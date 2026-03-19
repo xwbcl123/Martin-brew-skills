@@ -30,3 +30,11 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 - Private transcript and journal source material
 - Project-specific path examples that should not ship in a reusable public repo
 - Generated cache artifacts such as `__pycache__`
+
+### Updated Later The Same Day
+
+- Synced `audio-transcriber` to the new transcript-first architecture
+- Added `workflows/` routing docs for `reflection`, `meeting`, `voice-note`, glossary loop, and architecture notes
+- Migrated prompt files from mixed `.txt` usage to `.md`-based workflow prompts
+- Added sanitized public demo files for MoM and voice-note brief outputs
+- Kept public `glossary.md` and reference examples sanitized instead of copying private working data
