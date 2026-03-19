@@ -2,15 +2,18 @@
 """Audio transcriber using Gemini API with multi-scenario support and glossary enforcement.
 
 Scenarios:
-  - meeting:    Meeting minutes (Executive Briefing + Detailed Minutes + Action Table)
+  - meeting:    Raw meeting transcript (API-only ASR; structured MoM moved to Claude)
   - reflection: Raw high-fidelity transcript (API-only ASR; no cleaning or structure)
   - journal:    Structured daily journal (second pass, takes transcript text as input)
-  - voice-note: General voice notes (Clean Verbatim + Executive Briefing)
+  - voice-note: Raw voice-note transcript (API-only ASR; briefing moved to Claude)
 
 Supports both audio files (uploaded via File API) and text files (.md/.txt — read
-directly, no upload). This enables two-pass workflows:
-  Pass 1: audio → reflection transcript (high-fidelity verbatim)
-  Pass 2: transcript.md → journal (structured daily journal)
+directly, no upload). All ASR scenarios produce raw transcripts only; structured
+synthesis (MoM, brief, journal) is handled by Claude in subsequent passes.
+
+Two-pass example (reflection → journal):
+  Pass 1: audio → raw transcript (API-only ASR)
+  Pass 2: transcript_clean.md → structured journal (Claude or this script)
 
 Usage:
   # Basic transcription (default: voice-note scenario)
@@ -48,6 +51,7 @@ DEFAULT_SCENARIO = "voice-note"
 
 AUTO_SECTION_HEADER = "## 📝 新增术语 (Auto-discovered)"
 TEXT_EXTENSIONS = {".md", ".txt", ".markdown"}
+RAW_TRANSCRIPT_SCENARIOS = {"reflection", "meeting", "voice-note"}
 
 
 def build_prompt(scenario: str, custom_prompt: str | None, glossary_path: str | None,
@@ -61,10 +65,17 @@ def build_prompt(scenario: str, custom_prompt: str | None, glossary_path: str | 
     if custom_prompt:
         base_prompt = custom_prompt
     else:
-        template_file = PROMPTS_DIR / f"{scenario}.txt"
-        if not template_file.exists():
-            available = [f.stem for f in PROMPTS_DIR.glob("*.txt")]
-            print(f"Error: Scenario template '{scenario}' not found at {template_file}")
+        # .md-first, .txt-fallback
+        template_md = PROMPTS_DIR / f"{scenario}.md"
+        template_txt = PROMPTS_DIR / f"{scenario}.txt"
+        if template_md.exists():
+            template_file = template_md
+        elif template_txt.exists():
+            template_file = template_txt
+        else:
+            available = sorted({f.stem for f in PROMPTS_DIR.glob("*.md")} |
+                               {f.stem for f in PROMPTS_DIR.glob("*.txt")})
+            print(f"Error: Scenario template '{scenario}' not found.")
             print(f"Available scenarios: {', '.join(available) if available else '(none)'}")
             sys.exit(1)
         base_prompt = template_file.read_text(encoding="utf-8")
@@ -250,7 +261,7 @@ def do_transcribe(args: argparse.Namespace) -> None:
 
     # Build prompt (reflection scenario skips glossary — API does pure ASR only)
     final_prompt = build_prompt(args.scenario, args.prompt, args.glossary,
-                                use_glossary=(args.scenario != "reflection"))
+                                use_glossary=(args.scenario not in RAW_TRANSCRIPT_SCENARIOS))
 
     # Dry-run mode — no API key or SDK needed
     if args.dry_run:
@@ -365,8 +376,8 @@ def do_transcribe(args: argparse.Namespace) -> None:
             f.write(output_text)
         print(f"\nOutput saved to: {output_file}")
 
-        # Extract new terms sidecar (skip for journal and reflection)
-        if args.scenario not in ("journal", "reflection"):
+        # Extract new terms sidecar (skip for raw-transcript scenarios and journal)
+        if args.scenario not in RAW_TRANSCRIPT_SCENARIOS and args.scenario != "journal":
             new_terms_content = extract_new_terms(output_text, os.path.basename(file_path),
                                                      glossary_path=args.glossary)
             if new_terms_content:
@@ -485,7 +496,7 @@ Examples:
   # Transcribe with default voice-note scenario
   %(prog)s audio.m4a
 
-  # Meeting minutes
+  # Raw meeting transcript (Step 1 only; MoM via Claude Step 3)
   %(prog)s audio.m4a --scenario meeting
 
   # Dry-run to preview prompt
