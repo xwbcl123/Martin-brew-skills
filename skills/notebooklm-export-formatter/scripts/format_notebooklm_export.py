@@ -24,7 +24,7 @@ HEADING_PATTERNS = (
 
 SECTION_HEADING_RE = re.compile(r"^\d+️⃣\s+.+$")
 INLINE_REF_RE = re.compile(r"\\?\[(\d+)\\?\]")
-REFERENCE_LINE_RE = re.compile(r"^\[(\d+)\]\s+(.*)$")
+REFERENCE_LINE_RE = re.compile(r"^\[\^?(\d+)\](?::)?\s+(.*)$")
 
 
 def split_frontmatter(text: str) -> tuple[str, str]:
@@ -50,6 +50,15 @@ def is_heading_line(line: str) -> bool:
 
 def starts_with_emoji_from(line: str, emojis: set[str]) -> bool:
     return any(line.startswith(emoji) for emoji in emojis)
+
+
+def unwrap_blockquote(line: str) -> str:
+    return re.sub(r"^\s*>\s?", "", line).strip()
+
+
+def is_reference_heading(line: str) -> bool:
+    normalized = unwrap_blockquote(line)
+    return normalized in {"## 引用来源", "引用来源", "**来源：**", "来源："}
 
 
 def extract_frontmatter_title(frontmatter: str) -> str | None:
@@ -80,7 +89,7 @@ def format_body(body: str, frontmatter_title: str | None = None) -> str:
         if line.startswith("导出时间:"):
             continue
 
-        if line == "## 引用来源" or line == "引用来源":
+        if is_reference_heading(line):
             if output and output[-1] != "":
                 output.append("")
             output.append("---")
@@ -91,11 +100,14 @@ def format_body(body: str, frontmatter_title: str | None = None) -> str:
             continue
 
         if in_references:
-            match = REFERENCE_LINE_RE.match(line)
+            normalized_ref_line = unwrap_blockquote(line)
+            if not normalized_ref_line:
+                continue
+            match = REFERENCE_LINE_RE.match(normalized_ref_line)
             if match:
                 output.append(f"[^{match.group(1)}]: {match.group(2)}")
             else:
-                output.append(line)
+                output.append(normalized_ref_line)
             continue
 
         line = normalize_inline_references(line)

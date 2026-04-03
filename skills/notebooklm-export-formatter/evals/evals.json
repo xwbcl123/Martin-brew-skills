@@ -20,6 +20,12 @@
       "prompt": "这是 raw export 和我手工 polished 后的版本。请比较差异，提炼哪些是可泛化规则，输出 iteration notes，供下一轮更新 skill。",
       "expected_output": "生成一份 iteration notes，区分重复差异、可泛化规则和仅保留为人工偏好的修改。",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "请处理一份 NotebookLM allChat 导出。正文引用已经是 [^n]，但文末来源区仍是 `> **来源：**` 和 `> [^1] xxx` 这种 blockquote 形式。请把它转换成标准 Markdown footnote 定义区。",
+      "expected_output": "保留正文内容不改写，把 blockquote 来源区转换为 `## 引用来源` 和 `[^n]: xxx` 定义列表。",
+      "files": []
     }
   ]
 }

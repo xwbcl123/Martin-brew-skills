@@ -1,6 +1,6 @@
 ---
 name: notebooklm-export-formatter
-description: Convert NotebookLM-exported Markdown into clean Obsidian-friendly Markdown by restoring headings, lists, emphasis, and Markdown footnotes. Use this whenever the user mentions NotebookLM export formatting loss, wants to recover headings or bullet structure from a raw NotebookLM report, or needs bracket references like [1] / \\[1\\] converted into footnotes.
+description: Convert NotebookLM-exported Markdown into clean Obsidian-friendly Markdown by restoring headings, lists, emphasis, and Markdown footnotes. Use this whenever the user mentions NotebookLM export formatting loss, wants to recover headings or bullet structure from a raw NotebookLM report, or needs bracket references like [1] / \[1\] converted into footnotes.
 license: Internal
 ---
 
@@ -32,7 +32,7 @@ V1 目标很明确：
 ## File Structure
 
 ```text
-.agents/skills/notebooklm-export-formatter/
+skills/notebooklm-export-formatter/
 ├── SKILL.md
 ├── scripts/
 │   └── format_notebooklm_export.py
@@ -56,6 +56,7 @@ V1 目标很明确：
 - 裸段落形式的结构标签，例如 `💬 **Discussion** :`
 - 文中引用是 `\[1\]` 或 `[1]`
 - 文末存在 `## 引用来源` 与 `[1] xxx`
+- 对话型导出里，文末来源区也可能是 blockquote 形式：`> **来源：**` 与 `> [^1] xxx`
 
 ### 2. Run the formatter script
 
@@ -81,6 +82,7 @@ python skills/notebooklm-export-formatter/scripts/format_notebooklm_export.py "i
 - `Discussion` / `Decisions` / `Follow-Up Action Plans` 已恢复为列表层级
 - 所有正文引用都已变为 `[^n]`
 - 文末引用区已变为 `[^n]: ...`
+- 若原始来源区是 `> **来源：**` blockquote，也应被解包为标准脚注区
 - 没有新增乱码或明显的层级错乱
 
 ## Output Contract
