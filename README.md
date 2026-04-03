@@ -44,6 +44,8 @@ It does not keep:
 
 - `audio-transcriber`
 - `ds-citations`
+- `notebooklm-export-formatter`
+- `pptx-polish`
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
@@ -55,6 +57,8 @@ Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
 │   ├── ds-citations/
+│   ├── notebooklm-export-formatter/
+│   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
 │   └── slide-renamer/
@@ -120,6 +124,18 @@ If you reuse these skills in your own workspace, replace the templates with your
 - integration-oriented wrapper skill
 - depends on an external image hosting toolkit
 - this repository keeps the workflow contract, not the private infrastructure
+
+### `notebooklm-export-formatter`
+
+- restores headings, list structure, and emphasis from raw NotebookLM Markdown exports
+- converts bracket references into Markdown footnotes
+- includes a lightweight learn-from-polished iteration loop
+
+### `pptx-polish`
+
+- post-processes AI-generated PPTX decks
+- focuses on font normalization, minimum font size, and visual cleanup
+- includes a PPTX diff helper for extracting reusable formatting patterns
 
 ### `slide-renamer`
 

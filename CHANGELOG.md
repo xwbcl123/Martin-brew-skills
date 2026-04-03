@@ -4,6 +4,18 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-04-03
+
+### Added
+
+- Added `notebooklm-export-formatter`
+- Added `pptx-polish`
+
+### Changed
+
+- Updated `README.md` skill inventory and structure tree
+- Added public descriptions for the two newly synced skills
+
 ## 2026-03-19
 
 ### Added
