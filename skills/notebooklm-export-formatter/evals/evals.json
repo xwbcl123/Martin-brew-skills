@@ -1,0 +1,25 @@
+{
+  "skill_name": "notebooklm-export-formatter",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请把 skills/notebooklm-export-formatter/reference/origin_example.md 这个 NotebookLM 导出的会议纪要恢复成更适合 Obsidian 的 Markdown。重点修复 headings、list、bold 和 footnotes。",
+      "expected_output": "输出一份保留原始内容但结构更清晰的 Markdown，正文引用改成 [^n]，文末引用区改成 footnote 定义。",
+      "files": [
+        "skills/notebooklm-export-formatter/reference/origin_example.md"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我有一份 NotebookLM 导出的报告，复制后 heading 和列表都丢了。请用 notebooklm-export-formatter skill 只做格式恢复，不要改写正文内容，也不要删减引用。",
+      "expected_output": "结构恢复为分层标题和列表，保留事实内容与引用编号，不进行内容润色。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "这是 raw export 和我手工 polished 后的版本。请比较差异，提炼哪些是可泛化规则，输出 iteration notes，供下一轮更新 skill。",
+      "expected_output": "生成一份 iteration notes，区分重复差异、可泛化规则和仅保留为人工偏好的修改。",
+      "files": []
+    }
+  ]
+}
