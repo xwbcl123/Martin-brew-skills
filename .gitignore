@@ -13,6 +13,8 @@ venv/
 # OS / editor
 .DS_Store
 Thumbs.db
+desktop.ini
+Desktop.ini
 
 # Generated artifacts
 *.bak
