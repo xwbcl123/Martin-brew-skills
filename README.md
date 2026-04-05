@@ -44,6 +44,7 @@ It does not keep:
 
 - `audio-transcriber`
 - `ds-citations`
+- `doc-intelligent-summary`
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `publish-assets`
@@ -57,6 +58,7 @@ Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
 │   ├── ds-citations/
+│   ├── doc-intelligent-summary/
 │   ├── notebooklm-export-formatter/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
@@ -118,6 +120,12 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 - normalizes GPT / Gemini / OpenAI Deep Research citation artifacts
 - includes script, quick reference, and tests
+
+### `doc-intelligent-summary`
+
+- turns long Markdown documents into Obsidian-friendly wiki outputs
+- uses chunking + parallel analysis + dashboard synthesis
+- now includes persisted source chunks and a run log for auditability
 
 ### `publish-assets`
 

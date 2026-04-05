@@ -22,6 +22,7 @@ Current in-scope skills:
 
 - `audio-transcriber`
 - `ds-citations`
+- `doc-intelligent-summary`
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
@@ -84,6 +85,12 @@ If content is useful structurally but not safe to publish:
 
 - keep script, tests, and docs aligned
 - prefer path examples that match this repository layout
+
+### doc-intelligent-summary
+
+- keep the workflow portable and repo-relative
+- do not commit generated output folders or private source documents
+- preserve the audit-oriented structure: source chunks, summary chunks, and run log
 
 ### publish-assets
 
