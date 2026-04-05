@@ -125,7 +125,8 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 - turns long Markdown documents into Obsidian-friendly wiki outputs
 - uses chunking + parallel analysis + dashboard synthesis
-- now includes persisted source chunks and a run log for auditability
+- includes persisted source chunks, `run_log.md`, and `--validate-only` for auditability
+- prefers medium-sized chunks instead of over-fragmented slices, with summary depth tuned for reusable wiki notes
 
 ### `publish-assets`
 
