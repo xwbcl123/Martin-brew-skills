@@ -165,4 +165,4 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 ## License
 
-Add the license that matches how you want to share these skills.
+MIT
