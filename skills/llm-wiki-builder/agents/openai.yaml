@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLM Wiki Builder"
+  short_description: "Turn a folder into a governed LLM wiki."
+  default_prompt: "Use $llm-wiki-builder to bootstrap a small governed wiki from a source folder."

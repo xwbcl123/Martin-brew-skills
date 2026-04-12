@@ -50,6 +50,7 @@ It does not keep:
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
+- `llm-wiki-builder`
 
 ## Repository Structure
 
@@ -60,6 +61,7 @@ Martin-brew-skills/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
 │   ├── notebooklm-export-formatter/
+│   ├── llm-wiki-builder/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
@@ -133,6 +135,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - integration-oriented wrapper skill
 - depends on an external image hosting toolkit
 - this repository keeps the workflow contract, not the private infrastructure
+
+### `llm-wiki-builder`
+
+- bootstraps a governed small wiki from a source folder
+- preserves source safety via copy-first ingestion into `raw/`
+- supports optional `raw-normalized/` working copies for filename cleanup
+- emits generic governance files plus starter analysis/evidence pages
 
 ### `notebooklm-export-formatter`
 
