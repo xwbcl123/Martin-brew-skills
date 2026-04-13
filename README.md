@@ -155,6 +155,15 @@ If you reuse these skills in your own workspace, replace the templates with your
 - focuses on font normalization, minimum font size, and visual cleanup
 - includes a PPTX diff helper for extracting reusable formatting patterns
 
+## Changelog
+
+### 2026-04-13
+
+- `pptx-polish` v1.2: add short-label background expansion so empty label shapes widen with the text box after polish
+- improve width sizing with rendered-text estimation plus extra safety padding to reduce visible text overflow
+- add adjacent-label spacing protection to avoid overlap after widening
+- document the learn-from-manual-polish iteration in `skills/pptx-polish/SKILL.md`
+
 ### `slide-renamer`
 
 - OCR-based slide image renaming utility

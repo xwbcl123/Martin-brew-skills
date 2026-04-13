@@ -55,6 +55,11 @@ WARN_BORDER = 'F0AD4E'  # 黄色（⚠️ 待决策）
 DONE_BORDER = '28A745'  # 绿色（✅ 已完成）
 CARD_BORDER = '84C5F6'  # 淡蓝（有填充卡片）
 
+LABEL_BG_MAX_H_PT = 30          # 标签底框高度上限；更高的 shape 更可能是卡片/表格
+LABEL_TEXT_MAX_CHARS = 24       # 只处理短标签，避免误伤正文文本框
+LABEL_BG_PAD_X_PT = 24          # 标签底框左右扩展留白
+LABEL_BG_MIN_GAP_PT = 8         # 同一水平带相邻标签的最小间距
+
 # ─── Step 8: 语义色彩映射 ────────────────────────────────────────────────────
 # 关键词 → 文字颜色（交通灯体系），可由用户扩展
 SEMANTIC_COLORS = {
@@ -109,6 +114,194 @@ def fix_padding(root, pad_emu):
         for attr in ('lIns', 'tIns', 'rIns', 'bIns'):
             if int(bodyPr.get(attr, '0')) == 0:
                 bodyPr.set(attr, str(pad_emu))
+
+
+def _get_shape_name(sp):
+    for el in sp.iter():
+        if el.tag.endswith('}cNvPr'):
+            return el.get('name', '')
+    return ''
+
+
+def _get_shape_text(sp):
+    return ''.join(t.text or '' for t in sp.iter(qa('t'))).strip()
+
+
+def _estimate_text_width_emu(text, font_sz_hundredths):
+    """粗略估算单行文本渲染宽度，优先解决短标签底框不足问题。"""
+    sz_pt = max(font_sz_hundredths, 1600) / SZ_FACTOR
+    total = 0.0
+    for ch in text:
+        if ch.isspace():
+            total += 0.35
+        elif ord(ch) < 128:
+            if ch.isupper():
+                total += 0.72
+            elif ch.islower():
+                total += 0.58
+            elif ch.isdigit():
+                total += 0.58
+            else:
+                total += 0.42
+        else:
+            # 中文及大部分全角字符按接近 1em 估算
+            total += 0.95
+    return int(total * sz_pt * EMU_PT)
+
+
+def _get_shape_rect(sp):
+    for xfrm in sp.iter(qa('xfrm')):
+        off = xfrm.find(qa('off'))
+        ext = xfrm.find(qa('ext'))
+        if off is not None and ext is not None:
+            return (
+                int(off.get('x', 0)),
+                int(off.get('y', 0)),
+                int(ext.get('cx', 0)),
+                int(ext.get('cy', 0)),
+                off,
+                ext,
+            )
+    return None
+
+
+def _is_small_label_text(sp):
+    text = _get_shape_text(sp)
+    if not text:
+        return False
+    if len(text) > LABEL_TEXT_MAX_CHARS:
+        return False
+
+    rect = _get_shape_rect(sp)
+    if rect is None:
+        return False
+    _, _, _, h, _, _ = rect
+    if h > LABEL_BG_MAX_H_PT * EMU_PT:
+        return False
+
+    # 标题和标签往往是单段短文本；正文/说明文字通常更长
+    return '\n' not in text
+
+
+def _get_max_font_size(sp):
+    max_sz = 1600
+    for tag in (qa('rPr'), qa('endParaRPr'), qa('defRPr')):
+        for el in sp.iter(tag):
+            sz = el.get('sz')
+            if sz:
+                max_sz = max(max_sz, int(sz))
+    return max_sz
+
+
+def _is_small_empty_bg(sp):
+    text = _get_shape_text(sp)
+    if text:
+        return False
+
+    rect = _get_shape_rect(sp)
+    if rect is None:
+        return False
+    _, _, _, h, _, _ = rect
+    if h > LABEL_BG_MAX_H_PT * EMU_PT:
+        return False
+
+    return True
+
+
+def fix_label_bg_widths(root):
+    """短标签文字扩宽后，同步扩宽其背后的空白底框 shape。"""
+    shapes = list(root.iter(qp('sp')))
+    label_pad_x = int(LABEL_BG_PAD_X_PT * EMU_PT)
+    min_gap_x = int(LABEL_BG_MIN_GAP_PT * EMU_PT)
+
+    empty_bgs = []
+    text_labels = []
+    for sp in shapes:
+        rect = _get_shape_rect(sp)
+        if rect is None:
+            continue
+        x, y, w, h, off, ext = rect
+        item = {
+            'sp': sp,
+            'name': _get_shape_name(sp),
+            'text': _get_shape_text(sp),
+            'max_sz': _get_max_font_size(sp),
+            'x': x,
+            'y': y,
+            'w': w,
+            'h': h,
+            'off': off,
+            'ext': ext,
+        }
+        if _is_small_empty_bg(sp):
+            empty_bgs.append(item)
+        elif _is_small_label_text(sp):
+            text_labels.append(item)
+
+    matched_pairs = []
+    for bg in empty_bgs:
+        candidates = []
+        for label in text_labels:
+            # 仅处理明显位于底框内部的短标签；避免误吸附附近正文
+            if label['x'] < bg['x'] or label['x'] + label['w'] > bg['x'] + bg['w']:
+                continue
+
+            label_center_y = label['y'] + label['h'] / 2
+            bg_center_y = bg['y'] + bg['h'] / 2
+            if abs(label_center_y - bg_center_y) > max(bg['h'], label['h']) * 0.6:
+                continue
+
+            inter_y = max(0, min(bg['y'] + bg['h'], label['y'] + label['h']) - max(bg['y'], label['y']))
+            if inter_y <= 0:
+                continue
+
+            slack = bg['w'] - label['w']
+            candidates.append((slack, label))
+
+        if not candidates:
+            continue
+
+        candidates.sort(key=lambda item: item[0])
+        _, label = candidates[0]
+
+        estimated_text_w = _estimate_text_width_emu(label['text'], label['max_sz'])
+        # 留一档安全系数，优先避免视觉上“刚刚卡边”的情况
+        content_w = max(label['w'], int(estimated_text_w * 1.12))
+        target_x = label['x'] - label_pad_x
+        target_w = content_w + 2 * label_pad_x
+        if target_x < 0:
+            target_w += target_x
+            target_x = 0
+
+        if target_w > bg['w']:
+            bg['off'].set('x', str(target_x))
+            bg['ext'].set('cx', str(target_w))
+            bg['x'] = target_x
+            bg['w'] = target_w
+
+        matched_pairs.append((bg, label))
+
+    # 同一水平带内，如果扩大后的标签底框互相挤压，则把右侧 pair 整体右移。
+    matched_pairs.sort(key=lambda pair: (pair[0]['y'], pair[0]['x']))
+    for i in range(1, len(matched_pairs)):
+        prev_bg, _prev_label = matched_pairs[i - 1]
+        bg, label = matched_pairs[i]
+
+        prev_center_y = prev_bg['y'] + prev_bg['h'] / 2
+        center_y = bg['y'] + bg['h'] / 2
+        if abs(prev_center_y - center_y) > max(prev_bg['h'], bg['h']) * 0.8:
+            continue
+
+        prev_right = prev_bg['x'] + prev_bg['w']
+        needed_left = prev_right + min_gap_x
+        if bg['x'] >= needed_left:
+            continue
+
+        delta = needed_left - bg['x']
+        bg['x'] += delta
+        label['x'] += delta
+        bg['off'].set('x', str(bg['x']))
+        label['off'].set('x', str(label['x']))
 
 
 # ─── Step 4: 标题 shape 配色 ─────────────────────────────────────────────────
@@ -325,6 +518,7 @@ def process_slide(slide_path: Path, font, min_hundredths, pad_emu):
     fix_min_sz(root, min_hundredths)
     fix_size_remap(root)           # Step 2b: 字号重映射（在 min_sz 之后）
     fix_padding(root, pad_emu)
+    fix_label_bg_widths(root)      # Step 3b: 短标签底框跟随文字扩宽
     fix_title_bg(root)             # ← 必须在 fix_borders 之前（P1 先处理标题，避免误判）
     fix_borders(root)
     # fix_semantic_colors(root)    # Step 5b: 暂停——匹配逻辑太激进，误染叙述性文本
