@@ -157,6 +157,11 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 ## Changelog
 
+### 2026-04-15
+
+- `notebooklm-export-formatter`: expand heading pattern recognition to cover Chinese plain-text section titles (`核心发现`, `报告优势`, `主题：xxx`, `案例：xxx`, `论据 N：xxx` etc.) and emoji-prefixed section headers (`📋 案例研究分析`, `🧩 论点解构` etc.)
+- these are emitted as `###` level headings in the formatted output
+
 ### 2026-04-13
 
 - `pptx-polish` v1.2: add short-label background expansion so empty label shapes widen with the text box after polish

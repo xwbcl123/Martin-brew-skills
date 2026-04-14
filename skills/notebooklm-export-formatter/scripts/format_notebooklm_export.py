@@ -23,6 +23,15 @@ HEADING_PATTERNS = (
 )
 
 SECTION_HEADING_RE = re.compile(r"^\d+️⃣\s+.+$")
+
+# Additional plain-text Chinese section headings that appear as bare paragraphs
+CHINESE_SECTION_PATTERNS = (
+    re.compile(r"^(核心发现|报告优势|报告弱点|可信度评估|给决策者的建议|执行摘要|核心论题|主要论据|反论点处理|案例研究|论点解构|关键引文)$"),
+    re.compile(r"^(主题|案例|背景与挑战|结果与数据|来源位置|可信度评估|论证|证据强度|反论点|作者承认的局限)$"),
+    re.compile(r"^主题：.+"),
+    re.compile(r"^案例：.+"),
+    re.compile(r"^论据\s*\d+[：:].*"),
+)
 INLINE_REF_RE = re.compile(r"\\?\[(\d+)\\?\]")
 REFERENCE_LINE_RE = re.compile(r"^\[\^?(\d+)\](?::)?\s+(.*)$")
 
@@ -45,7 +54,7 @@ def normalize_inline_references(line: str) -> str:
 
 
 def is_heading_line(line: str) -> bool:
-    return any(pattern.match(line) for pattern in HEADING_PATTERNS) or bool(SECTION_HEADING_RE.match(line))
+    return any(pattern.match(line) for pattern in HEADING_PATTERNS) or bool(SECTION_HEADING_RE.match(line)) or any(pattern.match(line) for pattern in CHINESE_SECTION_PATTERNS)
 
 
 def starts_with_emoji_from(line: str, emojis: set[str]) -> bool:
@@ -142,6 +151,17 @@ def format_body(body: str, frontmatter_title: str | None = None) -> str:
         if SECTION_HEADING_RE.match(line):
             current_section = "minutes"
             output.append(f"### {line}")
+            output.append("")
+            continue
+
+        if any(p.match(line) for p in CHINESE_SECTION_PATTERNS):
+            output.append(f"### {line}")
+            output.append("")
+            continue
+
+        # Standalone emoji-prefixed section titles (e.g., "📋 案例研究分析", "🧩 论点解构") -> ## heading
+        if re.match(r"^[\U0001F300-\U0001F9FF] ", line) or re.match(r"^[📋📅👥🎯💬🤝🚀🧩🔍]\s+[\u4e00-\u9fff]", line):
+            output.append(f"## {line}")
             output.append("")
             continue
 
