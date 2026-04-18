@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -12,7 +11,8 @@ from pathlib import Path
 from typing import Dict, Iterable, List
 
 
-PARSED_EXTS = {".md", ".pdf", ".docx", ".pptx"}
+NATIVE_TEXT_EXTS = {".md", ".txt"}
+PARSED_EXTS = {".pdf", ".docx", ".pptx"}
 COPY_ONLY_EXTS = {".xlsx", ".xlsm", ".csv", ".tsv", ".png", ".jpg", ".jpeg", ".webp"}
 MANUAL_EXTS = {".zip"}
 CORE_FILES = ["index.md", "log.md", "AGENTS.md", "LINTS.md", "_meta.md"]
@@ -51,7 +51,8 @@ def ensure_dir(path: Path) -> None:
 def write_text(path: Path, content: str, incremental_safe: bool) -> None:
     if incremental_safe and path.exists():
         return
-    path.write_text(content, encoding="utf-8")
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(content)
 
 
 def append_text(path: Path, content: str) -> None:
@@ -94,6 +95,8 @@ def copy_tree_contents(src: Path, dst: Path) -> None:
 
 def classify_extension(path: Path) -> str:
     ext = path.suffix.lower()
+    if ext in NATIVE_TEXT_EXTS:
+        return "native-text"
     if ext in PARSED_EXTS:
         return "supported-and-parsed"
     if ext in COPY_ONLY_EXTS:
@@ -191,14 +194,11 @@ def extract_sources(
     for record in records:
         src = source_root / Path(record.relative_path)
         rel = Path(record.relative_path)
+        if record.category == "native-text":
+            record.extracted = True
+            record.note = "native text; use source layer directly"
+            continue
         if record.category == "supported-and-parsed":
-            if src.suffix.lower() == ".md":
-                dst = ingest_root / rel
-                ensure_dir(dst.parent)
-                shutil.copy2(src, dst)
-                record.extracted = True
-                record.note = "markdown copied into ingest layer"
-                continue
             if markitdown_available:
                 dst = ingest_root / rel.with_suffix(".md")
                 ok = try_markitdown(src, dst)
@@ -309,7 +309,8 @@ This local handbook applies only to this wiki root.
 
 - Keep source files in `raw/`
 - Keep renamed working copies in `raw-normalized/` only
-- Keep extracted text in `analysis/ingest-src/`
+- Keep rich/binary extracted text in `analysis/ingest-src/`
+- Read native text files such as Markdown/TXT directly from `raw-normalized/` or `raw/`
 - Keep evidence pages in `evidence/`
 - Keep root clean: only navigation and governance pages belong here
 
@@ -329,7 +330,8 @@ def build_lints() -> str:
 
 - `raw/` must not contain analysis markdown
 - `raw-normalized/` must not be treated as source of truth
-- `analysis/ingest-src/` is intermediate text, not final knowledge
+- `analysis/ingest-src/` is intermediate text for rich/binary extraction, not final knowledge
+- native Markdown/TXT should not be duplicated into `analysis/ingest-src/`
 - root must stay clean and keep only navigation/governance files
 - every evidence or analysis page should be traceable to source files
 - unsupported or uncertain files must appear in skipped/uncertain reporting
@@ -395,6 +397,7 @@ def build_inventory(records: List[FileRecord]) -> str:
     rows = []
     for r in records:
         rows.append(f"| `{r.relative_path}` | `{r.extension}` | {r.size} | `{r.category}` | `{str(r.extracted).lower()}` | {r.note or '-'} |")
+    table = header + "\n".join(rows)
     return f"""---
 title: Source Inventory
 type: evidence-inventory
@@ -407,7 +410,7 @@ schema_version: wiki-skill-v1
 
 # Source Inventory
 
-{header}{os.linesep.join(rows)}
+{table}
 """
 
 

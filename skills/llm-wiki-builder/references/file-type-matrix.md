@@ -3,6 +3,7 @@
 ## Categories
 
 - `supported-and-parsed`: copy to `raw/`, attempt extraction to `analysis/ingest-src/`
+- `native-text`: copy to `raw/`, read directly from `raw/` or `raw-normalized/`, do not duplicate into `analysis/ingest-src/`
 - `copied-only`: preserve in `raw/`, do not claim stable parsing
 - `manual-review-required`: record in `skipped_files` or `uncertain_items`
 
@@ -10,7 +11,7 @@
 
 | Extension | Behavior | Notes |
 | --- | --- | --- |
-| `.md` | supported-and-parsed | copied and mirrored into ingest layer |
+| `.md` `.txt` | native-text | directly readable from source layer; skip ingest-src duplication |
 | `.pdf` | supported-and-parsed | uses `markitdown` when available; otherwise manual review |
 | `.docx` | supported-and-parsed | uses `markitdown` when available; otherwise manual review |
 | `.pptx` | supported-and-parsed | uses `markitdown` when available; otherwise manual review |
@@ -22,5 +23,6 @@
 ## Extraction Notes
 
 - `markitdown` is the preferred extraction backend for v1.
+- Native text files do not need `markitdown` and should be linked directly from MoC pages.
 - If extraction fails, downgrade the file to `manual-review-required`.
 - Never present copied-only or manual-review-required files as parsed knowledge.

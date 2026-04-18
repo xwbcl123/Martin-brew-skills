@@ -138,10 +138,11 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 ### `llm-wiki-builder`
 
-- bootstraps a governed small wiki from a source folder
-- preserves source safety via copy-first ingestion into `raw/`
-- supports optional `raw-normalized/` working copies for filename cleanup
-- emits generic governance files plus starter analysis/evidence pages
+- builds a governed, navigable LLM wiki from a source folder, not just a file inventory
+- preserves source safety via copy-first ingestion into `raw/` and optional `raw-normalized/` working copies
+- treats Markdown/TXT as native text and avoids redundant `analysis/ingest-src/` copies
+- adds mandatory post-ingestion synthesis: core thesis, semantic MoC pages, source-linked summaries, and coverage QC
+- includes Windows-safe `source-inventory.md` table generation and multi-agent workflow guidance for inventory, clustering, and QC
 
 ### `notebooklm-export-formatter`
 
@@ -156,6 +157,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes a PPTX diff helper for extracting reusable formatting patterns
 
 ## Changelog
+
+### 2026-04-18
+
+- `llm-wiki-builder`: upgrade from scaffold-only bootstrap to a full Knowledge Architect workflow with mandatory semantic synthesis, source-linked MoC pages, and coverage QC
+- classify Markdown/TXT as `native-text` to prevent redundant ingest copies; keep rich/binary extraction in `analysis/ingest-src/`
+- fix Windows Markdown table rendering in `source-inventory.md` by forcing LF output and avoiding `os.linesep` row joins
+- add post-ingestion synthesis reference and expanded multi-agent delegation guidance for semantic clustering, source sampling, and MoC coverage checks
 
 ### 2026-04-15
 
