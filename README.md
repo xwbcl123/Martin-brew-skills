@@ -51,6 +51,7 @@ It does not keep:
 - `slide-renamer`
 - `prompt-crafter`
 - `llm-wiki-builder`
+- `visual-mail`
 
 ## Repository Structure
 
@@ -65,7 +66,8 @@ Martin-brew-skills/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
-│   └── slide-renamer/
+│   ├── slide-renamer/
+│   └── visual-mail/
 ├── .env.example
 ├── .gitignore
 ├── AGENTS.md
@@ -186,6 +188,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 - methodology-driven prompt design skill
 - includes reusable reference notes
+
+### `visual-mail`
+
+- turns a report, brief, analysis, progress update, or meeting note into a share-ready email package
+- produces an email draft, visual brief HTML, and screenshot preview with placeholder links when publication URLs are not available
+- includes fallback brand styles, output cleanup rules, and a Selenium/CDP full-page screenshot helper
+- keeps public-facing outputs free of automation/provenance traces
 
 ## Maintenance Principles
 

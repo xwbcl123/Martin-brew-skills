@@ -1,0 +1,5 @@
+interface:
+  display_name: "Visual Mail"
+  short_description: "Report → email + visual brief + screenshot"
+  brand_color: "#3B82F6"
+  default_prompt: "Use $visual-mail to share this report with the target audience: generate the email, visual brief HTML, and screenshot preview."

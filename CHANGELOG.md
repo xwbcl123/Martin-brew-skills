@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-04-24
+
+### Added
+
+- Added `visual-mail`, a report-to-email package skill that generates a share-ready email, visual brief HTML, and screenshot preview.
+- Included fallback brand styles, output cleanup rules, and Selenium/CDP full-page screenshot capture.
+
+### Changed
+
+- Updated root README and agent guidance to include `visual-mail`.
+
 ## 2026-04-03
 
 ### Added

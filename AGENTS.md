@@ -26,6 +26,7 @@ Current in-scope skills:
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
+- `visual-mail`
 
 Out of scope:
 
@@ -107,6 +108,13 @@ If content is useful structurally but not safe to publish:
 
 - keep references generic and reusable
 - avoid leaking old private prompt history
+
+### visual-mail
+
+- keep examples audience-neutral and avoid copying real report artifacts
+- keep screenshot helpers portable; prefer repo-relative paths in docs
+- do not commit generated email, HTML, screenshot, or E2E artifact outputs unless they are sanitized fixtures
+- keep brand references optional and provide fallback styles for standalone use
 
 ## Installation Guidance
 
