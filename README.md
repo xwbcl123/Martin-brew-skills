@@ -43,6 +43,7 @@ It does not keep:
 ## Included Skills
 
 - `audio-transcriber`
+- `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
 - `notebooklm-export-formatter`
@@ -59,6 +60,7 @@ It does not keep:
 Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
+│   ├── create-cover-illustration/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
 │   ├── notebooklm-export-formatter/
@@ -107,6 +109,7 @@ This repository intentionally ships with sanitized templates instead of private 
 
 - `audio-transcriber/prompts/glossary.md` is a starter template, not a real personal glossary
 - `audio-transcriber/reference/` contains demo examples only
+- `create-cover-illustration` documents Gemini configuration through placeholders only
 - `publish-assets` is documented as an integration skill and expects external tooling
 - environment variables are documented through placeholders only
 
@@ -119,6 +122,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - Gemini-based audio workflow
 - suitable for large-audio transcription and structured markdown generation
 - ships with sanitized glossary and demo references
+
+### `create-cover-illustration`
+
+- creates hand-drawn 16:9 journal and writing cover illustrations
+- uses Codex image generation as the primary path
+- includes a portable Gemini fallback script for agents without built-in image generation
+- keeps configuration generic through `.env` placeholders, with no private workspace paths or secrets
 
 ### `ds-citations`
 
@@ -159,6 +169,11 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes a PPTX diff helper for extracting reusable formatting patterns
 
 ## Changelog
+
+### 2026-04-26
+
+- add `create-cover-illustration`, a reusable hand-drawn cover illustration skill with Codex image generation as the primary path and Gemini fallback for other agents
+- document generic Gemini image configuration placeholders without private paths or secrets
 
 ### 2026-04-18
 

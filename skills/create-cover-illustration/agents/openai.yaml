@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cover Illustrator"
+  short_description: "Generate journal covers and hand-drawn article illustrations."
+  default_prompt: "Generate a hand-drawn 16:9 cover illustration for this journal or article."

@@ -17,5 +17,6 @@ desktop.ini
 Desktop.ini
 
 # Generated artifacts
+.tmp/
 *.bak
 *.log

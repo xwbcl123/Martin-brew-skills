@@ -21,6 +21,7 @@ Only include skills that Martin built or substantially shaped by hand.
 Current in-scope skills:
 
 - `audio-transcriber`
+- `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
 - `publish-assets`
@@ -81,6 +82,13 @@ If content is useful structurally but not safe to publish:
 - keep the script and public prompts
 - glossary must remain a starter template, not a private working glossary
 - reference examples must stay sanitized
+
+### create-cover-illustration
+
+- keep prompts and journal examples generic
+- do not hardcode private workspace paths, personal vault names, or local upload pipeline paths
+- document Gemini fallback configuration through placeholders only
+- do not commit generated images or E2E artifacts unless they are sanitized fixtures
 
 ### ds-citations
 

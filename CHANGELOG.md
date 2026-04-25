@@ -4,6 +4,18 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-04-26
+
+### Added
+
+- Added `create-cover-illustration`, a hand-drawn 16:9 journal and writing cover illustration skill.
+- Included a portable Gemini fallback script plus generic prompt contract and OpenAI-agent metadata.
+
+### Changed
+
+- Updated root README, `.env.example`, and agent guidance to include `create-cover-illustration`.
+- Sanitized fallback configuration docs so they use placeholders and repo-relative examples only.
+
 ## 2026-04-24
 
 ### Added
