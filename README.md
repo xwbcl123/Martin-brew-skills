@@ -174,6 +174,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 - add `create-cover-illustration`, a reusable hand-drawn cover illustration skill with Codex image generation as the primary path and Gemini fallback for other agents
 - document generic Gemini image configuration placeholders without private paths or secrets
+- tighten `create-cover-illustration` decision rules so Codex uses `$imagegen` before fallback scripts, documents generated-image handoff, and supports full-source prompts with explicit visual-theme extraction
 
 ### 2026-04-18
 
