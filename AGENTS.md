@@ -24,6 +24,7 @@ Current in-scope skills:
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
+- `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
@@ -100,6 +101,13 @@ If content is useful structurally but not safe to publish:
 - keep the workflow portable and repo-relative
 - do not commit generated output folders or private source documents
 - preserve the audit-oriented structure: source chunks, summary chunks, and run log
+
+### martin-pptx-skill
+
+- keep the staged workflow, reusable scripts, references, and templates
+- do not commit benchmark run folders, generated motherboard images, real decks, or private source packages
+- keep design examples generic and avoid hardcoded brand, client, policy, or local-machine context
+- preserve `deck-outline.md` / `design.md` / visual motherboard separation
 
 ### publish-assets
 

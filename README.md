@@ -48,6 +48,7 @@ It does not keep:
 - `doc-intelligent-summary`
 - `notebooklm-export-formatter`
 - `pptx-polish`
+- `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
 - `prompt-crafter`
@@ -65,6 +66,7 @@ Martin-brew-skills/
 │   ├── doc-intelligent-summary/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
+│   ├── martin-pptx-skill/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
@@ -168,7 +170,18 @@ If you reuse these skills in your own workspace, replace the templates with your
 - focuses on font normalization, minimum font size, and visual cleanup
 - includes a PPTX diff helper for extracting reusable formatting patterns
 
+### `martin-pptx-skill`
+
+- stages deck production from `deck-outline.md` and `design.md`
+- separates image-gen visual motherboard exploration from editable PPTX reconstruction
+- includes reusable script contracts for route choice, image-gen prompts, Option 5 PPTX reconstruction, render QC, Text Fidelity Gate, BG Gate, and contact sheets
+- ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
+
 ## Changelog
+
+### 2026-05-18
+
+- add `martin-pptx-skill`, a sanitized staged deck engineering skill for visual motherboard and editable PPTX workflows
 
 ### 2026-04-26
 
