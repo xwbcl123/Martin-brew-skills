@@ -26,6 +26,7 @@ Current in-scope skills:
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
+- `grill-me`
 - `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
@@ -115,6 +116,13 @@ If content is useful structurally but not safe to publish:
 - keep the workflow portable and repo-relative
 - do not commit generated output folders or private source documents
 - preserve the audit-oriented structure: source chunks, summary chunks, and run log
+
+### grill-me
+
+- keep the workflow session-scoped and repo-relative
+- do not hardcode private Life-OS or Work-PKM absolute paths
+- preserve the one-question-at-a-time interview pattern and recommended-answer structure
+- keep upstream attribution generic without copying private task examples
 
 ### martin-pptx-skill
 

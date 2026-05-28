@@ -10,10 +10,11 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 
 - Added `codex-fluent`, a report-first Codex session hygiene and handoff discipline skill.
 - Added `codex-retrospective`, a minimal evidence-backed Codex behavior improvement loop.
+- Added `grill-me`, a session-scoped requirement grilling workflow adapted from `grill-with-docs`.
 
 ### Changed
 
-- Updated README and agent guidance to include both Codex workflow skills.
+- Updated README and agent guidance to include the new Codex workflow and session clarification skills.
 
 ## 2026-04-26
 

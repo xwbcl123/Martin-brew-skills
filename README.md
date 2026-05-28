@@ -48,6 +48,7 @@ It does not keep:
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
+- `grill-me`
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `martin-pptx-skill`
@@ -68,6 +69,7 @@ Martin-brew-skills/
 │   ├── create-cover-illustration/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
+│   ├── grill-me/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
 │   ├── martin-pptx-skill/
@@ -160,6 +162,12 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes persisted source chunks, `run_log.md`, and `--validate-only` for auditability
 - prefers medium-sized chunks instead of over-fragmented slices, with summary depth tuned for reusable wiki notes
 
+### `grill-me`
+
+- adapts Matt Pocock's `grill-with-docs` idea for Martin's task/session workflow
+- writes requirement questions, session context, and decision logs under `tasks/sessions/YYYYMMDD_slug/`
+- asks one high-leverage clarification question at a time, with a recommended answer and tradeoff
+
 ### `publish-assets`
 
 - integration-oriented wrapper skill
@@ -198,6 +206,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 ### 2026-05-28
 
 - add `codex-fluent` and `codex-retrospective` with full reference folders
+- add `grill-me`, a session-scoped requirement grilling workflow adapted for Life-OS and Work-PKM
 - document both skills in the root inventory and notes
 
 ### 2026-05-18
