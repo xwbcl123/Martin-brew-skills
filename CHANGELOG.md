@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-05-28
+
+### Added
+
+- Added `codex-fluent`, a report-first Codex session hygiene and handoff discipline skill.
+- Added `codex-retrospective`, a minimal evidence-backed Codex behavior improvement loop.
+
+### Changed
+
+- Updated README and agent guidance to include both Codex workflow skills.
+
 ## 2026-04-26
 
 ### Added

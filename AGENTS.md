@@ -21,6 +21,8 @@ Only include skills that Martin built or substantially shaped by hand.
 Current in-scope skills:
 
 - `audio-transcriber`
+- `codex-fluent`
+- `codex-retrospective`
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
@@ -83,6 +85,18 @@ If content is useful structurally but not safe to publish:
 - keep the script and public prompts
 - glossary must remain a starter template, not a private working glossary
 - reference examples must stay sanitized
+
+### codex-fluent
+
+- keep maintenance references generic and report-first
+- do not encode private local session paths or machine-specific archive locations
+- preserve handoff-first safety language before any cleanup or archive action
+
+### codex-retrospective
+
+- keep examples focused on reusable behavior updates, not private session details
+- require evidence-backed, minimal AGENTS.md or skill changes
+- avoid committing raw conversation history, transcripts, or private retrospectives
 
 ### create-cover-illustration
 

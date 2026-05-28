@@ -43,6 +43,8 @@ It does not keep:
 ## Included Skills
 
 - `audio-transcriber`
+- `codex-fluent`
+- `codex-retrospective`
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
@@ -61,6 +63,8 @@ It does not keep:
 Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
+│   ├── codex-fluent/
+│   ├── codex-retrospective/
 │   ├── create-cover-illustration/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
@@ -125,6 +129,18 @@ If you reuse these skills in your own workspace, replace the templates with your
 - suitable for large-audio transcription and structured markdown generation
 - ships with sanitized glossary and demo references
 
+### `codex-fluent`
+
+- keeps long-running Codex usage responsive through report-first maintenance
+- includes handoff templates, archive safety rules, and maintenance checklists
+- preserves work through explicit handoffs before any session cleanup
+
+### `codex-retrospective`
+
+- reviews recent Codex usage history to identify repeatable behavior improvements
+- produces minimal, evidence-backed updates to AGENTS.md or tiny reusable skills
+- includes rules for safe constitution updates and high-signal retrospective prompts
+
 ### `create-cover-illustration`
 
 - creates hand-drawn 16:9 journal and writing cover illustrations
@@ -178,6 +194,11 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-05-28
+
+- add `codex-fluent` and `codex-retrospective` with full reference folders
+- document both skills in the root inventory and notes
 
 ### 2026-05-18
 
