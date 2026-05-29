@@ -45,6 +45,7 @@ It does not keep:
 - `audio-transcriber`
 - `codex-fluent`
 - `codex-retrospective`
+- `conference-video-deck-transcript`
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
@@ -143,6 +144,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - produces minimal, evidence-backed updates to AGENTS.md or tiny reusable skills
 - includes rules for safe constitution updates and high-signal retrospective prompts
 
+### `conference-video-deck-transcript`
+
+- turns long conference/keynote/webinar videos into per-speaker Deck PDFs and Transcript Markdown files
+- uses a speaker segment map as the source of truth for deck/transcript alignment
+- includes scripts for deck extraction, transcript splitting, manifest generation, and artifact archiving
+- keeps source media, raw frames, contact sheets, and process artifacts out of the final deliverable folder
+
 ### `create-cover-illustration`
 
 - creates hand-drawn 16:9 journal and writing cover illustrations
@@ -202,6 +210,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-05-29
+
+- add `conference-video-deck-transcript`, a workflow-and-scripts skill for producing numbered per-speaker Deck PDFs and Transcript Markdown files from conference videos, transcripts, and agendas
 
 ### 2026-05-28
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conference Video Deck Transcript"
+  short_description: "Turn conference videos into speaker decks and transcripts."
+  default_prompt: "Use $conference-video-deck-transcript to turn this conference video, agenda, and transcript into per-speaker Deck PDFs and Transcript Markdown files."

@@ -23,6 +23,7 @@ Current in-scope skills:
 - `audio-transcriber`
 - `codex-fluent`
 - `codex-retrospective`
+- `conference-video-deck-transcript`
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
@@ -98,6 +99,12 @@ If content is useful structurally but not safe to publish:
 - keep examples focused on reusable behavior updates, not private session details
 - require evidence-backed, minimal AGENTS.md or skill changes
 - avoid committing raw conversation history, transcripts, or private retrospectives
+
+### conference-video-deck-transcript
+
+- keep examples generic; do not commit real conference videos, transcripts, extracted frames, or generated decks
+- keep paths repo-relative and avoid hardcoded vault or media archive locations
+- preserve the final-deliverables-vs-artifacts separation in docs and scripts
 
 ### create-cover-illustration
 
