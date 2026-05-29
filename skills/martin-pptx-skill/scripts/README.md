@@ -101,7 +101,7 @@ python scripts/build_option5_deck.py \
   --run-id YYYYMMDD_exp-xxx
 ```
 
-Must not hardcode project-specific content.
+Must not hardcode CADA-specific content.
 
 Expected behavior:
 
@@ -201,7 +201,7 @@ Expected checks:
 
 ```bash
 python scripts/build_qc_report.py \
-  --run-folder runs/YYYYMMDD_exp-xxx-short-slug \
+  --run-folder 40_runs/YYYYMMDD_exp-xxx-short-slug \
   --out output/qc_report.md
 ```
 
@@ -216,7 +216,7 @@ Expected behavior:
 
 ```bash
 python scripts/verify_run_folder.py \
-  --run-folder runs/YYYYMMDD_exp-xxx-short-slug \
+  --run-folder 40_runs/YYYYMMDD_exp-xxx-short-slug \
   --formal-pptx true
 ```
 
@@ -269,4 +269,4 @@ Each script should:
 
 ## Not Implemented Here
 
-This design package defines script contracts and expected CLIs. It does not include production Python implementations. Local integration should implement these scripts by extracting and generalizing reusable experiment patterns.
+This design package defines script contracts and expected CLIs. It does not include production Python implementations. Local integration should implement these scripts by extracting and generalizing EXP-007 patterns.

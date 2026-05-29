@@ -67,7 +67,7 @@ python scripts/text_fidelity_gate.py --outline output/deck-outline.md --text-ext
 
 ```text
 Continue <run_id> from:
-runs/<run_id>/handover.md
+40_runs/<run_id>/handover.md
 
 Use confirmed artifacts:
 - input/brief.md

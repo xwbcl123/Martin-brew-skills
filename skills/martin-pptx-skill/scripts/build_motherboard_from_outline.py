@@ -111,7 +111,7 @@ def base_canvas(spec, total):
 def draw_footer(draw, spec):
     footer = spec.source or spec.evidence_label or "source-backed"
     draw.text((42, 840), "Motherboard visual reference", font=font(14), fill=BLUE)
-    draw.text((1260, 840), "Light Blue", font=font(14), fill=BLUE)
+    draw.text((1260, 840), "Huawei Light Blue", font=font(14), fill=BLUE)
     draw.text((42, 862), f"Source: {footer[:150]}", font=font(12), fill=MUTED)
 
 
@@ -126,7 +126,7 @@ def table_items(spec, limit: int = 8) -> list[str]:
         cells = [c.strip() for c in stripped.strip("|").split("|")]
         if len(cells) < 2 or all(not c for c in cells):
             continue
-        if any(c in {"条款", "判断维度", "当前草案", "利益相关方诉求"} for c in cells):
+        if any(c in {"条款", "判断维度", "当前草案", "成员国诉求"} for c in cells):
             continue
         items.append(" | ".join(c for c in cells if c))
         if len(items) >= limit:
@@ -147,7 +147,7 @@ def draw_cover(draw, spec):
     rounded(draw, (245, 250, 1355, 495), radius=22, fill=CARD, outline=LINE, width=3)
     draw_wrapped(draw, spec.title, (320, 292), 960, font(44, True), fill=(0, 0, 0), max_lines=2, center=True)
     draw_wrapped(draw, spec.key_message, (345, 420), 910, font(22), fill=BLUE, max_lines=2, center=True)
-    labels = ["Scope", "Evidence", "Stakeholders", "Strategy View"]
+    labels = ["Article 1-97", "ECCF", "27 MS", "Strategy View"]
     for i, label in enumerate(labels):
         x = 310 + i * 245
         rounded(draw, (x, 590, x + 190, 642), radius=20, fill=PALE, outline=BLUE)

@@ -20,9 +20,9 @@ DEFAULT_AVOID = [
     "browser chrome",
     "mockup frame",
     "invented legal claims",
-    "brand logo or wordmark",
+    "Huawei logo",
     "any brand logo unless explicitly supplied as an asset",
-    "wrong or invented year",
+    "wrong year such as 2024",
 ]
 
 
@@ -57,8 +57,8 @@ Canvas: 16:9 landscape, high-resolution, clean PowerPoint-like slide, premium fo
 Motherboard role: This is a visual reference image, not the final editable PPTX. It should raise the visual ceiling for later editable reconstruction.
 Generation mode: {sample_line}
 Language/text: Preserve the slide title and core message exactly where possible. Keep all visible text readable at presentation distance.
-Brand/logo rule: Use the visual language and palette only. Do not draw a brand logo, wordmark, or trademark unless a logo asset is explicitly provided for this run.
-Date rule: If a date or year is shown, it must come from the outline/source. Do not invent dates or years.
+Brand/logo rule: Use the visual language and palette only. Do not draw Huawei logo, Huawei wordmark, or any other brand logo unless a logo asset is explicitly provided for this run.
+Date rule: If a date/year is shown, it must come from the outline/source. For this run, CSA2 source dates are in 2026; never show 2024.
 
 Design system from design.md:
 {design_summary}
@@ -139,7 +139,7 @@ This folder contains the canonical prompt pack for the visual motherboard stage.
 - Slide count: {len(slides)}
 - Sample slides: {", ".join(str(x) for x in sorted(sample_slides))}
 
-Use these prompts with an image generation tool to create polished 16:9 text-included infographic slide references. Do not replace this stage with deterministic wireframes unless the user explicitly accepts that downgrade.
+Use these prompts with an image generation tool to create polished 16:9 text-included infographic slide references. Do not replace this stage with deterministic wireframes unless Martin explicitly accepts that downgrade.
 """,
         encoding="utf-8",
     )

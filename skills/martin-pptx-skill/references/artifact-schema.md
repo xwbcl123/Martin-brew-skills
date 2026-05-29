@@ -3,7 +3,7 @@
 ## Canonical Run Folder
 
 ```text
-runs/YYYYMMDD_exp-xxx-short-slug/
+40_runs/YYYYMMDD_exp-xxx-short-slug/
 ├── input/
 │   ├── brief.md
 │   ├── source_index.md
@@ -12,6 +12,7 @@ runs/YYYYMMDD_exp-xxx-short-slug/
 │   ├── design.md
 │   ├── style-preview.html
 │   ├── deck-outline.md
+│   ├── deck-spec.md                 # required for Option 6
 │   ├── visual-brief.html            # recommended
 │   ├── route_decision.md            # required once Stage 4 starts
 │   ├── motherboard_imagegen/
@@ -56,7 +57,23 @@ runs/YYYYMMDD_exp-xxx-short-slug/
 │   │   ├── contact_sheet.png
 │   │   ├── scorecard.md
 │   │   └── qc_report.md
-│   └── qc_report.md                 # final rollup
+│   ├── gamma_route/                 # Option 6 required when Gamma is available
+│   │   ├── deck.pptx
+│   │   ├── rendered/
+│   │   ├── contact_sheet.png
+│   │   ├── gamma_route.md
+│   │   └── qc_report.md
+│   ├── local_pptx_route/            # Option 6 local route
+│   │   ├── deck.pptx
+│   │   ├── rendered/
+│   │   ├── contact_sheet.png
+│   │   ├── text_extraction.json
+│   │   └── qc_report.md
+│   ├── optional_route_c/             # optional extra model/tool route
+│   │   ├── deck.pptx
+│   │   └── qc_report.md
+│   ├── route_scorecard.md            # Option 6 route comparison
+│   └── qc_report.md                  # final rollup
 ├── notes.md
 ├── verdict.md
 └── handover.md
@@ -168,6 +185,63 @@ Required sections:
 10. Density/readability rules.
 11. Negative rules.
 12. Theme-library reuse notes.
+
+## `deck-spec.md` Schema
+
+Required for Option 6. `deck-spec.md` includes the full `design.md` contract plus additional production instructions.
+
+Required sections:
+
+1. Metadata and upstream references.
+2. Global design system: visual thesis, palette, typography, grid, layout grammar, component grammar, chart/table grammar, image direction, negative rules, PPTX font policy.
+3. Evidence label system and footer policy.
+4. Per-slide production contract: layout template, text blocks, speaker notes, visual elements, artifact references, route notes.
+5. Artifact plan: artifact IDs, mode (`full-slide-motherboard`, `component-kit`, `hybrid`, `textless-background`), prompt constraints, required outputs, batch order.
+6. Image-generation policy: batch size, cooldown, text policy, forbidden visual elements, no-logo/no-flag/no-people constraints where relevant.
+7. PPTX assembly policy: required routes, native text requirements, text fidelity expectations, fallback route rules.
+8. QC gates: outline/spec consistency, motherboard gate, render gate, text fidelity gate, route scorecard.
+
+Recommended template:
+
+`templates/deck-spec-template.md`
+
+## Option 6 ImageGen Artifact Schema
+
+```text
+motherboard_imagegen/
+  prompts/
+    slide_01_prompt.md
+    slide_02_prompt.md
+  prompt_manifest.json
+  artifact_plan.md
+motherboard_batches/
+  batch_01/
+    slide_01.png
+    slide_02.png
+    contact_sheet.png
+    qc_report_batch_01.md
+  batch_02/
+    ...
+motherboard_full/
+  slide_01.png
+  ...
+  contact_sheet.png
+  qc_report.md
+component_kit/                       # optional
+  backgrounds/
+  icons/
+  diagrams/
+  panels/
+```
+
+Artifact modes:
+
+| mode | contract |
+|---|---|
+| `full-slide-motherboard` | one 16:9 visual reference per slide |
+| `component-kit` | reusable visual components for PPTX assembly |
+| `hybrid` | full-slide images for visually important slides plus components for editable assembly |
+| `textless-background` | image-gen backgrounds without business text; final text rebuilt natively |
 
 ## `deck-outline.md` Schema
 

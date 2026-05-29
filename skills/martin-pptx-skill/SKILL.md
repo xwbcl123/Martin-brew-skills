@@ -1,13 +1,13 @@
 ---
 name: martin-pptx-skill
-description: Staged deck engineering pipeline orchestrator for producing, validating, and iterating HTML/PDF/graphic and editable PPTX presentation artifacts from separated deck-outline.md, design.md, and visual motherboard inputs.
+description: Staged deck engineering pipeline orchestrator for producing, validating, and iterating HTML/PDF/graphic and editable PPTX presentation artifacts from separated deck-outline.md, deck-spec.md/design.md, image-generation artifacts, and multi-route PPTX assembly inputs.
 ---
 
 # martin-pptx-skill
 
 ## 定位
 
-Use this skill when a local coding agent needs to create, revise, validate, or hand over a presentation deck through a staged, reviewable, reproducible workflow.
+Use this skill when Martin or a local coding agent needs to create, revise, validate, or hand over a presentation deck through a staged, reviewable, reproducible workflow.
 
 This skill is a **deck engineering pipeline orchestrator**, not a one-shot slide generator.
 
@@ -15,6 +15,7 @@ Its job is to separate:
 
 - content and narrative control: `deck-outline.md`
 - visual system control: `design.md`
+- deck production control: `deck-spec.md`
 - visual reference review: `visual motherboard`
 - formal editable delivery: Option 5 PPTX reconstruction
 - quality assurance: BG Gate, Text Fidelity Gate, render QC, editability checks
@@ -28,8 +29,18 @@ Trigger this skill when any of the following are true:
 3. The user requires a deck that is editable, reviewable, auditable, or can be continued across machines.
 4. The user provides or asks for `design.md`, `style.md`, `deck-outline.md`, visual references, a PowerPoint template, or a visual motherboard.
 5. The user asks to validate PPTX quality, editability, font policy, text fidelity, visual consistency, or handoff readiness.
+6. The user asks for a `baked presentation`, `image-baked deck`, `image-gen baked deck`, `visual motherboard`, or similar full-slide visual deck output.
 
 Do not trigger this skill for a trivial single-slide mockup unless the user explicitly wants staged artifacts or formal QC.
+
+### Baked Presentation Trigger Rule
+
+In Martin's vocabulary, `baked presentation`, `image-baked`, `image-gen baked`, and `visual motherboard` mean **image-generation-led visual production** unless Martin explicitly approves a downgrade.
+
+- Valid baked route: `deck-outline.md + design.md -> image generation prompts -> image_gen slide images -> contact sheet / PDF / image-only PPTX`, followed by editable reconstruction when formal PPTX is required.
+- Invalid substitute: deterministic PIL/HTML/canvas/card screenshots presented as the official baked deck or motherboard.
+- If image generation is unavailable, create the prompt pack and report the capability blocker. Do not silently replace the baked route with a programmatic scaffold.
+- If using deterministic programmatic cards/tables/shapes instead, the PPTX must be built as editable native PowerPoint objects, not as one full-slide raster image per slide.
 
 ## Required Inputs
 
@@ -73,6 +84,13 @@ At minimum, collect or create:
 12. Every real run must produce `handover.md`.
 13. Formal PPTX runs must produce and review `visual motherboard` before Option 5 reconstruction. Direct `deck-outline.md + design.md -> PPTX` is allowed only as an explicitly labeled script smoke test, not as the full skill workflow.
 14. Programmatic PNG/PDF/PPTX renders made from layout heuristics are `visual wireframes` or `scaffolds`, not the authoritative visual motherboard. They may help prompt writing or smoke testing, but they do not satisfy Motherboard Gate unless explicitly accepted by the user.
+15. A `baked presentation` cannot be satisfied by programmatic card rendering alone. It must use an image generation tool for the official baked visuals, unless Martin explicitly accepts a deterministic scaffold.
+16. Programmatic card/table/shape decks must be editable PPTX: titles, body text, labels, chips, tables, cards, and core claims should be native PowerPoint objects. Full-slide programmatic PNG insertion is allowed only for smoke tests, contact sheets, or explicitly accepted non-editable delivery.
+17. Image generation has a practical consecutive-call limit. For decks over 10 slides, split visual motherboard generation into batches of at most 10 images, then run a QA / cooldown checkpoint before continuing. Do not repeatedly retry into tool cooldown.
+18. For high-stakes deck creation, prefer **Option 6 — Four-Step ImageGen Multi-Route Deck Factory** when the user wants a strong visual deck and the environment has image-generation plus at least one PPTX assembly route. This option is the default candidate for Martin's future main workflow.
+19. Option 6 has exactly four production steps: `deck-outline.md` -> `deck-spec.md` -> image-generation artifacts -> multi-route PPTX assembly. Do not skip `deck-spec.md`; it is the design-and-production contract.
+20. Option 6 must produce at least two PPTX routes when tools are available: one Gamma AI route and one local PPTX route. A third route using another strong model/toolchain is recommended when available.
+21. Option 6 should use multiple models/tools by role fit: strong writing/reasoning models for outline/spec; Codex for image generation and local orchestration; Gamma AI as required fallback/alternate; optional Opus/Claude Code route for additional PPTX assembly.
 
 ## Stage-by-Stage Workflow
 
@@ -172,6 +190,7 @@ Definition:
 - A valid motherboard should look like a polished executive / policy infographic deck reference, not a crude box-and-text programmatic layout.
 - It may include text because its purpose is visual/narrative reference, while Stage 5 later rebuilds formal text as editable PPTX objects.
 - Programmatic diagrams, HTML screenshots, or PIL-generated slides are only acceptable as `wireframe_motherboard` scaffolds unless the user explicitly approves them as final visual references.
+- Do not call a deterministic full-slide PNG deck a `baked presentation` unless it was generated from image-gen visuals or Martin explicitly accepted the downgrade.
 
 Required actions:
 
@@ -179,10 +198,13 @@ Required actions:
 2. Generate a small image-gen sample first for high-risk decks, typically 2–3 representative slides.
 3. Pass sample through Motherboard Gate before full-deck generation.
 4. Generate full `visual motherboard` only after design and outline are stable enough.
-5. Create one text-included image per slide by default.
-6. Create `contact_sheet.png` for fast whole-deck visual QA.
-7. Export `motherboard.pdf` and `motherboard_image_only.pptx` from approved image-gen images when needed.
-8. Create `qc_report.md` for visual motherboard stage.
+5. For decks with more than 10 slides, generate in batches of at most 10 images.
+6. After each batch, stop for a `batch_qc` checkpoint: verify image count, dimensions, legibility, style consistency, prompt drift, and whether any slide needs targeted regeneration.
+7. Use the `batch_qc` checkpoint as the natural cooldown period for image generation tools. Do not start repeated immediate retries when the tool shows cooldown / rate-limit behavior.
+8. Create one text-included image per slide by default.
+9. Create `contact_sheet.png` for fast whole-deck visual QA.
+10. Export `motherboard.pdf` and `motherboard_image_only.pptx` from approved image-gen images when needed.
+11. Create `qc_report.md` for visual motherboard stage.
 
 Outputs:
 
@@ -192,6 +214,8 @@ output/motherboard_imagegen/prompt_manifest.json
 output/motherboard_sample/slide_*.png        # optional sample path
 output/motherboard_sample/contact_sheet_sample.png
 output/motherboard_sample/qc_report_sample.md
+output/motherboard_batches/batch_01/slide_*.png
+output/motherboard_batches/batch_01/qc_report_batch_01.md
 output/motherboard_full/slide_01.png ... slide_N.png
 output/motherboard_full/contact_sheet.png
 output/motherboard_full/motherboard.pdf
@@ -237,12 +261,136 @@ Route registry:
 | Option 1 — Direct Python PPTX | Need deterministic native shapes, no safe background extraction, or simple enterprise layout | foundation / fallback inside Option 5 |
 | Option 3 — HTML-first editable export | Need fast HTML/CSS authoring loop and export mapping can preserve editability | v1 R&D |
 | Option 2 — image-gen textless background + editable text | Special visual acceleration with known cleanup risk | special-case only |
+| Option 2A — textless image-gen motherboard + native editable overlay | One-page executive/policy infographics where image-gen gives the layout ceiling but exact legal/Chinese text must stay editable | preferred hybrid route for single-slide formal briefings |
+| Option 6 — Four-Step ImageGen Multi-Route Deck Factory | High-stakes deck creation where visual quality matters and Martin wants outline/spec/artifacts/PPTX as auditable stages | preferred candidate main workflow |
 
 Outputs:
 
 ```text
 output/route_decision.md
 ```
+
+#### Option 2A — Textless Motherboard + Editable Native Overlay
+
+Use this route when Martin needs a **single-slide or very small executive/policy briefing** where:
+
+- image generation can provide a polished `textless` visual motherboard / layout background;
+- exact Chinese, legal, regulatory, or evidence-labeled text must remain editable;
+- a pure baked-image version is useful, but not sufficient for iteration;
+- the slide is dense enough that deterministic card drawing alone would look mechanical.
+
+Production pattern:
+
+```text
+deck-outline.md + design.md
+-> image_gen textless 16:9 motherboard background
+-> native PowerPoint text overlay
+-> render preview PNG
+-> manual-style alignment pass
+-> editable_text.pptx
+-> optional baked export if requested
+```
+
+Rules learned from Martin's accepted 2026-05-29 one-page CSA2/NIS2 briefing:
+
+1. **Generate the background without text.** AI-generated Chinese or legal text is not reliable enough for final copy. The image-gen prompt should request empty panels, nodes, and visual structure only.
+2. **Use native PowerPoint text for all claims.** Titles, node labels, evidence tags, risk text, member-state handles, and footer guardrails must remain editable.
+3. **Start with large, confident typography.** For one-page executive slides, do not pre-shrink everything. Use larger type first, then reduce only after rendered preview proves collision.
+4. **Use the full visual container.** Text boxes should match the real generated card/panel width, not a conservative narrow box. This matters more than mathematical symmetry.
+5. **Preserve load-bearing policy phrases.** Do not over-compress phrases such as `technical/non-technical conflation`, `objective and transparent criteria`, `proportionality`, `simplification-not-complexification`, or their Chinese equivalents.
+6. **Run PowerPoint render QC, not XML-only QC.** Export the editable PPTX to PNG and inspect it, because PowerPoint text wrapping can differ from expected coordinates.
+7. **Keep both variants when useful.** Use explicit filenames such as `_editable_text.pptx` and `_baked.pptx`; do not let a baked export replace the editable source.
+8. **Record the accepted manual version as a design reference.** If Martin manually adjusts an editable slide and accepts it, compare against the agent version and feed the observed font sizes, text-box widths, and placement back into future runs.
+
+#### Option 6 — Four-Step ImageGen Multi-Route Deck Factory
+
+Use this route when Martin asks for a high-quality deck and wants the workflow to be reviewable, reproducible, and visually ambitious.
+
+This option was extracted from the accepted `20260528_vul-wave-report` session. The key correction from that run: deterministic SVG/Pillow artifacts can be useful wireframes, but they do not satisfy a baked/image-gen visual motherboard unless Martin explicitly accepts the downgrade.
+
+Production contract:
+
+```text
+Step 1: deck-outline.md
+  -> narrative SSOT, slide-by-slide action titles, evidence labels, visual intent
+
+Step 2: deck-spec.md
+  -> design.md-level global design system + per-slide production contract + artifact plan
+
+Step 3: image-generation artifacts
+  -> image_gen visual motherboard or component kit, contact sheet, batch QC, cooldown
+
+Step 4: multi-route PPTX assembly
+  -> Gamma AI route + local PPTX route + optional third model/tool route
+  -> render all routes, compare, select/harden
+```
+
+Required templates:
+
+- `templates/deck-outline-template.md` or `templates/option6-deck-outline-template.md`
+- `templates/deck-spec-template.md`
+- `templates/imagegen-artifact-plan-template.md`
+- `templates/multi-route-assembly-qc-template.md`
+
+Step 1 output requirements:
+
+- `deck-outline.md` must include audience, objective, narrative arc, slide count, action title, key message, evidence classification, visual intent, speaker-note hint, and downstream generation notes for every slide.
+- It should be compatible with Martin's `.claude/commands/deck-outline.md` style but stricter for visual production.
+
+Step 2 output requirements:
+
+- `deck-spec.md` must include everything normally required in `design.md`: visual thesis, color tokens, typography, grid, component grammar, chart/table grammar, image direction, negative rules, and PPTX font policy.
+- It must also include per-slide layout templates, artifact IDs, prompt constraints, text policy, evidence footer rules, and route assembly notes.
+- Treat `deck-spec.md` as `design.md + production spec`; do not create a vague style note.
+
+Step 3 artifact modes:
+
+| mode | use when | default? | output |
+|---|---|---|---|
+| `full-slide-motherboard` | The deck needs strong visual direction and image-gen can render slide-level compositions | default for high-stakes decks | `motherboard_batches/batch_*/slide_*.png` |
+| `component-kit` | The final PPTX should be highly editable and only needs generated visual components | optional | icons, backgrounds, diagrams, texture panels |
+| `hybrid` | Some slides need full-slide visuals and others need reusable components | recommended default when unsure | both motherboard slides and component assets |
+| `textless-background` | Exact dense Chinese/legal text must stay editable | use for formal text-heavy slides | textless slide backgrounds plus native overlays |
+
+Default artifact configuration:
+
+```yaml
+artifact_mode: hybrid
+image_generation_required: true
+batch_size_limit: 10
+language: zh-CN
+preserve_english_terms: true
+text_policy: visual-reference text allowed, final claims rebuilt as native PPTX text
+contact_sheet_required: true
+batch_qc_required: true
+cooldown_after_each_batch: true
+no_silent_downgrade_to_programmatic_wireframes: true
+```
+
+Step 4 route requirements:
+
+- Required Route A: Gamma AI PPTX route, as fallback / alternate / comparison.
+- Required Route B: local PPTX route using this skill's PPTX reconstruction principles.
+- Optional Route C: another model/tool route, for example Opus/Claude Code direct PPTX assembly, when available and not blocking.
+- Render every route to PDF/PNG/contact sheet before quality claims.
+- Create a scorecard comparing visual quality, narrative fidelity, text fidelity, editability, evidence safety, and production cost.
+
+Multi-model assignment guidance:
+
+| task | preferred owner/tool | reason |
+|---|---|---|
+| outline writing | Sonnet / Opus / strong reasoning model | better narrative and wording satisfaction |
+| deck-spec/design system | Sonnet / Opus with master p-review | strong structure and visual reasoning |
+| image generation | Codex with built-in image_gen | available image-generation tool and local file handling |
+| Gamma route | Codex or Claude Code with Gamma app access | connector availability |
+| local PPTX route | Codex / pptx skill / Presentations plugin | local render/QC and filesystem control |
+| optional third route | Opus/Claude Code if capable | diversity for "抽卡/选美" |
+
+Quality lesson:
+
+`image tool for visual taste; PPTX native text for factual control`.
+
+This means image-generation artifacts raise the visual ceiling, while final titles, claims, evidence labels, tables, and speaker notes should be rebuilt as native editable PPTX objects whenever the deck is formal or evidence-heavy.
 
 Stop conditions:
 
@@ -429,7 +577,7 @@ Promote from lab candidate to formal skill only when:
 1. A fresh local agent can run the workflow from this `SKILL.md` without old chat history.
 2. At least 3 benchmark runs have been executed using the same artifact schema.
 3. At least 2 formal PPTX runs pass mandatory gates with no blocking failures.
-4. Option 5 scripts are reusable and parameterized, not project-specific.
+4. Option 5 scripts are reusable and parameterized, not CADA-specific.
 5. BG Gate and Text Fidelity Gate can run from CLI with documented inputs/outputs.
 6. `handover.md` consistently supports cross-device continuation.
 7. Failure modes and recoveries are documented in `qc_report.md` or `verdict.md`.

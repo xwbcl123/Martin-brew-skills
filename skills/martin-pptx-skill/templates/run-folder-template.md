@@ -5,20 +5,20 @@ Use this template for every real `martin-pptx-skill` run.
 ## Folder Name
 
 ```text
-runs/YYYYMMDD_exp-xxx-short-slug/
+40_runs/YYYYMMDD_exp-xxx-short-slug/
 ```
 
 Examples:
 
 ```text
-runs/YYYYMMDD_exp-008-chart-heavy-business-review/
-runs/YYYYMMDD_exp-009-customer-english-briefing/
+40_runs/20260518_exp-008-chart-heavy-business-review/
+40_runs/20260519_exp-009-customer-english-briefing/
 ```
 
 ## Required Structure
 
 ```text
-runs/YYYYMMDD_exp-xxx-short-slug/
+40_runs/YYYYMMDD_exp-xxx-short-slug/
 ├── input/
 │   ├── brief.md
 │   ├── source_index.md
@@ -38,6 +38,64 @@ runs/YYYYMMDD_exp-xxx-short-slug/
 ├── verdict.md
 └── handover.md
 ```
+
+## Option 6 Structure
+
+Use this structure when the selected route is `Option 6 — Four-Step ImageGen Multi-Route Deck Factory`.
+
+```text
+40_runs/YYYYMMDD_exp-xxx-short-slug/
+├── input/
+│   ├── brief.md
+│   ├── source_index.md
+│   └── known_gaps.md
+├── output/
+│   ├── deck-outline.md
+│   ├── deck-spec.md
+│   ├── motherboard_imagegen/
+│   │   ├── artifact_plan.md
+│   │   ├── prompt_manifest.json
+│   │   └── prompts/
+│   │       └── slide_01_prompt.md
+│   ├── motherboard_batches/
+│   │   └── batch_01/
+│   │       ├── slide_01.png
+│   │       ├── contact_sheet.png
+│   │       └── qc_report_batch_01.md
+│   ├── motherboard_full/
+│   │   ├── slide_01.png
+│   │   ├── contact_sheet.png
+│   │   ├── motherboard.pdf
+│   │   └── qc_report.md
+│   ├── component_kit/               # optional; required for hybrid/component-kit mode
+│   ├── gamma_route/
+│   │   ├── deck.pptx
+│   │   ├── rendered/
+│   │   ├── contact_sheet.png
+│   │   └── qc_report.md
+│   ├── local_pptx_route/
+│   │   ├── deck.pptx
+│   │   ├── rendered/
+│   │   ├── contact_sheet.png
+│   │   ├── text_extraction.json
+│   │   ├── text_fidelity_gate.md
+│   │   └── qc_report.md
+│   ├── optional_route_c/
+│   ├── route_scorecard.md
+│   └── qc_report.md
+├── notes.md
+├── verdict.md
+└── handover.md
+```
+
+Option 6 template mapping:
+
+| output | template |
+| --- | --- |
+| `output/deck-outline.md` | `templates/option6-deck-outline-template.md` |
+| `output/deck-spec.md` | `templates/deck-spec-template.md` |
+| `output/motherboard_imagegen/artifact_plan.md` | `templates/imagegen-artifact-plan-template.md` |
+| `output/route_scorecard.md` | `templates/multi-route-assembly-qc-template.md` |
 
 ## `input/brief.md` Starter
 

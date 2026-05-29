@@ -29,13 +29,16 @@ These cannot be changed without a new product decision:
 9. BG Gate and Text Fidelity Gate are mandatory for formal PPTX delivery.
 10. Business-critical formal PPTX text must not be flattened into images.
 11. Formal PPTX delivery must pass through an image-gen visual motherboard stage before Option 5 reconstruction. Skipping motherboard is a pipeline shortcut and does not count as a full quality benchmark.
-12. Programmatic PNG/PDF/PPTX artifacts generated from deterministic layout heuristics are `wireframe_motherboard` scaffolds. They may inform prompt writing and smoke tests, but they do not satisfy the visual motherboard contract unless explicitly accepted by the user.
+12. Programmatic PNG/PDF/PPTX artifacts generated from deterministic layout heuristics are `wireframe_motherboard` scaffolds. They may inform prompt writing and smoke tests, but they do not satisfy the visual motherboard contract unless explicitly accepted by Martin.
+13. `Baked presentation`, `image-baked deck`, `image-gen baked deck`, and `visual motherboard` mean image-generation-led visual production by default. Programmatic PIL/HTML/canvas/card screenshots are not acceptable substitutes unless Martin explicitly approves a deterministic scaffold.
+14. If a route uses deterministic programmatic cards, tables, chips, timelines, or layout grammar, its PPTX output must be editable native PowerPoint objects. Full-slide raster insertion from programmatic renders is allowed only for smoke tests, contact sheets, or explicitly accepted non-editable delivery.
+15. Image-generation tools have a practical consecutive-call limit. For decks over 10 slides, the official visual motherboard workflow must split generation into batches of at most 10 images, with a QA / cooldown checkpoint after each batch before continuing.
 
 ## Users
 
 Primary:
 
-- Primary user as product owner and reviewer.
+- Martin as product owner and heavy user.
 - Future local coding agents running deck experiments or production workflows.
 
 Secondary:

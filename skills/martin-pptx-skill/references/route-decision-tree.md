@@ -9,6 +9,7 @@
 | Option 1 | Direct Python PPTX | Deterministic native-object reconstruction | foundation / fallback |
 | Option 3 | HTML-first editable PPTX export | Rich preview and component authoring | v1 R&D |
 | Option 2 | Image-gen textless background + editable text | Visual acceleration in special cases | special-case only |
+| Option 6 | Four-Step ImageGen Multi-Route Deck Factory | Outline -> spec -> image-gen artifacts -> multi-route PPTX assembly | preferred candidate main workflow |
 
 ## Default Decision Logic
 
@@ -16,15 +17,22 @@
 if scenario == formal-company-report:
     require editable PPTX
     require visual motherboard before PPTX reconstruction
-    select Option 5 as main route
+    if user asks for high visual quality, image-gen artifacts, multiple routes, or "four-step" workflow:
+        select Option 6 as main production workflow
+    else:
+        select Option 5 as main route
     if Presentations/artifact-tool runtime is available and backup requested/useful:
         also run Option 4 as independent backup
     if BG extraction is unsafe or visual motherboard unavailable:
         use Option 1 direct Python reconstruction
 
 elif target_output includes pptx and editable_text_required:
-    select Option 5 when visual motherboard / shared master exists
-    else select Option 1
+    if high-stakes visual deck and image generation is available:
+        select Option 6
+    elif visual motherboard / shared master exists:
+        select Option 5
+    else:
+        select Option 1
     optionally run Option 4 if runtime available
 
 elif target_output in [html, pdf, graphic] and user accepts non-editable visual delivery:
@@ -46,6 +54,7 @@ else:
 | --- | --- | --- | --- |
 | Formal company report | Option 5 | Option 4 if available | Must deliver editable PPTX. |
 | Board / leadership policy deck | Option 5 | Option 4 if available | Editable PPTX + PDF preview. |
+| High-stakes visual/policy deck with image-gen artifacts | Option 6 | Gamma + local PPTX + optional third route | Must deliver at least two PPTX routes if tools are available. |
 | Customer communication | HTML/PDF first; Option 5 if PPTX required | Option 4 | Can stop at approved HTML/PDF. |
 | Visual essay / blog / personal project | Stage 3 visual + HTML/PDF | Option 4 | Can stop at graphic/PDF/HTML. |
 | Research report | HTML/PDF + source/evidence QC | Option 5 if requested | Can stop at report/deck PDF. |
@@ -87,6 +96,70 @@ Known tradeoffs:
 - Not a pixel-perfect visual motherboard clone.
 - Background chrome may be raster.
 - Python reconstruction can become bespoke unless component builders are extracted.
+
+## Option 6 — Four-Step ImageGen Multi-Route Deck Factory
+
+Use when:
+
+- Martin asks for a high-quality deck and references `deck-outline`, `deck-spec`, image generation artifacts, Gamma, or multi-route PPTX output.
+- Visual taste matters as much as content correctness.
+- The deck benefits from "抽卡/选美": multiple assembly routes compared by rendered contact sheet.
+- The environment has image generation and at least one PPTX assembly path.
+
+Four required steps:
+
+```text
+1. deck-outline.md
+2. deck-spec.md
+3. image-generation artifacts
+4. multi-route PPTX assembly
+```
+
+Required artifacts:
+
+```text
+output/deck-outline.md
+output/deck-spec.md
+output/motherboard_imagegen/prompts/
+output/motherboard_batches/batch_01/slide_*.png
+output/motherboard_batches/batch_01/contact_sheet.png
+output/motherboard_batches/batch_01/qc_report_batch_01.md
+output/gamma_route/deck.pptx
+output/gamma_route/rendered/
+output/gamma_route/qc_report.md
+output/local_pptx_route/deck.pptx
+output/local_pptx_route/rendered/
+output/local_pptx_route/qc_report.md
+output/route_scorecard.md
+handover.md
+```
+
+Default route mix:
+
+| route | required? | role |
+|---|---|---|
+| Gamma AI | yes when connector available | fallback / independent backup / speed route |
+| Local PPTX | yes | controllable route using artifacts + native text reconstruction |
+| Third model/tool route | optional | extra "lottery ticket" when Opus/Claude Code/Gemini has strong PPTX capability |
+
+Pass conditions:
+
+- `deck-outline.md` and `deck-spec.md` exist and are internally consistent.
+- Image generation artifacts exist and are reviewed via contact sheet.
+- At least two PPTX routes exist unless a tool blocker is documented.
+- Each PPTX route has render output, contact sheet, and QC report.
+- Final recommendation identifies the preferred route and known warnings.
+
+Known tradeoffs:
+
+- Image-gen text is not trustworthy as final factual text.
+- Local PPTX assembly may require manual-style hardening after first draft.
+- Gamma may produce strong editorial decks but can drift from the requested visual system.
+
+Recovery:
+
+- If first artifacts look too plain, treat them as wireframes and regenerate with image tool; do not continue assembling a weak visual direction.
+- If image-gen produces beautiful but text-inaccurate slides, use them as visual motherboard and rebuild text natively.
 
 ## Option 4 — Independent Backup Route
 

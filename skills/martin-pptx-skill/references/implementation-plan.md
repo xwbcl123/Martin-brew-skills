@@ -9,7 +9,7 @@ Promote the current `martin-pptx-skill` candidate from experiment notes into a r
 Target:
 
 ```text
-skills/martin-pptx-skill/SKILL.md
+30_skill-candidate/martin-pptx-skill/SKILL.md
 ```
 
 Actions:
@@ -30,7 +30,7 @@ Exit criteria:
 Target:
 
 ```text
-runs/YYYYMMDD_exp-xxx-short-slug/
+40_runs/YYYYMMDD_exp-xxx-short-slug/
 ```
 
 Actions:
@@ -61,9 +61,9 @@ Exit criteria:
 
 ## Milestone 3 — Extract Reusable Scripts
 
-Extract one-off reusable experiment patterns into reusable scripts.
+Extract one-off EXP-007 patterns into reusable scripts.
 
-| Reusable Pattern | Target Script | Purpose |
+| EXP-007 Pattern | Target Script | Purpose |
 | --- | --- | --- |
 | Image-gen motherboard prompt builder | `scripts/build_imagegen_motherboard_prompts.py` | Produce canonical per-slide image-gen prompts from outline + design for high-quality 16:9 infographic motherboard images. |
 | Wireframe motherboard builder | `scripts/build_motherboard_from_outline.py` | Produce deterministic 16:9 scaffold visuals and contact sheet from outline + design. These are scaffolds, not official motherboard outputs unless explicitly approved. |
@@ -78,8 +78,8 @@ Extract one-off reusable experiment patterns into reusable scripts.
 
 Exit criteria:
 
-- Scripts accept CLI args and do not hardcode project-specific paths.
-- A second benchmark can run without copying prior experiment files.
+- Scripts accept CLI args and do not hardcode CADA paths.
+- A second benchmark can run without copying EXP-007 files.
 - Script README documents dependencies and expected outputs.
 - Formal PPTX runs cannot be marked full benchmark pass unless image-gen motherboard prompts exist, image-gen sample/full motherboard images are generated and approved, and `motherboard_full/` exists before PPTX reconstruction.
 
@@ -88,7 +88,7 @@ Exit criteria:
 Target:
 
 ```text
-skills/martin-pptx-skill/scripts/components/
+30_skill-candidate/martin-pptx-skill/scripts/components/
 ```
 
 Suggested components:
@@ -170,7 +170,7 @@ Exit criteria:
 
 ## Milestone 6 — Add Benchmarks
 
-Use a sanitized dense-policy benchmark as one example. Add at least three total benchmark runs before promotion.
+CADA is one benchmark. Add at least three total benchmark runs before promotion.
 
 Recommended benchmark set:
 
@@ -201,30 +201,30 @@ Promotion requirements:
 - References and templates are installed.
 - Reusable scripts exist for Option 5, BG Gate, Text Fidelity Gate, render QC, contact sheet.
 - Multiple benchmarks are logged.
-- Acceptance review passes.
-- Known limitations are recorded in a sanitized review note.
+- `evaluation/acceptance-review.md` passes.
+- Known limitations are recorded in `evaluation/open-questions.md`.
 
 ## Local Integration Checklist
 
 ```bash
-# 1. Copy the reusable package into the skill directory.
-cp -R <sanitized-skill-package>/* skills/martin-pptx-skill/
+# 1. Copy generated package into candidate skill directory.
+cp -R martin-pptx-skill_design_output/* 30_skill-candidate/martin-pptx-skill/
 
 # 2. Verify repository scaffold.
 python3 scripts/verify_scaffold.py
 
 # 3. Create next run from template.
-mkdir -p runs/YYYYMMDD_exp-xxx-short-slug/{input,output}
-cp skills/martin-pptx-skill/templates/run-folder-template.md \
-  runs/YYYYMMDD_exp-xxx-short-slug/README.md
+mkdir -p 40_runs/YYYYMMDD_exp-xxx-short-slug/{input,output}
+cp 30_skill-candidate/martin-pptx-skill/templates/run-folder-template.md \
+  40_runs/YYYYMMDD_exp-xxx-short-slug/README.md
 
 # 4. Run next benchmark using this skill contract.
 # Fill input/brief.md and input/source_index.md first.
 
 # 5. After formal PPTX build, run gates.
-python skills/martin-pptx-skill/scripts/extract_pptx_text_metrics.py --help
-python skills/martin-pptx-skill/scripts/text_fidelity_gate.py --help
-python skills/martin-pptx-skill/scripts/bg_gate.py --help
+python 30_skill-candidate/martin-pptx-skill/scripts/extract_pptx_text_metrics.py --help
+python 30_skill-candidate/martin-pptx-skill/scripts/text_fidelity_gate.py --help
+python 30_skill-candidate/martin-pptx-skill/scripts/bg_gate.py --help
 ```
 
 ## Risks and Mitigations
