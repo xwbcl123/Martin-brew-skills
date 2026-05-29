@@ -50,6 +50,7 @@ It does not keep:
 - `ds-citations`
 - `doc-intelligent-summary`
 - `grill-me`
+- `life-os-reflect-cover-orchestrator`
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `martin-pptx-skill`
@@ -176,6 +177,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - writes requirement questions, session context, and decision logs under `tasks/sessions/YYYYMMDD_slug/`
 - asks one high-leverage clarification question at a time, with a recommended answer and tradeoff
 
+### `life-os-reflect-cover-orchestrator`
+
+- coordinates a daily reflection worker and a cover-generation worker in sequence
+- enforces the rule that cover generation starts only after the journal is complete
+- includes babysitting rules for approvals, `/btw` progress checks, and the 15-minute writing window
+- verifies journal path, local image, hosted image URL, and operation log before final reporting
+
 ### `publish-assets`
 
 - integration-oriented wrapper skill
@@ -214,6 +222,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 ### 2026-05-29
 
 - add `conference-video-deck-transcript`, a workflow-and-scripts skill for producing numbered per-speaker Deck PDFs and Transcript Markdown files from conference videos, transcripts, and agendas
+- add `life-os-reflect-cover-orchestrator`, a Life-OS workflow skill for coordinating daily reflection and cover generation across worker agents
 
 ### 2026-05-28
 

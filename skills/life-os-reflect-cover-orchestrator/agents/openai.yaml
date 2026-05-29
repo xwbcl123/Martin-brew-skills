@@ -1,0 +1,4 @@
+interface:
+  display_name: "Life-OS Reflect Cover Orchestrator"
+  short_description: "Babysit reflect, then assign cover."
+  default_prompt: "Babysit a Life-OS /reflect run, then assign cover illustration generation after the journal is complete."

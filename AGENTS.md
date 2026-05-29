@@ -28,6 +28,7 @@ Current in-scope skills:
 - `ds-citations`
 - `doc-intelligent-summary`
 - `grill-me`
+- `life-os-reflect-cover-orchestrator`
 - `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
@@ -130,6 +131,12 @@ If content is useful structurally but not safe to publish:
 - do not hardcode private Life-OS or Work-PKM absolute paths
 - preserve the one-question-at-a-time interview pattern and recommended-answer structure
 - keep upstream attribution generic without copying private task examples
+
+### life-os-reflect-cover-orchestrator
+
+- keep terminal orchestration rules generic; do not commit real journal paths, dates, screenshots, or worker transcripts
+- avoid hardcoded hosted image domains, asset folders, or local upload pipeline paths
+- preserve the strict ordering: finish reflection before assigning cover generation
 
 ### martin-pptx-skill
 
