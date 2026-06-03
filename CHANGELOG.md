@@ -4,6 +4,17 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-06-03
+
+### Added
+
+- Added `martin-outcome-package`, a portable six-deliverable outcome package skill for turning transcripts, `.req.md` captures, or fuzzy task inputs into D1-D6 delivery packages.
+- Included references, templates, smoke-test criteria, DesignMD / DesignStack planning, and a `martin-pptx-skill` handoff template.
+
+### Changed
+
+- Updated root README and agent guidance to include the new outcome-package skill and its D5 delegation boundary.
+
 ## 2026-05-28
 
 ### Added

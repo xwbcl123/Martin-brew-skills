@@ -29,6 +29,7 @@ Current in-scope skills:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `martin-outcome-package`
 - `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
@@ -137,6 +138,13 @@ If content is useful structurally but not safe to publish:
 - keep terminal orchestration rules generic; do not commit real journal paths, dates, screenshots, or worker transcripts
 - avoid hardcoded hosted image domains, asset folders, or local upload pipeline paths
 - preserve the strict ordering: finish reflection before assigning cover generation
+
+### martin-outcome-package
+
+- keep the six-deliverable package contract portable and self-contained
+- do not commit real `.req.md` captures, transcripts, client examples, or vault session outputs
+- preserve the D5 boundary: this skill authors `design.md`, `design-stack.md`, and `martin-pptx-handoff.md`; `martin-pptx-skill` owns `deck-spec`, artifacts, and PPTX production
+- keep adapter or vault-specific routing examples optional; runtime instructions must work without Work-PKM, Life-OS, or local absolute paths
 
 ### martin-pptx-skill
 

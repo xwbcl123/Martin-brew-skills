@@ -51,6 +51,7 @@ It does not keep:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `martin-outcome-package`
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `martin-pptx-skill`
@@ -74,6 +75,7 @@ Martin-brew-skills/
 │   ├── grill-me/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
+│   ├── martin-outcome-package/
 │   ├── martin-pptx-skill/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
@@ -184,6 +186,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes babysitting rules for approvals, `/btw` progress checks, and the 15-minute writing window
 - verifies journal path, local image, hosted image URL, and operation log before final reporting
 
+### `martin-outcome-package`
+
+- turns transcripts, `.req.md` captures, or fuzzy task inputs into a governed six-deliverable outcome package
+- keeps D1 deep report and D2 executive summary as the minimum deliverables, with optional D3-D6 package routes
+- authors `design.md`, `design-stack.md`, and `martin-pptx-handoff.md` while delegating `deck-spec` / artifacts / PPTX production to `martin-pptx-skill`
+- includes portable references, templates, smoke-test criteria, and no mandatory vault-specific runtime paths
+
 ### `publish-assets`
 
 - integration-oriented wrapper skill
@@ -218,6 +227,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-06-03
+
+- add `martin-outcome-package`, a portable six-deliverable outcome package skill with D1-D6 templates, DesignMD/DesignStack planning, and `martin-pptx-skill` handoff
 
 ### 2026-05-29
 
