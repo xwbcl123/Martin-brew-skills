@@ -47,8 +47,8 @@ $candidates = @(
   'F:\我的云端硬盘\Life-OS'
 )
 $candidates | Where-Object {
-  Test-Path (Join-Path $_ 'AGENTS.md') -and
-  Test-Path (Join-Path $_ '10-19_Me-Health\13.10_personal-journal-lib\_meta.md')
+  (Test-Path (Join-Path $_ 'AGENTS.md')) -and
+  (Test-Path (Join-Path $_ '10-19_Me-Health\13.10_personal-journal-lib\_meta.md'))
 }
 ```
 
@@ -137,6 +137,7 @@ Constraints:
 - If running in Codex with built-in image_gen available, use built-in image_gen first.
 - Save the source image under _assets/YYYY/MM/YYYYMMDD_journal-cover.png.
 - Insert Markdown image syntax immediately after the H1.
+- Keep the journal visually scannable with emoji markers. If the reflection worker did not add emoji to the cover caption and major section headings, add a minimal emoji pass during cover insertion without rewriting the prose.
 - Run the 13.10 image pipeline dry-run and then real execution.
 - Verify the note points to a hosted URL and curl HEAD returns HTTP 200 with image content-type.
 - Append or create the operation log; do not overwrite existing log content from another agent.
@@ -161,6 +162,7 @@ For the journal:
 
 ```bash
 rg -n "待填|待定主题|TODO|昨天是\\.\\.\\." <journal-path>
+rg -n "[🌟✨⚠️🧭💡🛡️🧩🎯✅📌⬆️]" <journal-path>
 sed -n '1,80p' <journal-path>
 ```
 
