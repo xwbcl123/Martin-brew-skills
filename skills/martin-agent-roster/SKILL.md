@@ -10,7 +10,7 @@ Use this Skill when Martin asks to update, inspect, restart, cold-start, or main
 ## Core Model
 
 - `agent_harness`: the CLI harness that hosts the agent, such as `claude-code`, `codex`, `antigravity`, or `cursor-agent`.
-- `model_slot`: the intended model lane named by the tab/surface, such as `deepseek`, `gpt-5.5-high`, or `gemini-3.5-flash`.
+- `model_slot`: the intended model lane named by the tab/surface, such as `deepseek`, `gpt-5.5-high`, or `gemini-3.5-flash`. For Codex GPT-5.5 lanes, `high` / `xhigh` are reasoning effort values, not model names.
 - `observed_model`: runtime state inferred from screen/status/process inspection.
 - `layout`: terminal topology, such as cmux `workspace -> pane -> surface`.
 - `service`: desired semantic agent slot attached to a layout selector.
@@ -63,6 +63,7 @@ Shortcut wrappers exist in `scripts/detect-profile`, `scripts/inspect-cmux`, and
   - Sonnet: `ccs reset && claude --model sonnet`
   - Opus: `ccs reset && claude --model opus`
 - Special aliases:
-  - `master`: `codex -m gpt-5.5-high`
+  - `master`: `codex -m gpt-5.5 -c 'model_reasoning_effort="high"'`
   - `planner`: `ccs reset && claude --model opus`
-  - `reviewer`: `codex -m gpt-5.5-xhigh`
+  - `reviewer`: `codex -m gpt-5.5 -c 'model_reasoning_effort="xhigh"'`
+  - `codex-5.3-spark`: `codex -m codex-5.3-spark -c 'model_reasoning_effort="high"'`

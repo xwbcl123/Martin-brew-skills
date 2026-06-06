@@ -21,17 +21,14 @@ models:
   minimax:
     provider: minimax
     best_for: [general, backup]
-  gpt-5.5-high:
-    provider: openai
-    best_for: [master, final_integration]
   gpt-5.5:
     provider: openai
-    best_for: [general, coding, review]
-  gpt-5.5-xhigh:
-    provider: openai
-    best_for: [review, final_judgment]
+    supported_efforts: [medium, high, xhigh]
+    best_for: [general, coding, master, review, final_integration]
   codex-5.3-spark:
     provider: openai
+    default_effort: high
+    supported_efforts: [high]
     best_for: [fast_coding, mechanical_changes]
   gemini-3.5-flash:
     provider: google
@@ -52,7 +49,7 @@ preference_groups:
     fallback_models: [opus-4.8, opus-4.6]
   high_reasoning:
     primary_model: opus-4.8
-    fallback_models: [gpt-5.5-high, sonnet-4.6]
+    fallback_models: [gpt-5.5, sonnet-4.6]
   fast_chores:
     primary_model: gemini-3.5-flash
     fallback_models: [codex-5.3-spark, composer-2.5]
@@ -60,6 +57,6 @@ preference_groups:
     primary_model: codex-5.3-spark
     fallback_models: [composer-2.5, sonnet-4.6]
   final_review:
-    primary_model: gpt-5.5-xhigh
-    fallback_models: [gpt-5.5-high, opus-4.8]
-
+    primary_model: gpt-5.5
+    primary_effort: xhigh
+    fallback_models: [opus-4.8]

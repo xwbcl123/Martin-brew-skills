@@ -56,6 +56,7 @@ workspaces:
             agent_harness: codex
             model_slot: gpt-5.5
             expected_model: gpt-5.5
+            expected_effort: medium
             role: general-codex-worker
             cwd: "Life-OS"
             launch_ref: codex_gpt55_medium
@@ -140,7 +141,8 @@ workspaces:
             index_in_pane: 0
             agent_harness: codex
             model_slot: gpt-5.5-high
-            expected_model: gpt-5.5-high
+            expected_model: gpt-5.5
+            expected_effort: high
             role: master
             cwd: "Life-OS"
             launch_ref: codex_gpt55_high
@@ -162,7 +164,8 @@ workspaces:
             index_in_pane: 2
             agent_harness: codex
             model_slot: gpt-5.5-xhigh
-            expected_model: gpt-5.5-xhigh
+            expected_model: gpt-5.5
+            expected_effort: xhigh
             role: reviewer
             cwd: "Life-OS"
             launch_ref: codex_gpt55_xhigh
@@ -176,9 +179,9 @@ workspaces:
         group: command-control
         notes: "Top pane: master/planner/reviewer plus remote control; kept separate from execution workers."
         services:
-          - {id: work-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5-high, role: master, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5, expected_effort: high, role: master, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
           - {id: work-planner, surface_title_hint: planner, index_in_pane: 1, agent_harness: claude-code, model_slot: opus-4.8, expected_model: opus-4.8, role: planner, cwd: "Work-PKM-Vault", launch_ref: claude_opus, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
-          - {id: work-reviewer, surface_title_hint: reviewer, index_in_pane: 2, agent_harness: codex, model_slot: gpt-5.5-xhigh, expected_model: gpt-5.5-xhigh, role: reviewer, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_xhigh, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-reviewer, surface_title_hint: reviewer, index_in_pane: 2, agent_harness: codex, model_slot: gpt-5.5-xhigh, expected_model: gpt-5.5, expected_effort: xhigh, role: reviewer, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_xhigh, update_ref: codex_native, exit_policy_ref: codex_exit}
           - {id: work-remote-ctrl, surface_title_hint: remote-ctrl, index_in_pane: 3, agent_harness: codex, model_slot: remote-control, expected_model: null, role: remote-control, cwd: "Work-PKM-Vault", launch_ref: codex_remote_control, update_ref: codex_native, exit_policy_ref: generic_prompt_exit}
       - index: 1
         ref_hint: pane:4
@@ -186,10 +189,10 @@ workspaces:
         notes: "Lower-left pane: top frontier models and core task execution."
         services:
           - {id: work-sonnet, surface_title_hint: sonnet, index_in_pane: 0, agent_harness: claude-code, model_slot: sonnet, expected_model: sonnet-4.6, role: writing-coding-worker, cwd: "Work-PKM-Vault", launch_ref: claude_sonnet, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
-          - {id: work-gpt55, surface_title_hint: gpt-5.5, index_in_pane: 1, agent_harness: codex, model_slot: gpt-5.5, expected_model: gpt-5.5, role: general-codex-worker, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_medium, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-gpt55, surface_title_hint: gpt-5.5, index_in_pane: 1, agent_harness: codex, model_slot: gpt-5.5, expected_model: gpt-5.5, expected_effort: medium, role: general-codex-worker, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_medium, update_ref: codex_native, exit_policy_ref: codex_exit}
           - {id: work-gemini, surface_title_hint: gemini, index_in_pane: 2, agent_harness: antigravity, model_slot: gemini-3.5-flash, expected_model: null, role: fast-chores-worker, cwd: "Work-PKM-Vault", launch_ref: antigravity, update_ref: antigravity_native, exit_policy_ref: antigravity_exit, post_launch: "Inside agy, use /model to select Gemini 3.5 Flash.", needs_review: true}
           - {id: work-opus, surface_title_hint: opus, index_in_pane: 3, agent_harness: antigravity, model_slot: opus-4.6-thinking, expected_model: null, role: deep-reasoning-worker, cwd: "Work-PKM-Vault", launch_ref: antigravity, update_ref: antigravity_native, exit_policy_ref: antigravity_exit, post_launch: "Inside agy, use /model to select Opus 4.6 Thinking.", needs_review: true}
-          - {id: work-codex-spark, surface_title_hint: codex-5.3-spark, index_in_pane: 4, agent_harness: codex, model_slot: codex-5.3-spark, expected_model: codex-5.3-spark, role: fast-coding-worker, cwd: "Work-PKM-Vault", launch_ref: codex_53_spark, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-codex-spark, surface_title_hint: codex-5.3-spark, index_in_pane: 4, agent_harness: codex, model_slot: codex-5.3-spark, expected_model: codex-5.3-spark, expected_effort: high, role: fast-coding-worker, cwd: "Work-PKM-Vault", launch_ref: codex_53_spark, update_ref: codex_native, exit_policy_ref: codex_exit}
       - index: 2
         ref_hint: pane:5
         group: open-model-bulk-workers
@@ -206,7 +209,7 @@ workspaces:
         ref_hint: pane:6
         group: command
         services:
-          - {id: research-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5-high, role: master, cwd: "~/Code/research", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: research-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5, expected_effort: high, role: master, cwd: "~/Code/research", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
       - index: 1
         ref_hint: pane:7
         group: workers
