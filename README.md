@@ -51,6 +51,7 @@ It does not keep:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `martin-agent-roster`
 - `martin-outcome-package`
 - `notebooklm-export-formatter`
 - `pptx-polish`
@@ -75,6 +76,7 @@ Martin-brew-skills/
 │   ├── grill-me/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
+│   ├── martin-agent-roster/
 │   ├── martin-outcome-package/
 │   ├── martin-pptx-skill/
 │   ├── pptx-polish/
@@ -185,6 +187,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - enforces the rule that cover generation starts only after the journal is complete
 - includes babysitting rules for approvals, `/btw` progress checks, and the 15-minute writing window
 - verifies journal path, local image, hosted image URL, and operation log before final reporting
+
+### `martin-agent-roster`
+
+- manages Martin's local terminal agent roster across cmux and future WezTerm profiles
+- separates `agent_harness`, model slot, desired layout, and observed runtime state
+- includes guarded dry-run tooling, command catalogs, and a macOS cmux profile tested on Life and Work workspaces
+- ships with a WezTerm testing handoff; WezTerm support is not yet validated
 
 ### `martin-outcome-package`
 

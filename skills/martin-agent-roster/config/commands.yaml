@@ -1,0 +1,70 @@
+version: 1
+
+updates:
+  claude_code_homebrew_latest:
+    command: "brew upgrade --cask claude-code@latest"
+    check: "claude update"
+    notes: "Use for macOS profile where /opt/homebrew/bin/claude is managed by claude-code@latest."
+  claude_code_native:
+    command: "claude update"
+    notes: "Generic fallback for non-Homebrew Claude Code installs."
+  codex_native:
+    command: "codex update"
+    fallback: "npm install -g @openai/codex"
+  antigravity_native:
+    command: "agy update"
+    fallback: "curl -fsSL https://antigravity.google/cli/install.sh | bash"
+  cursor_agent_native:
+    command: "agent update"
+    aliases:
+      - "cursor-agent update"
+      - "cursor-agent upgrade"
+
+launches:
+  claude_sonnet:
+    command: "ccs reset && claude --model sonnet"
+  claude_opus:
+    command: "ccs reset && claude --model opus"
+  claude_deepseek:
+    command: "ccs reset && ccs use deepseek && claude"
+  claude_glm2:
+    command: "ccs reset && ccs use glm2 && claude"
+    notes: "Use glm2 for overseas GLM profile."
+  claude_minimax:
+    command: "ccs reset && ccs use minimax && claude"
+  codex_default:
+    command: "codex"
+  codex_gpt55_medium:
+    command: "codex -m gpt-5.5"
+  codex_gpt55_high:
+    command: "codex -m gpt-5.5-high"
+  codex_gpt55_xhigh:
+    command: "codex -m gpt-5.5-xhigh"
+  codex_53_spark:
+    command: "codex -m codex-5.3-spark"
+  codex_remote_control:
+    command: "codex remote-control"
+    notes: "Starts Codex app-server with remote control enabled for mobile ChatGPT app access."
+  antigravity:
+    command: "agy"
+    post_launch: "Use /model inside Antigravity TUI if a specific model is required."
+  cursor_agent:
+    command: "agent"
+
+exit_policies:
+  generic_prompt_exit:
+    commands:
+      - "/exit"
+    notes: "Only apply after screen inspection confirms prompt or idle state."
+  claude_code_exit:
+    commands:
+      - "/exit"
+  codex_exit:
+    commands:
+      - "/exit"
+  antigravity_exit:
+    commands:
+      - "/exit"
+  cursor_agent_exit:
+    commands:
+      - "/exit"

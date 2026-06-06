@@ -1,0 +1,215 @@
+version: 1
+profile: macos-cmux
+description: "Initial macOS cmux profile seeded from the tuned cmux topology on 2026-06-06."
+
+match:
+  os: darwin
+  hostnames:
+    - MartindeMac-mini
+    - MartindeMac-mini.local
+  required_commands:
+    - cmux
+  optional_commands:
+    - claude
+    - codex
+    - agy
+    - agent
+    - ccs
+
+terminal:
+  kind: cmux
+  topology_command: "cmux tree --all --json"
+
+defaults:
+  update_refs:
+    claude-code: claude_code_homebrew_latest
+    codex: codex_native
+    antigravity: antigravity_native
+    cursor-agent: cursor_agent_native
+  authority_allowed:
+    guarded: inspect-only
+    apply: restart-allowed
+    dream: full-auto-if-idle
+
+workspaces:
+  - name: Life
+    ref_hint: workspace:1
+    panes:
+      - index: 0
+        ref_hint: pane:1
+        group: primary-workers
+        services:
+          - id: life-sonnet
+            surface_title_hint: sonnet
+            index_in_pane: 0
+            agent_harness: claude-code
+            model_slot: sonnet
+            expected_model: sonnet-4.6
+            role: writing-coding-worker
+            cwd: "Life-OS"
+            launch_ref: claude_sonnet
+            update_ref: claude_code_homebrew_latest
+            exit_policy_ref: claude_code_exit
+          - id: life-codex
+            surface_title_hint: codex
+            index_in_pane: 1
+            agent_harness: codex
+            model_slot: gpt-5.5
+            expected_model: gpt-5.5
+            role: general-codex-worker
+            cwd: "Life-OS"
+            launch_ref: codex_gpt55_medium
+            update_ref: codex_native
+            exit_policy_ref: codex_exit
+          - id: life-agy-gemini
+            surface_title_hint: agy-gemini
+            index_in_pane: 2
+            agent_harness: antigravity
+            model_slot: gemini-3.5-flash
+            expected_model: null
+            role: fast-chores-worker
+            cwd: "Life-OS"
+            launch_ref: antigravity
+            update_ref: antigravity_native
+            exit_policy_ref: antigravity_exit
+            post_launch: "Inside agy, use /model to select Gemini 3.5 Flash."
+            needs_review: true
+          - id: life-agy-opus
+            surface_title_hint: agy-opus
+            index_in_pane: 3
+            agent_harness: antigravity
+            model_slot: opus-4.6
+            expected_model: null
+            role: writing-synthesis-worker
+            cwd: "Life-OS"
+            launch_ref: antigravity
+            update_ref: antigravity_native
+            exit_policy_ref: antigravity_exit
+            post_launch: "Inside agy, use /model to select Opus 4.6."
+            needs_review: true
+          - id: life-minimax
+            surface_title_hint: minimax-3
+            index_in_pane: 4
+            agent_harness: claude-code
+            model_slot: minimax
+            expected_model: minimax
+            role: general-bulk-worker
+            cwd: "Life-OS"
+            launch_ref: claude_minimax
+            update_ref: claude_code_homebrew_latest
+            exit_policy_ref: claude_code_exit
+          - id: life-glm
+            surface_title_hint: glm-5.1
+            index_in_pane: 5
+            agent_harness: claude-code
+            model_slot: glm2
+            expected_model: glm2
+            role: general-backup-worker
+            cwd: "Life-OS"
+            launch_ref: claude_glm2
+            update_ref: claude_code_homebrew_latest
+            exit_policy_ref: claude_code_exit
+          - id: life-deepseek
+            surface_title_hint: deepseek
+            index_in_pane: 6
+            agent_harness: claude-code
+            model_slot: deepseek
+            expected_model: deepseek
+            role: high-volume-general-worker
+            cwd: "Life-OS"
+            launch_ref: claude_deepseek
+            update_ref: claude_code_homebrew_latest
+            exit_policy_ref: claude_code_exit
+          - id: life-composer
+            surface_title_hint: composer
+            index_in_pane: 7
+            agent_harness: cursor-agent
+            model_slot: composer-2.5
+            expected_model: composer-2.5
+            role: fast-programming-worker
+            cwd: "Life-OS"
+            launch_ref: cursor_agent
+            update_ref: cursor_agent_native
+            exit_policy_ref: cursor_agent_exit
+      - index: 1
+        ref_hint: pane:2
+        group: command
+        services:
+          - id: life-master
+            surface_title_hint: master
+            index_in_pane: 0
+            agent_harness: codex
+            model_slot: gpt-5.5-high
+            expected_model: gpt-5.5-high
+            role: master
+            cwd: "Life-OS"
+            launch_ref: codex_gpt55_high
+            update_ref: codex_native
+            exit_policy_ref: codex_exit
+          - id: life-planner
+            surface_title_hint: planner
+            index_in_pane: 1
+            agent_harness: claude-code
+            model_slot: opus-4.8
+            expected_model: opus-4.8
+            role: planner
+            cwd: "Life-OS"
+            launch_ref: claude_opus
+            update_ref: claude_code_homebrew_latest
+            exit_policy_ref: claude_code_exit
+          - id: life-reviewer
+            surface_title_hint: reviewer
+            index_in_pane: 2
+            agent_harness: codex
+            model_slot: gpt-5.5-xhigh
+            expected_model: gpt-5.5-xhigh
+            role: reviewer
+            cwd: "Life-OS"
+            launch_ref: codex_gpt55_xhigh
+            update_ref: codex_native
+            exit_policy_ref: codex_exit
+  - name: Work
+    ref_hint: workspace:2
+    panes:
+      - index: 0
+        ref_hint: pane:3
+        group: command-control
+        notes: "Top pane: master/planner/reviewer plus remote control; kept separate from execution workers."
+        services:
+          - {id: work-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5-high, role: master, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-planner, surface_title_hint: planner, index_in_pane: 1, agent_harness: claude-code, model_slot: opus-4.8, expected_model: opus-4.8, role: planner, cwd: "Work-PKM-Vault", launch_ref: claude_opus, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
+          - {id: work-reviewer, surface_title_hint: reviewer, index_in_pane: 2, agent_harness: codex, model_slot: gpt-5.5-xhigh, expected_model: gpt-5.5-xhigh, role: reviewer, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_xhigh, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-remote-ctrl, surface_title_hint: remote-ctrl, index_in_pane: 3, agent_harness: codex, model_slot: remote-control, expected_model: null, role: remote-control, cwd: "Work-PKM-Vault", launch_ref: codex_remote_control, update_ref: codex_native, exit_policy_ref: generic_prompt_exit}
+      - index: 1
+        ref_hint: pane:4
+        group: frontier-workers
+        notes: "Lower-left pane: top frontier models and core task execution."
+        services:
+          - {id: work-sonnet, surface_title_hint: sonnet, index_in_pane: 0, agent_harness: claude-code, model_slot: sonnet, expected_model: sonnet-4.6, role: writing-coding-worker, cwd: "Work-PKM-Vault", launch_ref: claude_sonnet, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
+          - {id: work-gpt55, surface_title_hint: gpt-5.5, index_in_pane: 1, agent_harness: codex, model_slot: gpt-5.5, expected_model: gpt-5.5, role: general-codex-worker, cwd: "Work-PKM-Vault", launch_ref: codex_gpt55_medium, update_ref: codex_native, exit_policy_ref: codex_exit}
+          - {id: work-gemini, surface_title_hint: gemini, index_in_pane: 2, agent_harness: antigravity, model_slot: gemini-3.5-flash, expected_model: null, role: fast-chores-worker, cwd: "Work-PKM-Vault", launch_ref: antigravity, update_ref: antigravity_native, exit_policy_ref: antigravity_exit, post_launch: "Inside agy, use /model to select Gemini 3.5 Flash.", needs_review: true}
+          - {id: work-opus, surface_title_hint: opus, index_in_pane: 3, agent_harness: antigravity, model_slot: opus-4.6-thinking, expected_model: null, role: deep-reasoning-worker, cwd: "Work-PKM-Vault", launch_ref: antigravity, update_ref: antigravity_native, exit_policy_ref: antigravity_exit, post_launch: "Inside agy, use /model to select Opus 4.6 Thinking.", needs_review: true}
+          - {id: work-codex-spark, surface_title_hint: codex-5.3-spark, index_in_pane: 4, agent_harness: codex, model_slot: codex-5.3-spark, expected_model: codex-5.3-spark, role: fast-coding-worker, cwd: "Work-PKM-Vault", launch_ref: codex_53_spark, update_ref: codex_native, exit_policy_ref: codex_exit}
+      - index: 2
+        ref_hint: pane:5
+        group: open-model-bulk-workers
+        notes: "Lower-right pane: strong open / third-party model lanes for routine token-consuming work."
+        services:
+          - {id: work-deepseek, surface_title_hint: deepseek, index_in_pane: 0, agent_harness: claude-code, model_slot: deepseek, expected_model: deepseek, role: high-volume-general-worker, cwd: "Work-PKM-Vault", launch_ref: claude_deepseek, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
+          - {id: work-minimax, surface_title_hint: minimax, index_in_pane: 1, agent_harness: claude-code, model_slot: minimax, expected_model: minimax, role: general-bulk-worker, cwd: "Work-PKM-Vault", launch_ref: claude_minimax, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
+          - {id: work-glm, surface_title_hint: glm, index_in_pane: 2, agent_harness: claude-code, model_slot: glm2, expected_model: glm2, role: general-backup-worker, cwd: "Work-PKM-Vault", launch_ref: claude_glm2, update_ref: claude_code_homebrew_latest, exit_policy_ref: claude_code_exit}
+          - {id: work-composer, surface_title_hint: composer, index_in_pane: 3, agent_harness: cursor-agent, model_slot: composer-2.5, expected_model: composer-2.5, role: fast-programming-worker, cwd: "Work-PKM-Vault", launch_ref: cursor_agent, update_ref: cursor_agent_native, exit_policy_ref: cursor_agent_exit}
+  - name: Open-Research
+    ref_hint: workspace:3
+    panes:
+      - index: 0
+        ref_hint: pane:6
+        group: command
+        services:
+          - {id: research-master, surface_title_hint: master, index_in_pane: 0, agent_harness: codex, model_slot: gpt-5.5-high, expected_model: gpt-5.5-high, role: master, cwd: "~/Code/research", launch_ref: codex_gpt55_high, update_ref: codex_native, exit_policy_ref: codex_exit}
+      - index: 1
+        ref_hint: pane:7
+        group: workers
+        services:
+          - {id: research-gemini, surface_title_hint: woker-gemini, index_in_pane: 0, agent_harness: antigravity, model_slot: gemini-3.5-flash, expected_model: null, role: fast-research-worker, cwd: "~/Code/research", launch_ref: antigravity, update_ref: antigravity_native, exit_policy_ref: antigravity_exit, needs_review: true}
+          - {id: research-shell, surface_title_hint: "~/Code/research", index_in_pane: 1, agent_harness: shell, model_slot: shell, expected_model: null, role: shell, cwd: "~/Code/research", launch_ref: null, update_ref: null, exit_policy_ref: generic_prompt_exit, needs_review: true}

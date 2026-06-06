@@ -29,6 +29,7 @@ Current in-scope skills:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `martin-agent-roster`
 - `martin-outcome-package`
 - `martin-pptx-skill`
 - `publish-assets`
@@ -138,6 +139,13 @@ If content is useful structurally but not safe to publish:
 - keep terminal orchestration rules generic; do not commit real journal paths, dates, screenshots, or worker transcripts
 - avoid hardcoded hosted image domains, asset folders, or local upload pipeline paths
 - preserve the strict ordering: finish reflection before assigning cover generation
+
+### martin-agent-roster
+
+- keep terminal roster commands portable and profile-scoped
+- do not commit credentials, token values, or raw terminal transcripts
+- preserve the tested-state boundary: cmux has been tested; WezTerm remains pending until a real WezTerm dry-run and apply test complete
+- keep machine-specific profiles explicit and marked as profiles rather than global defaults
 
 ### martin-outcome-package
 
