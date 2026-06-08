@@ -206,7 +206,9 @@ def create_workspace(workspace, layout, apply, launch):
             print(proc.stderr.rstrip(), file=sys.stderr)
         if proc.returncode != 0:
             raise SystemExit(proc.returncode)
-        rename_tabs(workspace)
+        # The layout already supplies surface titles. Renaming after creation is
+        # unsafe because cmux may return surface refs in creation-time order that
+        # does not match the roster indices.
 
 
 def main(argv=None):
