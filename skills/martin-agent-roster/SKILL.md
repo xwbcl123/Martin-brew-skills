@@ -33,9 +33,11 @@ Prefer the bundled script interface:
 python3 skills/martin-agent-roster/scripts/roster.py detect-profile
 python3 skills/martin-agent-roster/scripts/roster.py validate-roster --profile macos-cmux
 python3 skills/martin-agent-roster/scripts/roster.py dry-run --profile macos-cmux --workspace Life
+skills/martin-agent-roster/scripts/bootstrap-cmux-workspaces
 ```
 
 Shortcut wrappers exist in `scripts/detect-profile`, `scripts/inspect-cmux`, and `scripts/validate-roster`.
+Use `scripts/bootstrap-cmux-workspaces` to render Life/Work cmux workspace layouts from the roster YAML. It defaults to dry-run; pass `--apply` only after Martin authorizes live workspace creation. Pass `--no-launch` to create titled shells without starting the agents.
 
 ## Workflow
 
@@ -66,4 +68,4 @@ Shortcut wrappers exist in `scripts/detect-profile`, `scripts/inspect-cmux`, and
   - `master`: `codex -m gpt-5.5 -c 'model_reasoning_effort="high"'`
   - `planner`: `ccs reset && claude --model opus`
   - `reviewer`: `codex -m gpt-5.5 -c 'model_reasoning_effort="xhigh"'`
-  - `codex-5.3-spark`: `codex -m codex-5.3-spark -c 'model_reasoning_effort="high"'`
+  - `gpt-5.3-codex-spark`: `codex -m gpt-5.3-codex-spark -c 'model_reasoning_effort="high"'`

@@ -25,7 +25,7 @@ models:
     provider: openai
     supported_efforts: [medium, high, xhigh]
     best_for: [general, coding, master, review, final_integration]
-  codex-5.3-spark:
+  gpt-5.3-codex-spark:
     provider: openai
     default_effort: high
     supported_efforts: [high]
@@ -52,9 +52,9 @@ preference_groups:
     fallback_models: [gpt-5.5, sonnet-4.6]
   fast_chores:
     primary_model: gemini-3.5-flash
-    fallback_models: [codex-5.3-spark, composer-2.5]
+    fallback_models: [gpt-5.3-codex-spark, composer-2.5]
   fast_coding:
-    primary_model: codex-5.3-spark
+    primary_model: gpt-5.3-codex-spark
     fallback_models: [composer-2.5, sonnet-4.6]
   final_review:
     primary_model: gpt-5.5

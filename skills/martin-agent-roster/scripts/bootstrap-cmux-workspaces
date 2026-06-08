@@ -1,0 +1,234 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import os
+import shlex
+import subprocess
+import sys
+from pathlib import Path
+
+import yaml
+
+
+SKILL_ROOT = Path(__file__).resolve().parents[1]
+CONFIG = SKILL_ROOT / "config"
+
+
+def load_yaml(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def profile_path(profile):
+    return CONFIG / "profiles" / f"{profile}.yaml"
+
+
+def find_life_root():
+    env_root = os.environ.get("LIFE_OS_ROOT")
+    if env_root:
+        return Path(env_root).expanduser()
+    cwd = Path.cwd().resolve()
+    if cwd.name == "Life-OS":
+        return cwd
+    for base in (SKILL_ROOT, cwd):
+        for parent in (base, *base.parents):
+            if parent.name == "Life-OS":
+                return parent
+    return cwd
+
+
+def resolve_cwd(cwd):
+    life_root = find_life_root()
+    if not cwd:
+        return str(life_root)
+    expanded = Path(cwd).expanduser()
+    if expanded.is_absolute():
+        return str(expanded)
+    if cwd == "Life-OS":
+        return str(life_root)
+    env_key = cwd.upper().replace("-", "_") + "_ROOT"
+    if os.environ.get(env_key):
+        return str(Path(os.environ[env_key]).expanduser())
+    candidates = [
+        life_root.parent / cwd,
+        life_root.parent / "workspace_sync" / "assets" / cwd,
+        life_root / cwd,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+    return cwd
+
+
+def shell_command(cwd, launch_command, title):
+    prefix = f"cd {shlex.quote(resolve_cwd(cwd))}"
+    title_cmd = "printf '\\033]0;%s\\007' " + shlex.quote(title)
+    if launch_command:
+        return f"{prefix} && {title_cmd} && {launch_command}"
+    return f"{prefix} && {title_cmd}"
+
+
+def service_surface(service, launches, launch):
+    launch_ref = service.get("launch_ref")
+    launch_command = launches.get(launch_ref, {}).get("command") if launch and launch_ref else None
+    title = service.get("surface_title_hint") or service.get("id")
+    surface = {
+        "type": "terminal",
+        "title": title,
+        "command": shell_command(service.get("cwd"), launch_command, title),
+    }
+    return surface
+
+
+def pane_node(pane, launches, launch):
+    services = sorted(pane.get("services", []), key=lambda svc: svc.get("index_in_pane", 0))
+    return {
+        "pane": {
+            "surfaces": [service_surface(service, launches, launch) for service in services],
+        }
+    }
+
+
+def split_node(children, direction="horizontal", split=0.5):
+    if len(children) == 1:
+        return children[0]
+    return {
+        "direction": direction,
+        "split": split,
+        "children": [children[0], split_node(children[1:], direction, split)],
+    }
+
+
+def workspace_layout(workspace, launches, launch):
+    panes = sorted(workspace.get("panes", []), key=lambda pane: pane.get("index", 0))
+    nodes = [pane_node(pane, launches, launch) for pane in panes]
+    if workspace.get("name") == "Work" and len(nodes) == 3:
+        return {
+            "direction": "vertical",
+            "split": 0.34,
+            "children": [
+                nodes[0],
+                {
+                    "direction": "horizontal",
+                    "split": 0.5,
+                    "children": [nodes[1], nodes[2]],
+                },
+            ],
+        }
+    return split_node(nodes, "horizontal", 0.72 if len(nodes) == 2 else 0.5)
+
+
+def find_workspace(profile, name):
+    for workspace in profile.get("workspaces", []):
+        if workspace.get("name") == name:
+            return workspace
+    raise SystemExit(f"Workspace not found in profile: {name}")
+
+
+def summarize(workspace):
+    lines = []
+    for pane in sorted(workspace.get("panes", []), key=lambda pane: pane.get("index", 0)):
+        services = sorted(pane.get("services", []), key=lambda svc: svc.get("index_in_pane", 0))
+        labels = ", ".join(service.get("surface_title_hint", service["id"]) for service in services)
+        lines.append(f"  pane {pane.get('index')}: {pane.get('group', 'workers')} -> {labels}")
+    return "\n".join(lines)
+
+
+def cmux_tree():
+    proc = subprocess.run(["cmux", "tree", "--all", "--json"], text=True, capture_output=True, check=False)
+    if proc.returncode != 0:
+        raise SystemExit(proc.stderr.strip() or "cmux tree failed")
+    return json.loads(proc.stdout)
+
+
+def rename_tabs(workspace):
+    live_workspace = None
+    for window in cmux_tree().get("windows", []):
+        for candidate in window.get("workspaces", []):
+            if candidate.get("title") == workspace["name"]:
+                live_workspace = candidate
+    if not live_workspace:
+        raise SystemExit(f"Created workspace not found for tab renames: {workspace['name']}")
+
+    expected = {}
+    for pane in workspace.get("panes", []):
+        for service in pane.get("services", []):
+            expected[(pane.get("index"), service.get("index_in_pane"))] = service.get("surface_title_hint") or service["id"]
+
+    for pane in live_workspace.get("panes", []):
+        for surface in pane.get("surfaces", []):
+            title = expected.get((pane.get("index"), surface.get("index_in_pane")))
+            if not title or surface.get("title") == title:
+                continue
+            subprocess.run(
+                ["cmux", "rename-tab", "--workspace", live_workspace["ref"], "--surface", surface["ref"], title],
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+            print(f"renamed {live_workspace['ref']} {surface['ref']} -> {title}")
+
+
+def create_workspace(workspace, layout, apply, launch):
+    cwd = resolve_cwd(workspace.get("panes", [{}])[0].get("services", [{}])[0].get("cwd"))
+    cmd = [
+        "cmux",
+        "new-workspace",
+        "--name",
+        workspace["name"],
+        "--description",
+        f"Martin {workspace['name']} agent roster; generated from martin-agent-roster.",
+        "--cwd",
+        cwd,
+        "--layout",
+        json.dumps(layout, ensure_ascii=False),
+        "--focus",
+        "false",
+    ]
+    print(f"\n# {workspace['name']}")
+    print(summarize(workspace))
+    print("\ncommand:")
+    print(" ".join(shlex.quote(part) for part in cmd))
+    if not launch:
+        print("\nlaunch: disabled; surfaces open as titled shells")
+    if apply:
+        print("\napplying...")
+        proc = subprocess.run(cmd, text=True, capture_output=True, check=False)
+        if proc.stdout:
+            print(proc.stdout.rstrip())
+        if proc.stderr:
+            print(proc.stderr.rstrip(), file=sys.stderr)
+        if proc.returncode != 0:
+            raise SystemExit(proc.returncode)
+        rename_tabs(workspace)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Create Life/Work cmux workspaces from martin-agent-roster.")
+    parser.add_argument("--profile", default="macos-cmux")
+    parser.add_argument("--workspace", action="append", choices=["Life", "Work"])
+    parser.add_argument("--apply", action="store_true", help="Actually run cmux new-workspace.")
+    parser.add_argument("--no-launch", action="store_true", help="Create shells without launching agents.")
+    args = parser.parse_args(argv)
+
+    profile = load_yaml(profile_path(args.profile))
+    commands = load_yaml(CONFIG / "commands.yaml")
+    names = args.workspace or ["Life", "Work"]
+    launch = not args.no_launch
+
+    print("# cmux Life/Work Workspace Bootstrap")
+    print(f"profile: {args.profile}")
+    print(f"mode: {'apply' if args.apply else 'dry-run'}")
+    print(f"agent launch commands: {'enabled' if launch else 'disabled'}")
+
+    for name in names:
+        workspace = find_workspace(profile, name)
+        layout = workspace_layout(workspace, commands.get("launches", {}), launch)
+        create_workspace(workspace, layout, args.apply, launch)
+
+    if not args.apply:
+        print("\nDry run only. Add --apply to create the workspaces.")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
