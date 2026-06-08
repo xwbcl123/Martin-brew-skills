@@ -102,6 +102,12 @@ def split_node(children, direction="horizontal", split=0.5):
 def workspace_layout(workspace, launches, launch):
     panes = sorted(workspace.get("panes", []), key=lambda pane: pane.get("index", 0))
     nodes = [pane_node(pane, launches, launch) for pane in panes]
+    if workspace.get("name") == "Life" and len(nodes) == 2:
+        return {
+            "direction": "vertical",
+            "split": 0.72,
+            "children": [nodes[0], nodes[1]],
+        }
     if workspace.get("name") == "Work" and len(nodes) == 3:
         return {
             "direction": "vertical",

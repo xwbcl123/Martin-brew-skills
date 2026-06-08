@@ -38,6 +38,7 @@ workspaces:
       - index: 0
         ref_hint: pane:1
         group: primary-workers
+        notes: "Top pane: Life execution workers."
         services:
           - id: life-sonnet
             surface_title_hint: sonnet
@@ -135,6 +136,7 @@ workspaces:
       - index: 1
         ref_hint: pane:2
         group: command
+        notes: "Bottom pane: master/planner/reviewer command agents."
         services:
           - id: life-master
             surface_title_hint: master
