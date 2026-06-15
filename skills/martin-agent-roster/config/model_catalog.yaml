@@ -12,14 +12,15 @@ models:
     best_for: [writing, synthesis]
   deepseek:
     provider: deepseek
-    capacity_note: high-volume
+    capacity_note: high-volume; ccs should export deepseek-v4-pro[1m] for 1M context accounting
     best_for: [general_bulk, repetitive_tasks]
   glm2:
     provider: zhipu
-    notes: "Overseas GLM profile through ccs use glm2."
+    notes: "Overseas GLM profile through ccs use glm2; default big model should be glm-5.2[1m]."
     best_for: [general, backup]
   minimax:
     provider: minimax
+    capacity_note: "ccs should export MiniMax-M3[1m] for 1M context accounting."
     best_for: [general, backup]
   gpt-5.5:
     provider: openai

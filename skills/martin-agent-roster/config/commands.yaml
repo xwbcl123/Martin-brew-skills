@@ -22,16 +22,16 @@ updates:
 
 launches:
   claude_sonnet:
-    command: "ccs reset && claude --model sonnet"
+    command: "zsh -lic 'ccs reset && claude --model sonnet'"
   claude_opus:
-    command: "ccs reset && claude --model opus"
+    command: "zsh -lic 'ccs reset && claude --model opus'"
   claude_deepseek:
-    command: "ccs reset && ccs use deepseek && claude"
+    command: "zsh -lic 'ccs reset && ccs use deepseek && claude'"
   claude_glm2:
-    command: "ccs reset && ccs use glm2 && claude"
+    command: "zsh -lic 'ccs reset && ccs use glm2 && claude'"
     notes: "Use glm2 for overseas GLM profile."
   claude_minimax:
-    command: "ccs reset && ccs use minimax && claude"
+    command: "zsh -lic 'ccs reset && ccs use minimax && claude'"
   codex_default:
     command: "codex"
   codex_gpt55_medium:
@@ -47,7 +47,13 @@ launches:
     notes: "Starts Codex app-server with remote control enabled for mobile ChatGPT app access."
   antigravity:
     command: "agy"
-    post_launch: "Use /model inside Antigravity TUI if a specific model is required."
+    notes: "Generic Antigravity fallback. Prefer model-pinned launch refs when the intended model is known."
+  antigravity_gemini35_flash_high:
+    command: "agy --model 'Gemini 3.5 Flash (High)'"
+    notes: "Verify exact model spelling with `agy models` after Antigravity upgrades."
+  antigravity_opus46_thinking:
+    command: "agy --model 'Claude Opus 4.6 (Thinking)'"
+    notes: "Start Opus lanes at least 30 seconds after Gemini lanes during full-roster restarts."
   cursor_agent:
     command: "agent"
 

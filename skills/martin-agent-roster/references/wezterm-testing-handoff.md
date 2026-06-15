@@ -3,7 +3,7 @@ title: "Handoff - WezTerm Testing for Martin Agent Roster"
 type: task-handoff
 status: active
 created: 2026-06-06
-updated: 2026-06-06
+updated: 2026-06-16
 ---
 
 # Handoff - WezTerm Testing for Martin Agent Roster
@@ -27,9 +27,9 @@ The cmux path is considered functionally validated:
 
 ## Known Residual cmux Notes
 
-- Antigravity (`agy`) cannot reliably select the model by startup flag in the current implementation.
-- `agy` surfaces must still use `/model` inside the TUI for model-specific lanes.
-- In the Work apply test, `work-opus` launched but defaulted to Gemini 3.5 Flash; it still needs manual `/model` switch to Opus 4.6 Thinking.
+- Antigravity (`agy`) now supports model-pinned startup with `--model` on the local 1.0.8 build.
+- `agy` model names are display strings; refresh exact names with `agy models` after upgrades.
+- Full-roster restarts should launch Gemini Antigravity lanes first, wait at least 30 seconds, then launch Opus Antigravity lanes to avoid auth/session contention.
 - CWD drift is real. Apply logic should use explicit `cd <workspace> && <launch>` before starting a harness. This fixed the first `life-sonnet` launch issue.
 
 ## WezTerm Test Goal
@@ -141,4 +141,3 @@ skills/martin-agent-roster/scripts/roster.py
 - WezTerm dry-run produces a correct startup plan.
 - At least one explicit WezTerm apply test succeeds.
 - Handoff/result notes clearly state whether Windows local, Linux local, and `wezterm connect` remote modes were tested.
-
