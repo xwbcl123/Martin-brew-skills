@@ -1,0 +1,4 @@
+interface:
+  display_name: "NotebookLM Deck Factory"
+  short_description: "Build NotebookLM deck packages with QC"
+  default_prompt: "Use $notebooklm-deck-factory to generate a NotebookLM PPTX from a source bundle, design.md, and deck outline."

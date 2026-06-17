@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-06-18
+
+### Added
+
+- Added `notebooklm-deck-factory`, a NotebookLM alternate-deck generation workflow with run package scaffolding, prompt/source manifests, PPTX/PDF download records, render evidence, and editability QC.
+
+### Changed
+
+- Updated README skill inventory and structure tree to include `notebooklm-deck-factory`.
+
 ## 2026-06-03
 
 ### Added

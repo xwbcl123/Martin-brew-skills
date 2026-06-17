@@ -53,6 +53,7 @@ It does not keep:
 - `life-os-reflect-cover-orchestrator`
 - `martin-agent-roster`
 - `martin-outcome-package`
+- `notebooklm-deck-factory`
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `martin-pptx-skill`
@@ -79,6 +80,7 @@ Martin-brew-skills/
 │   ├── martin-agent-roster/
 │   ├── martin-outcome-package/
 │   ├── martin-pptx-skill/
+│   ├── notebooklm-deck-factory/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
@@ -221,6 +223,12 @@ If you reuse these skills in your own workspace, replace the templates with your
 - restores headings, list structure, and emphasis from raw NotebookLM Markdown exports
 - converts bracket references into Markdown footnotes
 - includes a lightweight learn-from-polished iteration loop
+
+### `notebooklm-deck-factory`
+
+- creates auditable NotebookLM deck-generation run packages from source bundles, `deck-outline.md`, and `design.md`
+- preserves source, prompt, notebook/artifact manifests, PPTX/PDF download records, and render evidence
+- includes NotebookLM-specific outline/design templates and explicit editability QC for image-baked PPTX exports
 
 ### `pptx-polish`
 
