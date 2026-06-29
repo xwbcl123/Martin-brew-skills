@@ -202,6 +202,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 - turns transcripts, `.req.md` captures, or fuzzy task inputs into a governed six-deliverable outcome package
 - keeps D1 deep report and D2 executive summary as the minimum deliverables, with optional D3-D6 package routes
 - authors `design.md`, `design-stack.md`, and `martin-pptx-handoff.md` while delegating `deck-spec` / artifacts / PPTX production to `martin-pptx-skill`
+- adds deck-first scheduling, D0/Deep Research escape hatches, external package access checks, route readiness checks, worker acceptance gates, and state synchronization safeguards for time-sensitive deck-led packages
 - includes portable references, templates, smoke-test criteria, and no mandatory vault-specific runtime paths
 
 ### `publish-assets`
@@ -244,6 +245,16 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-06-29
+
+- update `martin-outcome-package` with deck-led execution gates from a real dry-run retrospective:
+  - D4/D5 deck-first scheduling and polish-buffer guidance
+  - D0 / Deep Research escape hatch when local context is stronger than generic research
+  - Cloud Expert / external package access verification
+  - cmux/shore delegation and master acceptance rules
+  - deck route readiness and NotebookLM visual-reference defaults
+  - package README gate-status fields for state synchronization
 
 ### 2026-06-03
 

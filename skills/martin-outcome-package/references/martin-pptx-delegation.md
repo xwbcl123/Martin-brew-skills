@@ -34,7 +34,8 @@ The `d5-martin-pptx-handoff-template.md` must provide all required inputs for `m
 2. Author `design.md` and `design-stack.md` using templates.
 3. Fill `martin-pptx-handoff.md` with all required fields mapped above.
 4. Verify handoff completeness: all required fields populated, no TBD placeholders for required items.
-5. The handoff file itself is the delegation trigger. No additional coordination protocol needed.
+5. Verify route readiness and editability expectations using `references/execution-gotchas.md`.
+6. The handoff file itself is the delegation trigger for file-based workflow. If using cmux/shore workers, create a durable task package and require master acceptance before marking the route accepted.
 
 ## What This Skill Does NOT Do
 

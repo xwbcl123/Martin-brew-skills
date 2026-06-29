@@ -8,6 +8,8 @@ D5 produces three artifacts that together define the visual system and enable de
 2. **`design-stack.md`** — Top-level production/render contract (output format, toolchain, constraints)
 3. **`martin-pptx-handoff.md`** — Complete delegation brief for `martin-pptx-skill`
 
+Before D5 starts, run the deck route readiness gate in `references/execution-gotchas.md`. In particular, confirm whether the intended deck route produces an editable PPTX or only image-baked slides. Treat image-baked slides as visual reference, not as the primary editable deck.
+
 ## Authorship Boundary
 
 This Skill (martin-outcome-package) is the **single author** of all three D5 files. `martin-pptx-skill` **consumes** them as downstream inputs but never modifies them.
@@ -64,3 +66,9 @@ D1 (deep report) + D2 (exec summary) + D4 (deck outline)
                 ▼
         martin-pptx-skill Stage 0
 ```
+
+## Route Readiness Notes
+
+- Gamma AI can be used as a formal deck route only after returned PPTX/PDF artifacts pass QA and are suitable for polish.
+- NotebookLM is a visual reference route by default. It may inspire slide rhythm and composition, but it must pass editability checks before being treated as a formal editable deck.
+- If the route requires a browser session, CLI auth, or download state, verify that readiness before the route is on the critical path.

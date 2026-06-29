@@ -38,6 +38,18 @@ Intake → Context Discovery → deliverable_home resolution →
   Package README → Completion
 ```
 
+## Deck-Led Package Override
+
+When the final deliverable is a management deck, board deck, customer deck, or any other deck-first artifact, do not let D1/D0 research work consume the schedule by default.
+
+Apply `references/execution-gotchas.md`:
+
+- D4/D5 is the critical path.
+- D0 / Deep Research must have an escape hatch.
+- D4 deck outline should reach review early.
+- D5/deck route readiness must be verified before relying on a route.
+- NotebookLM-style image-baked outputs are visual references unless editability is proven.
+
 ## D5 Ownership Boundary
 
 This Skill is the **single author** of:

@@ -11,6 +11,11 @@ source_type: {{SOURCE_TYPE}}  # transcript | req-md | inbox-capture | session | 
 deliverable_home: {{DELIVERABLE_HOME}}
 needs_archive_destination: {{NEEDS_ARCHIVE}}  # true if deliverable_home is session-local fallback
 deliverables_produced: [{{DELIVERABLE_LIST}}]  # e.g. [D1, D2, D4, D5]
+gate_status:
+  d0_research: {{D0_STATUS}}  # not_needed | auxiliary | complete | blocked
+  d4_outline_review: {{D4_REVIEW_STATUS}}  # not_needed | pending | approved | skipped
+  d5_route_readiness: {{D5_ROUTE_STATUS}}  # not_needed | ready | visual_reference_only | blocked
+external_package_access: {{EXTERNAL_PACKAGE_ACCESS}}  # not_needed | verified | missing | blocked
 ```
 
 ## Intake Summary
@@ -23,6 +28,7 @@ deliverables_produced: [{{DELIVERABLE_LIST}}]  # e.g. [D1, D2, D4, D5]
 | Language | {{LANGUAGE}} |
 | Deck needed | {{DECK_NEEDED}} |
 | Email needed | {{EMAIL_NEEDED}} |
+| Final deliverable critical path | {{CRITICAL_PATH}} |
 
 ## Deliverables
 
@@ -38,6 +44,10 @@ deliverables_produced: [{{DELIVERABLE_LIST}}]  # e.g. [D1, D2, D4, D5]
 ## Missing Optional Inputs
 
 {{MISSING_INPUTS_OR_NONE}}
+
+## Gate and Route Notes
+
+{{GATE_ROUTE_NOTES}}
 
 ## Notes
 

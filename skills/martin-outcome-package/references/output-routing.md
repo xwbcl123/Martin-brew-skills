@@ -10,6 +10,8 @@ The `deliverable_home` is the root directory where all package deliverables are 
 
 When the session-local fallback is used, set `needs_archive_destination: true` in the package README to signal that outputs should be moved to a permanent location.
 
+For project-matched work, verify the final `deliverable_home` exists or can be created before D1 production. Session-local output is staging/cache only unless the user explicitly wants the final package there.
+
 ## Folder Structure
 
 Under `deliverable_home`:
@@ -43,3 +45,5 @@ The package README must record:
 - `needs_archive_destination` (boolean)
 - Which deliverables were actually produced
 - Timestamp of completion
+- Gate/route status when D4-D6 or delegated deck routes are produced
+- Whether any external/Cloud Expert package was verified as tool-accessible

@@ -28,9 +28,12 @@ Six deliverables, produced sequentially. D1+D2 are mandatory; D3-D6 are gated by
 
 1. **Intake before production.** Run the intake grill (see `references/intake-grill.md`) unless the source already answers all required questions.
 2. **deliverable_home captured.** Resolve output directory before writing any deliverable (see `references/output-routing.md`).
-3. **D5 ownership.** This Skill is the single author of `design.md`, `design-stack.md`, and `martin-pptx-handoff.md`. Do not create `deck-spec.md` — that belongs to `martin-pptx-skill`.
-4. **Portability.** Runtime instructions must not depend on paths outside this Skill folder (see `references/portability.md`).
-5. **Package README.** Every completed package must have a `README.md` with structured metadata.
+3. **Deck-first gate.** If D4/D5/deck is the final user-facing deliverable, run the deck-first scheduling and route-readiness checks before spending significant time on background research (see `references/execution-gotchas.md`).
+4. **Research escape hatch.** Deep Research / D0 is not automatically a hard gate. When local project context is strong and external research adds little, cap D0 as auxiliary fact-check/background and move to D4/D5 critical path (see `references/execution-gotchas.md`).
+5. **D5 ownership.** This Skill is the single author of `design.md`, `design-stack.md`, and `martin-pptx-handoff.md`. Do not create `deck-spec.md` — that belongs to `martin-pptx-skill`.
+6. **Portability.** Runtime instructions must not depend on paths outside this Skill folder (see `references/portability.md`).
+7. **Package README.** Every completed package must have a `README.md` with structured metadata.
+8. **State synchronization.** Major gates must update package README/status files as they complete. Do not leave `30_report.md`, README, or route status stale after substantial production work (see `references/execution-gotchas.md`).
 
 ## Quick Workflow
 
@@ -58,6 +61,7 @@ Read on demand:
 | deliverable_home resolution | `references/output-routing.md` |
 | D5 artifacts and pipeline | `references/d5-design-pipeline.md` |
 | martin-pptx-skill delegation | `references/martin-pptx-delegation.md` |
+| Deck-first scheduling, D0 cap, delegation/package gotchas | `references/execution-gotchas.md` |
 | Portability rules and scan | `references/portability.md` |
 | ASPG registration and discovery | `references/runtime-registration.md` |
 
@@ -67,4 +71,5 @@ All templates are in `templates/`. Use the template as a starting point; adapt s
 
 ## Version
 
+- v1.1 — 2026-06-29 — Added deck-first scheduling, D0 escape hatch, route-readiness, Cloud Expert package access, shore delegation, worker acceptance, and state-sync gates from EU CRA dry-run lessons.
 - v1.0 — 2026-06-03 — Initial implementation. Skill-first, portable, six-deliverable package.
