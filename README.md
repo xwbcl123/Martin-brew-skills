@@ -197,6 +197,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 - turns explicitly authorized URLs into auditable Life-OS Markdown clippings
 - routes article, video, social-media, and course URLs to template-compatible output contracts
 - uses Defuddle for article-like HTML, with browser or configured web extraction as fallbacks
+- documents Node.js/Defuddle installation, Hermes runtime PATH verification, and truthful fallback reporting
 - resolves the vault through `LIFE_OS_ROOT` or common Google Drive locations, validates its structure, and never hardcodes a personal path
 
 ### `martin-agent-roster`

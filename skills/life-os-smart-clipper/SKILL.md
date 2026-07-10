@@ -39,27 +39,29 @@ Before clipping, read both references:
 
 1. `references/template-contracts.md` for the template selection and required output blocks.
 2. `references/life-os-routing.md` for destinations, frontmatter, naming, deduplication, and link rules.
+3. `references/defuddle-dependency.md` before the first Defuddle invocation in a session.
 
 ## Workflow
 
 1. Canonicalize the URL and identify its source type before fetching.
 2. Select the template using the ordered matching rules in `template-contracts.md`; record it in `template:` frontmatter.
-3. Extract source material:
+3. Verify the Defuddle dependency when the selected route is an article-like HTML page; use the dependency reference's installation and fallback rules.
+4. Extract source material:
    - Use `defuddle parse "$URL" --md` for standard article-like HTML pages. Capture its output before summarizing.
    - Use the configured Hermes web extractor (Firecrawl) when Defuddle fails, returns an access/error page, or returns too little meaningful text.
    - Do not use Defuddle for YouTube/podcasts, PDFs, raw `.md` files, or social-platform pages. Use a transcript extractor, PDF extractor, direct Markdown fetch, or the rendered web/browser fallback instead.
    - Preserve factual failure signals such as `HTTP 403`, `原文提取失败`, or missing transcript. Do not invent unavailable source content.
-4. Validate extraction quality before generating analysis: title and canonical URL must exist; source text must be substantial enough for the chosen template; reject cookie walls, login pages, navigation-only output, and duplicate text.
-5. Render the selected template in Simplified Chinese. Generate only claims grounded in the extracted source. Keep original-language quotations marked as quotations.
-6. Use the routing reference to select a stable existing destination under `LIFE_OS_ROOT`, normalize the filename, and check for duplicate canonical URLs or substantially identical titles before writing.
-7. Find related notes by title, tags, and topic. Link only high-confidence matches; otherwise write `- 暂无高置信关联笔记`.
-8. Write exactly one Markdown note, then run:
+5. Validate extraction quality before generating analysis: title and canonical URL must exist; source text must be substantial enough for the chosen template; reject cookie walls, login pages, navigation-only output, and duplicate text.
+6. Render the selected template in Simplified Chinese. Generate only claims grounded in the extracted source. Keep original-language quotations marked as quotations.
+7. Use the routing reference to select a stable existing destination under `LIFE_OS_ROOT`, normalize the filename, and check for duplicate canonical URLs or substantially identical titles before writing.
+8. Find related notes by title, tags, and topic. Link only high-confidence matches; otherwise write `- 暂无高置信关联笔记`.
+9. Write exactly one Markdown note, then run:
 
    ```bash
    python3 scripts/validate_clip.py /absolute/path/to/note.md
    ```
 
-9. Report the selected template, extraction method/fallback, final path, and validation result.
+10. Report the selected template, extraction method/fallback, final path, and validation result.
 
 ## Safety and fallback rules
 
