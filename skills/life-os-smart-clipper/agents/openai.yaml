@@ -1,0 +1,4 @@
+interface:
+  display_name: "Life-OS Smart Clipper"
+  short_description: "Extract, summarize, classify, and archive URLs into Life-OS."
+  default_prompt: "Archive this URL as a smart Life-OS clipping:"

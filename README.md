@@ -51,6 +51,7 @@ It does not keep:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `life-os-smart-clipper`
 - `martin-agent-roster`
 - `martin-outcome-package`
 - `notebooklm-deck-factory`
@@ -75,6 +76,7 @@ Martin-brew-skills/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
 │   ├── grill-me/
+│   ├── life-os-smart-clipper/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
 │   ├── martin-agent-roster/
@@ -190,6 +192,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes babysitting rules for approvals, `/btw` progress checks, and the 15-minute writing window
 - verifies journal path, local image, hosted image URL, and operation log before final reporting
 
+### `life-os-smart-clipper`
+
+- turns explicitly authorized URLs into auditable Life-OS Markdown clippings
+- routes article, video, social-media, and course URLs to template-compatible output contracts
+- uses Defuddle for article-like HTML, with browser or configured web extraction as fallbacks
+- resolves the vault through `LIFE_OS_ROOT` or common Google Drive locations, validates its structure, and never hardcodes a personal path
+
 ### `martin-agent-roster`
 
 - manages Martin's local terminal agent roster across cmux and future WezTerm profiles
@@ -245,6 +254,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-07-11
+
+- add `life-os-smart-clipper`, a portable, template-aware URL-to-Obsidian workflow with Defuddle extraction, fallback routing, frontmatter validation, and Google Drive-aware Life-OS root discovery
 
 ### 2026-06-29
 
