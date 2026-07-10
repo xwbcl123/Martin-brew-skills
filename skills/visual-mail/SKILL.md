@@ -56,6 +56,9 @@ Apply `viz-brief` principles (see `.claude/commands/viz/viz-brief.md`):
   - Meeting minutes: 决策 / 行动项 / 责任人 / 风险 / 后续
 - Font sizes: Ensure legibility in screenshots by keeping card body text and list items at `text-sm` (14px) or larger. Avoid using `text-xs` (12px) for card body text or list contents; limit `text-xs` only to minor labels, metadata, or timestamps.
 - Footer: `Martin Design ©️ CSTC & EU RSPO All Rights Reserved`
+- **Logo Selection**: Override the default logo URL in brand guidelines. Instead, randomly select one of the following two EU-RSPO logos as the visual brief header image:
+  - Default (Horizontal 3:1): `https://img.bruxelles-ai.ac.cn/feynman-pic/1783701129_eu_rspo_logo_3to1_v3.jpg`
+  - Secondary (Square 1:1): `https://img.bruxelles-ai.ac.cn/feynman-pic/1783700412_eu_rspo_logo_opt5_v3.jpg`
 
 For E2E tests, write to `tasks/shore/<task-slug>/artifacts/e2e/assets/viz/`.
 
