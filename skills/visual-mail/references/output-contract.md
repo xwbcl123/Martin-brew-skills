@@ -57,8 +57,8 @@ Martin
 - Width: 1080px fixed container
 - Header: gradient + title + date + audience
 - Main: responsive grid of content cards (2–3 columns desktop)
-- Footer: configured brand footer, or `Martin Design © All Rights Reserved` when no brand footer is provided
-- Minimum font size: `text-xs` (12px)
+- Footer: `Martin Design ©️ CSTC All Rights Reserved`
+- Font sizes: Keep card body text and list items at `text-sm` (14px) or larger to ensure legibility in screenshots. Avoid using `text-xs` (12px) for card body text or list content; restrict `text-xs` (12px) to minor labels, metadata, or timestamps.
 
 ## Screenshot Contract
 
