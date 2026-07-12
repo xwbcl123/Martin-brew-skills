@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Knowledge Brief"
+  short_description: "Generate and deliver a grounded Chinese Life-OS knowledge brief"
+  default_prompt: "Generate, validate, persist, and deliver the current Daily Knowledge Brief."

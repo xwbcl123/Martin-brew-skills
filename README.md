@@ -47,6 +47,7 @@ It does not keep:
 - `codex-retrospective`
 - `conference-video-deck-transcript`
 - `create-cover-illustration`
+- `daily-knowledge-brief`
 - `ds-citations`
 - `doc-intelligent-summary`
 - `grill-me`
@@ -73,6 +74,7 @@ Martin-brew-skills/
 │   ├── codex-fluent/
 │   ├── codex-retrospective/
 │   ├── create-cover-illustration/
+│   ├── daily-knowledge-brief/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
 │   ├── grill-me/
@@ -166,6 +168,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - uses Codex image generation as the primary path
 - includes a portable Gemini fallback script for agents without built-in image generation
 - keeps configuration generic through `.env` placeholders, with no private workspace paths or secrets
+
+### `daily-knowledge-brief`
+
+- turns a bounded Life-OS clipping ledger into a grounded Chinese daily knowledge synthesis
+- persists and validates Obsidian Markdown before Telegram or Gmail delivery
+- tracks per-recipient delivery state and message IDs for idempotent retry
+- supports per-job provider/model pinning in Hermes Cron without embedding private recipients or machine-specific paths
 
 ### `ds-citations`
 
