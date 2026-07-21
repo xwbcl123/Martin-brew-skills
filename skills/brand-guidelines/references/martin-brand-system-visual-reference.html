@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Martin Brand System - Visual Reference | 视觉规范指南</title>
+  <meta name="description" content="Martin Brand System 官方视觉规范与品牌路由参考指南，清晰拆解 Life 个人品牌与 Work 岗位品牌体系。">
+  <style>
+    /* ==========================================================================
+       1. CORE DESIGN SYSTEM & TOKENS
+       ========================================================================== */
+    :root {
+      /* Shared & Global Layout */
+      --font-display: 'Spline Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-body: 'Barlow', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Charter', 'Source Han Serif SC', 'Noto Serif CJK SC', 'Songti SC', Georgia, serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Neutral Editorial Base (Demonstrator Canvas) */
+      --canvas-bg: #F5F7F6;
+      --canvas-card-bg: #FFFFFF;
+      --canvas-border: #DCE3E6;
+      --canvas-ink: #172033;
+      --canvas-slate: #697386;
+      --navy-structure: #091231;
+
+      /* Life Brand Palette */
+      --life-navy: #091231;
+      --life-cyan: #29DDDA;
+      --life-mint: #16FFBB;
+      --life-ice: #37A7E7;
+      --life-canvas: #F5F7F6;
+      --life-ink: #172033;
+      --life-slate: #697386;
+      --life-line: #DCE3E6;
+
+      /* Martin-Borealis Dark Palette */
+      --borealis-bg: #091231;
+      --borealis-card: rgba(10, 18, 49, 0.82);
+      --borealis-border: rgba(41, 221, 218, 0.34);
+      --borealis-heading: #F0FCFF;
+      --borealis-body: #E0E7EA;
+
+      /* Work Brand Palette (Organization Brand) */
+      --work-red: #B42318;
+      --work-charcoal: #202124;
+      --work-gray-cool: #525252;
+      --work-gray-light: #D9D9D9;
+      --work-white: #FFFFFF;
+      --work-card-bg: #FAFAFA;
+      --work-border: #E5E5E5;
+
+      /* Spacing & Radius */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow-subtle: 0 4px 20px rgba(9, 18, 49, 0.05);
+      --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(9, 18, 49, 0.06);
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ==========================================================================
+       2. BASE & RESET
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--canvas-bg);
+      color: var(--canvas-ink);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Typography Defaults */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--navy-structure);
+      line-height: 1.25;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    code, kbd, pre {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+
+    /* ==========================================================================
+       3. LAYOUT & CONTAINERS
+       ========================================================================== */
+    .container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 1rem;
+      }
+    }
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245, 247, 246, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--canvas-border);
+      padding: 0.85rem 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .brand-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-badge {
+      background: var(--navy-structure);
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .site-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy-structure);
+    }
+
+    nav.nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    nav.nav-links a {
+      color: var(--canvas-slate);
+      transition: var(--transition);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    nav.nav-links a:hover,
+    nav.nav-links a:focus-visible {
+      color: var(--navy-structure);
+      background: rgba(9, 18, 49, 0.05);
+      outline: none;
+    }
+
+    @media (max-width: 860px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.65rem;
+      }
+
+      nav.nav-links {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 0.35rem 0.5rem;
+        font-size: 0.825rem;
+      }
+
+      nav.nav-links a {
+        padding: 0.2rem 0.45rem;
+        background: rgba(9, 18, 49, 0.04);
+      }
+    }
+
+    .nav-tag-life {
+      border-bottom: 2px solid var(--life-cyan);
+    }
+    .nav-tag-work {
+      border-bottom: 2px solid var(--work-red);
+    }
+
+    /* Sections */
+    section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--canvas-border);
+    }
+
+    section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+      color: var(--canvas-slate);
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--canvas-slate);
+      max-width: 800px;
+    }
+
+    /* ==========================================================================
+       4. HERO SECTION
+       ========================================================================== */
+    .hero-section {
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--canvas-bg) 100%);
+      padding: 4.5rem 0 3.5rem 0;
+      border-bottom: 1px solid var(--canvas-border);
+    }
+
+    .hero-card {
+      background: var(--navy-structure);
+      color: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 3.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(9, 18, 49, 0.15);
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(41, 221, 218, 0.15) 0%, rgba(22, 255, 187, 0.05) 50%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-pill {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--life-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      color: #FFFFFF;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: 1.35rem;
+      color: var(--life-cyan);
+      font-weight: 500;
+      margin-bottom: 1.75rem;
+      font-family: var(--font-display);
+    }
+
+    .hero-method {
+      background: rgba(255, 255, 255, 0.06);
+      border-left: 4px solid var(--life-mint);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-bottom: 2rem;
+      max-width: 680px;
+    }
+
+    .hero-method-text {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: #F0FCFF;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-pillars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hero-pillar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: #DCE3E6;
+    }
+
+    .hero-pillar-item strong {
+      color: #FFFFFF;
+    }
+
+    .dot-cyan { width: 8px; height: 8px; border-radius: 50%; background: var(--life-cyan); }
+    .dot-mint { width: 8px; height: 8px; border-radius: 50%; background: var(--life-mint); }
+    .dot-ice  { width: 8px; height: 8px; border-radius: 50%; background: var(--life-ice); }
+
+    /* ==========================================================================
+       5. ARCHITECTURE OVERVIEW
+       ========================================================================== */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .arch-card {
+      background: var(--canvas-card-bg);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      border: 2px solid var(--canvas-border);
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+
+    .arch-card.card-life {
+      border-top: 5px solid var(--life-cyan);
+    }
+
+    .arch-card.card-work {
+      border-top: 5px solid var(--work-red);
+    }
+
+    .arch-card.card-anthropic {
+      border-top: 5px solid var(--canvas-slate);
+      opacity: 0.9;
+    }
+
+    .arch-card-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .arch-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge-life { background: #E6FAF9; color: #0C7A77; }
+    .badge-work { background: #FDE8E8; color: var(--work-red); }
+    .badge-anthropic { background: #EFEFEF; color: #444; }
+
+    .arch-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .arch-scope {
+      font-size: 0.95rem;
+      color: var(--canvas-slate);
+      margin-bottom: 1rem;
+    }
+
+    .arch-list {
+      list-style: none;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .arch-list li {
+      padding: 0.4rem 0;
+      border-bottom: 1px dashed var(--canvas-border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .arch-list li strong {
+      color: var(--navy-structure);
+    }
+
+    .rule-alert-box {
+      background: #FFF9E6;
+      border: 1px solid #FFE58F;
+      border-left: 4px solid #FAAD14;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      color: #594200;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .rule-alert-box strong {
+      color: #261A00;
+    }
+
+    /* ==========================================================================
+       6. COLOR SWATCHES & SYSTEM CARDS
+       ========================================================================== */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .swatch-item {
+      background: var(--canvas-card-bg);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--canvas-border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .swatch-color {
+      height: 70px;
+      width: 100%;
+    }
+
+    .swatch-info {
+      padding: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .swatch-name {
+      font-weight: 700;
+      color: var(--navy-structure);
+      display: block;
+    }
+
+    .swatch-hex {
+      font-family: var(--font-mono);
+      color: var(--canvas-slate);
+      font-size: 0.75rem;
+    }
+
+    /* Grid Layout for Details */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .two-col-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .system-detail-card {
+      background: var(--canvas-card-bg);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      border: 1px solid var(--canvas-border);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .detail-heading {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--canvas-border);
+    }
+
+    /* ==========================================================================
+       7. BOREALIS DARK SYSTEM SPECIFIC
+       ========================================================================== */
+    .borealis-demo-card {
+      background: var(--borealis-bg);
+      color: var(--borealis-body);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      border: 1px solid var(--borealis-border);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(9, 18, 49, 0.4);
+    }
+
+    .borealis-demo-card h3 {
+      color: var(--borealis-heading);
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .borealis-glass-box {
+      background: var(--borealis-card);
+      border: 1px solid var(--borealis-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      margin-top: 1.5rem;
+    }
+
+    .borealis-tag {
+      color: var(--life-cyan);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ==========================================================================
+       8. WORK SYSTEM CARDS (Organization Brand)
+       ========================================================================== */
+    .work-section-card {
+      background: var(--work-white);
+      border: 1px solid var(--work-border);
+      border-top: 4px solid var(--work-red);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .work-mission-box {
+      background: #FDF2F2;
+      border-left: 4px solid var(--work-red);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 1.5rem 0;
+    }
+
+    .work-mission-box strong {
+      color: var(--work-red);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ==========================================================================
+       9. LOGO GALLERY SECTION
+       ========================================================================== */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .logo-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--canvas-border);
+      box-shadow: var(--shadow-subtle);
+      background: var(--canvas-card-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-preview-box {
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      position: relative;
+    }
+
+    .bg-light {
+      background-color: #FFFFFF;
+    }
+
+    .bg-dark {
+      background-color: var(--navy-structure);
+    }
+
+    .bg-charcoal {
+      background-color: var(--work-charcoal);
+    }
+
+    .logo-img {
+      max-height: 80px;
+      width: auto;
+      max-width: 85%;
+      object-fit: contain;
+    }
+
+    .logo-info {
+      padding: 1rem 1.25rem;
+      background: var(--canvas-card-bg);
+      border-top: 1px solid var(--canvas-border);
+      flex-grow: 1;
+    }
+
+    .logo-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy-structure);
+      margin-bottom: 0.25rem;
+    }
+
+    .logo-filename {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--canvas-slate);
+      word-break: break-all;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-usecase {
+      font-size: 0.825rem;
+      color: var(--canvas-ink);
+    }
+
+    /* ==========================================================================
+       10. SCENARIO ROUTING MATRIX
+       ========================================================================== */
+    .matrix-table-wrapper {
+      overflow-x: auto;
+      background: var(--canvas-card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--canvas-border);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    table.matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.925rem;
+    }
+
+    table.matrix-table th,
+    table.matrix-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--canvas-border);
+    }
+
+    table.matrix-table th {
+      background: #F0F4F6;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--navy-structure);
+    }
+
+    table.matrix-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cell-life {
+      background: rgba(41, 221, 218, 0.04);
+    }
+
+    .cell-work {
+      background: rgba(165, 12, 11, 0.03);
+    }
+
+    /* ==========================================================================
+       11. DO / DON'T & GOVERNANCE
+       ========================================================================== */
+    .dodont-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .dodont-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dodont-card {
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      border: 1px solid var(--canvas-border);
+      box-shadow: var(--shadow-subtle);
+      background: var(--canvas-card-bg);
+    }
+
+    .dodont-card.card-do {
+      border-top: 5px solid #52C41A;
+    }
+
+    .dodont-card.card-dont {
+      border-top: 5px solid #FF4D4F;
+    }
+
+    .dodont-header {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-do .dodont-header { color: #389E0D; }
+    .card-dont .dodont-header { color: #CF1322; }
+
+    .dodont-list {
+      list-style: none;
+    }
+
+    .dodont-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.95rem;
+    }
+
+    .card-do .dodont-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #52C41A;
+      font-weight: bold;
+    }
+
+    .card-dont .dodont-list li::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      color: #FF4D4F;
+      font-weight: bold;
+    }
+
+    /* ==========================================================================
+       12. FOOTER & PROVENANCE
+       ========================================================================== */
+    footer.site-footer {
+      background: var(--navy-structure);
+      color: #DCE3E6;
+      padding: 3.5rem 0 2.5rem 0;
+      font-size: 0.875rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .footer-meta strong {
+      color: #FFFFFF;
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-provenance {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-sm);
+      max-width: 500px;
+    }
+
+    /* Accessibility Focus styles */
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--life-cyan);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-title-group">
+        <span class="brand-badge">Official Ref</span>
+        <span class="site-title">Martin Brand System 视觉规范指南</span>
+      </div>
+      <nav class="nav-links" aria-label="页面导览">
+        <a href="#hero">首页</a>
+        <a href="#architecture">品牌架构</a>
+        <a href="#life-system" class="nav-tag-life">Life 体系</a>
+        <a href="#borealis-variant">Borealis 暗色</a>
+        <a href="#work-system" class="nav-tag-work">Work 体系</a>
+        <a href="#logo-gallery">Logo 画廊</a>
+        <a href="#scenario-matrix">场景路由</a>
+        <a href="#governance">治理规范</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- ==========================================================================
+         1. HERO SECTION
+         ========================================================================== -->
+    <section id="hero" class="hero-section">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-meta">
+            <span class="hero-pill">Martin Xie Brand System v1.0</span>
+            <span class="hero-pill" style="color: var(--life-mint); border-color: rgba(22,255,187,0.3);">SSOT Standard</span>
+          </div>
+          <h1 class="hero-title">Martin Brand System</h1>
+          <div class="hero-subtitle">From complexity to clarity / 化繁为简，洞见本质</div>
+
+          <div class="hero-method">
+            <div class="hero-method-text">
+              「由此及彼，由表及里，去粗存精，去伪存真」
+            </div>
+          </div>
+
+          <div class="hero-pillars">
+            <div class="hero-pillar-item">
+              <span class="dot-cyan"></span>
+              <span><strong>Calm Authority</strong> (淡定权威)</span>
+            </div>
+            <div class="hero-pillar-item">
+              <span class="dot-mint"></span>
+              <span><strong>Evidence-led Insight</strong> (证据驱动)</span>
+            </div>
+            <div class="hero-pillar-item">
+              <span class="dot-ice"></span>
+              <span><strong>Human Curiosity</strong> (人文好奇)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         2. BRAND ARCHITECTURE OVERVIEW
+         ========================================================================== -->
+    <section id="architecture">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">01. Architecture Overview</span>
+          <h2 class="section-title">品牌架构与单主品牌原则</h2>
+          <p class="section-desc">
+            Martin 品牌系统严格区分 <strong>Life (个人身份)</strong> 与 <strong>Work (岗位/机构身份)</strong>。任何产物在排版设计前，必须首先确定其归属并选择单一主品牌。
+          </p>
+        </div>
+
+        <div class="arch-grid">
+          <!-- Life Card -->
+          <div class="arch-card card-life">
+            <div class="arch-card-header">
+              <span class="arch-badge badge-life">Life System</span>
+              <h3 class="arch-title">Martin 个人品牌</h3>
+              <p class="arch-scope">适用于个人生活、学习总结、技术洞察、思考反思与创意表达。</p>
+            </div>
+            <ul class="arch-list">
+              <li><span>默认视觉风格:</span> <strong>Light Editorial (浅色编辑风)</strong></li>
+              <li><span>暗色高影响风格:</span> <strong>Martin-Borealis (极光暗色)</strong></li>
+              <li><span>主标志 (Logo):</span> <strong>Balanced Signal M / Martin</strong></li>
+              <li><span>核心色板:</span> <strong>Navy / Signal Cyan / Mint</strong></li>
+            </ul>
+          </div>
+
+          <!-- Work Card -->
+          <div class="arch-card card-work">
+            <div class="arch-card-header">
+              <span class="arch-badge badge-work">Work System</span>
+              <h3 class="arch-title">Organization Brand</h3>
+              <p class="arch-scope">适用于公司职责、organization 沟通、合规、客户信任与市场准入。</p>
+            </div>
+            <ul class="arch-list">
+              <li><span>默认视觉风格:</span> <strong>organization-approved deck / Work Editorial</strong></li>
+              <li><span>主标志 (Logo):</span> <strong>Organization Brand 双路径网关</strong></li>
+              <li><span>核心色板:</span> <strong>Deck Red / Charcoal / White</strong></li>
+              <li><span>个人署名规范:</span> <strong>仅允许 Byline，禁止并列主 Logo</strong></li>
+            </ul>
+          </div>
+
+          <!-- Anthropic Exception -->
+          <div class="arch-card card-anthropic">
+            <div class="arch-card-header">
+              <span class="arch-badge badge-anthropic">Explicit Exception</span>
+              <h3 class="arch-title">Anthropic 归档风格</h3>
+              <p class="arch-scope">仅在明确要求 Anthropic 原始风格时保留，不套用 Martin 默认样式。</p>
+            </div>
+            <ul class="arch-list">
+              <li><span>适用场景:</span> <strong>特定归档/Anthropic 专项产物</strong></li>
+              <li><span>标志资产:</span> <strong>按 Anthropic 官方要求</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="rule-alert-box">
+          <div style="font-size: 1.5rem; line-height: 1;">⚠️</div>
+          <div>
+            <strong>单件产物单主品牌原则 (Single Primary Brand Rule)</strong><br>
+            严禁在同一产物中将 Martin 个人 Logo 与 Organization Brand 机构 Logo 摆放为同等地位的联合主标 (Co-branded Lockup)。在 Work 产物中，Martin 仅能以文本 Byline (例如 <i>Author: Martin Xie</i>) 出现。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         3. LIFE BRAND SYSTEM (LIGHT EDITORIAL)
+         ========================================================================== -->
+    <section id="life-system">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">02. Life Personal Brand</span>
+          <h2 class="section-title">Life 个人品牌体系 (Light Editorial)</h2>
+          <p class="section-desc">
+            克制、清晰、证据驱动的浅色编辑风格。强调高可读性、优雅的版式与明确的知识层次。
+          </p>
+        </div>
+
+        <div class="two-col-grid">
+          <!-- Left Column: Swatches & Tokens -->
+          <div class="system-detail-card">
+            <h3 class="detail-heading">Life 色板与 Design Tokens</h3>
+            <p style="font-size: 0.9rem; color: var(--canvas-slate);">浅色编辑风以 Navy 为基线沉淀权威感，配以 Cyan 和 Mint 展现数字活力。</p>
+
+            <div class="swatch-grid">
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #091231;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.navy</span>
+                  <span class="swatch-hex">#091231</span>
+                </div>
+              </div>
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #29DDDA;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.cyan</span>
+                  <span class="swatch-hex">#29DDDA</span>
+                </div>
+              </div>
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #16FFBB;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.mint</span>
+                  <span class="swatch-hex">#16FFBB</span>
+                </div>
+              </div>
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #37A7E7;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.ice</span>
+                  <span class="swatch-hex">#37A7E7</span>
+                </div>
+              </div>
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #F5F7F6; border-bottom: 1px solid #DDD;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.canvas</span>
+                  <span class="swatch-hex">#F5F7F6</span>
+                </div>
+              </div>
+              <div class="swatch-item">
+                <div class="swatch-color" style="background: #172033;"></div>
+                <div class="swatch-info">
+                  <span class="swatch-name">life.ink</span>
+                  <span class="swatch-hex">#172033</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Typography & Content Pillars -->
+          <div class="system-detail-card">
+            <h3 class="detail-heading">字体层级与内容四大支柱</h3>
+
+            <div style="margin-bottom: 1.25rem;">
+              <strong style="display: block; font-size: 0.95rem; margin-bottom: 0.35rem;">字体阶梯 (Typography Stack):</strong>
+              <ul style="font-size: 0.9rem; color: var(--canvas-slate); padding-left: 1.2rem;">
+                <li><strong>英文 Display/标题:</strong> Spline Sans (600/700)</li>
+                <li><strong>英文 正文:</strong> Barlow (400/500)</li>
+                <li><strong>深度长文/引用:</strong> Charter / 思源宋体 (Source Han Serif SC)</li>
+                <li><strong>中文 标题/UI:</strong> 思源黑体 (Source Han Sans SC) / 微软雅黑</li>
+              </ul>
+            </div>
+
+            <div>
+              <strong style="display: block; font-size: 0.95rem; margin-bottom: 0.35rem;">内容四大支柱 (Content Pillars):</strong>
+              <ol style="font-size: 0.9rem; color: var(--canvas-slate); padding-left: 1.2rem;">
+                <li>Cybersecurity & AI through a systems lens (系统视角网络安全与 AI)</li>
+                <li>Sense-making: patterns, trade-offs, and second-order effects (模式与权衡)</li>
+                <li>Personal practice: learning, health, relationships, reflection (个人实践)</li>
+                <li>Creative experiments: tools, visual thinking, new expression (创意表达)</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         4. MARTIN-BOREALIS DARK VARIANT
+         ========================================================================== -->
+    <section id="borealis-variant">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">03. Borealis Variant</span>
+          <h2 class="section-title">Martin-Borealis 暗色表达变体</h2>
+          <p class="section-desc">
+            Life 品牌的命名暗色变体。专用于个人数字封面、Keynote 大屏演示、故事型长文或高视觉冲击力产物。非通用默认。
+          </p>
+        </div>
+
+        <div class="borealis-demo-card">
+          <span class="borealis-tag">Northern Lights Dark Editorial</span>
+          <h3>Martin-Borealis 视觉演示卡片</h3>
+          <p style="max-width: 650px; font-size: 1rem; color: #C5D2D8;">
+            采用 Deep Navy (<code>#091231</code>) 为深色基调，辅以极光青 Cyan (<code>#29DDDA</code>) 与薄荷绿 Mint (<code>#16FFBB</code>) 提亮。卡片采用半透明 Navy (<code>rgba(10,18,49,0.78)</code>) 配合 12px 圆角与微弱高光边框。
+          </p>
+
+          <div class="borealis-glass-box">
+            <div style="font-size: 0.85rem; color: var(--life-cyan); margin-bottom: 0.25rem;">BOREALIS GLASS COMPONENT</div>
+            <strong style="color: #FFF; font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">高可读性暗色玻璃风组件</strong>
+            <p style="font-size: 0.9rem; color: #E0E7EA; margin: 0;">
+              背景模糊控制在 10px 以内，严禁在密集阅读正文区域背景使用炫光。段落正文保持高对比度 <code>#E0E7EA</code>，绝不直接将段落设置为亮青或亮绿。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         5. WORK BRAND SYSTEM (Organization Brand)
+         ========================================================================== -->
+    <section id="work-system">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">04. Work Department Brand</span>
+          <h2 class="section-title">Organization Brand 工作品牌体系</h2>
+          <p class="section-desc">
+            代表机构专业能力、合规性与对外合作信任。采用严谨、权威的红黑白配色风格。
+          </p>
+        </div>
+
+        <div class="work-section-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <span class="arch-badge badge-work">Work Core Mission</span>
+              <h3 style="font-size: 1.75rem; color: var(--work-charcoal);">Organization Brand 品牌使命</h3>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--work-gray-cool); background: #EEE; padding: 0.3rem 0.6rem; border-radius: 4px;">
+              Primary Template: supplied at runtime
+            </div>
+          </div>
+
+          <div class="work-mission-box">
+            <strong>核心使命 (Mission):</strong>
+            网络安全能力与透明度、对外合作、合规、客户信任、利益相关方持续合作与网络安全市场准入。
+          </div>
+
+          <div class="two-col-grid" style="margin-top: 1.5rem;">
+            <div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Work 色板 Token</h4>
+              <div class="swatch-grid" style="grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));">
+                <div class="swatch-item">
+                  <div class="swatch-color" style="background: #B42318;"></div>
+                  <div class="swatch-info">
+                    <span class="swatch-name">Deck Red</span>
+                    <span class="swatch-hex">#B42318</span>
+                  </div>
+                </div>
+                <div class="swatch-item">
+                  <div class="swatch-color" style="background: #202124;"></div>
+                  <div class="swatch-info">
+                    <span class="swatch-name">Charcoal</span>
+                    <span class="swatch-hex">#202124</span>
+                  </div>
+                </div>
+                <div class="swatch-item">
+                  <div class="swatch-color" style="background: #525252;"></div>
+                  <div class="swatch-info">
+                    <span class="swatch-name">Cool Gray</span>
+                    <span class="swatch-hex">#525252</span>
+                  </div>
+                </div>
+                <div class="swatch-item">
+                  <div class="swatch-color" style="background: #FFFFFF; border-bottom: 1px solid #DDD;"></div>
+                  <div class="swatch-info">
+                    <span class="swatch-name">White</span>
+                    <span class="swatch-hex">#FFFFFF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 style="font-size: 1.1rem; margin-bottom: 0.75rem;">合规与背书规则 (Governance)</h4>
+              <ul style="font-size: 0.9rem; color: var(--work-gray-cool); padding-left: 1.2rem; line-height: 1.7;">
+                <li><strong>双路径网关意象:</strong> 炭灰路径代表专业网络安全能力与透明度；红色路径代表对外合作与市场准入。</li>
+                <li><strong>母品牌背书 (Parent Brand Endorsement):</strong> 必须保持在核心 Logo 保护区之外，作为独立 Endorsement 标识放置。</li>
+                <li><strong>使命短语 (Mission Line):</strong> 仅在长图或大型纵向封面上使用，小尺寸 Footer 严禁强行嵌入。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         6. LOGO ASSET GALLERY
+         ========================================================================== -->
+    <section id="logo-gallery">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">05. Official Asset Gallery</span>
+          <h2 class="section-title">Logo 官方资产画廊</h2>
+          <p class="section-desc">
+            展示 Life (Martin 个人) 与 Work (Organization Brand) 的全部生产级 SVG 资产在浅色与深色背景下的表现。
+          </p>
+        </div>
+
+        <!-- Life Logos Header -->
+        <h3 style="font-size: 1.35rem; margin-bottom: 1rem; color: var(--navy-structure); display: flex; align-items: center; gap: 0.5rem;">
+          <span class="arch-badge badge-life">Life Assets</span> Martin Personal Logos
+        </h3>
+        <div class="gallery-grid" style="margin-bottom: 3rem;">
+
+          <!-- Martin Horizontal Light -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/martin-personal/final/martin-logo-horizontal-light.svg" alt="Martin Horizontal Lockup Light" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Personal Horizontal (Light)</div>
+              <div class="logo-filename">martin-logo-horizontal-light.svg</div>
+              <div class="logo-usecase">浅色背景个人主标志组合</div>
+            </div>
+          </div>
+
+          <!-- Martin Horizontal Dark -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-dark">
+              <img src="../assets/martin-personal/final/martin-logo-horizontal-dark.svg" alt="Martin Horizontal Lockup Dark" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Personal Horizontal (Dark)</div>
+              <div class="logo-filename">martin-logo-horizontal-dark.svg</div>
+              <div class="logo-usecase">深色背景及 Borealis 页面主组合</div>
+            </div>
+          </div>
+
+          <!-- Emblem Navy -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/martin-personal/final/martin-m-emblem-navy.svg" alt="Martin M Emblem Navy" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Balanced Signal M (Navy Master)</div>
+              <div class="logo-filename">martin-m-emblem-navy.svg</div>
+              <div class="logo-usecase">浅色背景正式 Emblem 主徽标</div>
+            </div>
+          </div>
+
+          <!-- Emblem White -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-dark">
+              <img src="../assets/martin-personal/final/martin-m-emblem-white.svg" alt="Martin M Emblem White" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Balanced Signal M (Reverse White)</div>
+              <div class="logo-filename">martin-m-emblem-white.svg</div>
+              <div class="logo-usecase">深色背景反白徽标</div>
+            </div>
+          </div>
+
+          <!-- Emblem Digital -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-dark">
+              <img src="../assets/martin-personal/final/martin-m-emblem-digital.svg" alt="Martin M Emblem Digital" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Balanced Signal M (Digital Gradient)</div>
+              <div class="logo-filename">martin-m-emblem-digital.svg</div>
+              <div class="logo-usecase">数字大屏与 Borealis 极光表达徽标</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Work Logos Header -->
+        <h3 style="font-size: 1.35rem; margin-bottom: 1rem; color: var(--navy-structure); display: flex; align-items: center; gap: 0.5rem;">
+          <span class="arch-badge badge-work">Work Assets</span> Organization Brand Logos
+        </h3>
+        <div class="gallery-grid">
+
+          <!-- Work Horizontal Color -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Horizontal Color" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Horizontal (Color Master)</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">PPTX 演示主标志、页脚及标准横版</div>
+            </div>
+          </div>
+
+          <!-- Work Emblem Color -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Emblem Color" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Dual-Gateway Emblem (Color)</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">紧凑 Icon、应用图标与应用头图</div>
+            </div>
+          </div>
+
+          <!-- Work Square Color -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Square Color" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Square Lockup</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">正方形应用、卡片封面与 Avatar</div>
+            </div>
+          </div>
+
+          <!-- Work Portrait 2x3 -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Portrait 2x3 Color" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Portrait 2:3 Lockup (With Mission)</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">纵向海报、大型报告封面 (含使命短语)</div>
+            </div>
+          </div>
+
+          <!-- Work Mono Black -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-light">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Mono Black" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Emblem (Mono Black)</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">浅色背景单色/打印场景</div>
+            </div>
+          </div>
+
+          <!-- Work Mono White -->
+          <div class="logo-card">
+            <div class="logo-preview-box bg-dark">
+              <img src="../assets/organization-placeholder/organization-logo.svg" alt="Organization Brand Mono White" class="logo-img">
+            </div>
+            <div class="logo-info">
+              <div class="logo-title">Work Emblem (Mono White)</div>
+              <div class="logo-filename">organization-logo.svg · placeholder</div>
+              <div class="logo-usecase">深色背景单色反白场景</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         7. SCENARIO ROUTING MATRIX
+         ========================================================================== -->
+    <section id="scenario-matrix">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">06. Routing Decision Matrix</span>
+          <h2 class="section-title">场景路由决策矩阵</h2>
+          <p class="section-desc">
+            针对不同产物形态（文章、报告、一页纸、PPT、封面等），快速查阅 Life 与 Work 的对应规范。
+          </p>
+        </div>
+
+        <div class="matrix-table-wrapper">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">产物类型</th>
+                <th style="width: 41%;" class="cell-life">Life 个人路由</th>
+                <th style="width: 41%;" class="cell-work">Work 机构路由</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>博客 / 文章 (Blog / Essay)</strong></td>
+                <td class="cell-life">Light Editorial 默认；包含 Martin 个人署名与 Balanced Signal Logo。</td>
+                <td class="cell-work">通常不适用（若发表机构文章，需使用 Work 模板与 Organization Brand 标识）。</td>
+              </tr>
+              <tr>
+                <td><strong>洞察报告 (Insight Report)</strong></td>
+                <td class="cell-life">Light Editorial，强调高密度图表与实证分析。</td>
+                <td class="cell-work">Work Editorial 规范；顶部使用 Organization Brand 机构 Logo。</td>
+              </tr>
+              <tr>
+                <td><strong>一页纸 (One-Pager)</strong></td>
+                <td class="cell-life">Martin Light Editorial 一页纸视觉系统。</td>
+                <td class="cell-work">Work 色板与机构身份一页纸模版。</td>
+              </tr>
+              <tr>
+                <td><strong>演示文稿 (Slides / PPTX)</strong></td>
+                <td class="cell-life">Personal Light Slide 或 Martin-Borealis (若显式要求)。</td>
+                <td class="cell-work"><strong>运行时注入:</strong> 使用获得授权的机构 PPTX 模板。</td>
+              </tr>
+              <tr>
+                <td><strong>社交 / 封面 (Social / Cover)</strong></td>
+                <td class="cell-life">允许使用数字渐变或 Borealis 暗色风格。</td>
+                <td class="cell-work">使用 Work Palette (红/炭灰/白)；严禁放入 Martin 个人 Logo。</td>
+              </tr>
+              <tr>
+                <td><strong>简历 / 作品集 (Resume / Portfolio)</strong></td>
+                <td class="cell-life">Martin 个人 Identity 专属套件。</td>
+                <td class="cell-work">不适用（除非显式内部岗位履历申报）。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         8. GOVERNANCE & DO / DONT
+         ========================================================================== -->
+    <section id="governance">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">07. Brand Governance</span>
+          <h2 class="section-title">合规治理与 Do / Don't 准则</h2>
+          <p class="section-desc">
+            确保品牌一致性、可访问性（WCAG AA）与实证严肃性的红线准则。
+          </p>
+        </div>
+
+        <div class="dodont-grid">
+          <!-- DO CARD -->
+          <div class="dodont-card card-do">
+            <div class="dodont-header">
+              <span>✓ DO 推荐与标准做法</span>
+            </div>
+            <ul class="dodont-list">
+              <li><strong>坚持单主品牌:</strong> 每件产物有且仅有一个主品牌，明确归属于 Life 或 Work。</li>
+              <li><strong>保证 WCAG AA 对比度:</strong> 正文文本必须满足可读性要求；段落严禁使用 Cyan 或 Mint。</li>
+              <li><strong>证据驱动视觉:</strong> 优先使用真实的个人照片、系统截图、数据图表与架构图。</li>
+              <li><strong>按背景选择 Logo 变体:</strong> 浅色背景用 Master Navy/Color，深色背景用 White/Dark 变体。</li>
+              <li><strong>保持高自由度响应式:</strong> 确保在移动端 (375px) 与桌面端 (1440px) 均无横向溢出。</li>
+            </ul>
+          </div>
+
+          <!-- DONT CARD -->
+          <div class="dodont-card card-dont">
+            <div class="dodont-header">
+              <span>✕ DON'T 严禁与禁忌事项</span>
+            </div>
+            <ul class="dodont-list">
+              <li><strong>严禁混用色板:</strong> 绝不将 Life 的蓝绿系统默认混入 Work Organization Brand 产物。</li>
+              <li><strong>严禁作同等联合主标:</strong> 在 Work 产物中，禁止将 Martin 个人 Logo 与 Work Logo 并列放大。</li>
+              <li><strong>严禁使用已废弃 Logo:</strong> 严禁在任何地方使用已废弃的旧版 organization Publish Logo。</li>
+              <li><strong>严禁无授权 Co-branding:</strong> 严禁未经授权擅自创建联合品牌 Lockup。</li>
+              <li><strong>严禁装饰性假图表:</strong> 严禁使用赛博朋克霓虹、电路背景、3D 假仪表盘等纯装饰性科技元素。</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       FOOTER & PROVENANCE
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Martin Brand System Visual Reference</strong>
+        <p style="color: #A0ABBA; font-size: 0.85rem;">Single Source of Truth for Life & Work Identity Standards.</p>
+        <p style="color: #697386; font-size: 0.8rem; margin-top: 0.5rem;">Version 1.0 | Standardized: 2026-07-21</p>
+      </div>
+
+      <div class="footer-provenance">
+        <strong style="color: var(--life-cyan); font-size: 0.85rem;">PROVENANCE & CREDITS</strong>
+        <p style="font-size: 0.8rem; color: #DCE3E6; margin-top: 0.25rem;">
+          Designed & Built as a standalone HTML demonstrator.<br>
+          Personal assets sourced from <code>assets/martin-personal/final/</code>; Work Logo shown is a non-production placeholder.<br>
+          Brand Owner: Martin Xie.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

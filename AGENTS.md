@@ -21,6 +21,7 @@ Only include skills that Martin built or substantially shaped by hand.
 Current in-scope skills:
 
 - `audio-transcriber`
+- `brand-guidelines`
 - `codex-fluent`
 - `codex-retrospective`
 - `conference-video-deck-transcript`
@@ -84,6 +85,13 @@ If content is useful structurally but not safe to publish:
 - or remove it entirely
 
 ## Skill-Specific Notes
+
+### brand-guidelines
+
+- keep Martin's personal Life identity portable and self-contained
+- public Work examples must use the generic `Organization Brand` adapter; never publish private organization names, Logos, templates, or customer context
+- keep the HTML visual reference free of remote dependencies and validate all packaged relative asset paths
+- preserve the single-primary-brand rule and keep personal identity subordinate on organization-authorized artifacts
 
 ### audio-transcriber
 

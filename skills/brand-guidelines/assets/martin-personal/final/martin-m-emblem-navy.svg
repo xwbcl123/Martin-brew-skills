@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Martin Balanced Signal emblem</title>
+  <desc id="desc">A stable navy M crossed by a restrained transparent signal curve.</desc>
+  <defs>
+    <mask id="signal-cut">
+      <rect width="512" height="512" fill="white"/>
+      <path d="M118 314 C184 356 230 348 278 308 C324 270 360 270 404 302" fill="none" stroke="black" stroke-width="24" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <path d="M64 448V64L256 220L448 64V448H352V268L256 348L160 268V448Z" fill="#091231" mask="url(#signal-cut)"/>
+</svg>

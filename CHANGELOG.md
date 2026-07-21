@@ -4,6 +4,18 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-07-21
+
+### Added
+
+- Added `brand-guidelines`, Martin's portable Life-versus-Work brand router.
+- Added the Balanced Signal personal Logo family, the Light Editorial and Martin-Borealis modes, routing acceptance scenarios, and a responsive HTML visual reference.
+- Added a sanitized `Organization Brand` adapter so the public package does not expose private organization identities, templates, or workstation paths.
+
+### Changed
+
+- Updated the root README and agent guidance to include the new portable brand system.
+
 ## 2026-06-18
 
 ### Added

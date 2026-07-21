@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Martin horizontal personal Logo reverse</title>
+  <desc id="desc">Balanced Signal M and an artistic Martin wordmark for dark backgrounds.</desc>
+  <defs>
+    <linearGradient id="signal-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16FFBB"/>
+      <stop offset="0.52" stop-color="#29DDDA"/>
+      <stop offset="1" stop-color="#37A7E7"/>
+    </linearGradient>
+    <mask id="signal-cut">
+      <rect width="360" height="360" fill="white"/>
+      <path d="M78 221 C126 251 158 247 192 218 C226 191 253 191 284 213" fill="none" stroke="black" stroke-width="17" stroke-linecap="round"/>
+    </mask>
+  </defs>
+  <path d="M40 320V40L180 154L320 40V320H250V190L180 248L110 190V320Z" fill="url(#signal-gradient)" mask="url(#signal-cut)"/>
+  <text x="390" y="237" fill="#FFFFFF" font-family="Snell Roundhand, Segoe Script, Brush Script MT, cursive" font-size="180" font-weight="500">Martin</text>
+</svg>

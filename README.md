@@ -43,6 +43,7 @@ It does not keep:
 ## Included Skills
 
 - `audio-transcriber`
+- `brand-guidelines`
 - `codex-fluent`
 - `codex-retrospective`
 - `conference-video-deck-transcript`
@@ -71,6 +72,7 @@ It does not keep:
 Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
+│   ├── brand-guidelines/
 │   ├── codex-fluent/
 │   ├── codex-retrospective/
 │   ├── create-cover-illustration/
@@ -136,6 +138,13 @@ This repository intentionally ships with sanitized templates instead of private 
 If you reuse these skills in your own workspace, replace the templates with your private versions locally instead of committing them back here.
 
 ## Notes by Skill
+
+### `brand-guidelines`
+
+- routes artifacts between Martin's personal `Life` identity and an organization-owned `Work` identity
+- includes the Balanced Signal personal Logo family and a responsive HTML visual reference
+- keeps the public Work route sanitized through an `Organization Brand` adapter instead of publishing private organization names, Logos, templates, or local paths
+- defines `From complexity to clarity / 化繁为简，洞见本质` plus evidence-led editorial and accessibility rules
 
 ### `audio-transcriber`
 

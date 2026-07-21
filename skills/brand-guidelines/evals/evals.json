@@ -1,0 +1,29 @@
+{
+  "skill_name": "brand-guidelines",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把我这篇关于 AI 与个人学习的博客排成一份 Martin 风格的 PDF，不要暗色。",
+      "expected_output": "Routes to Life / Light Editorial, uses the M/Martin identity, blue-green accents, and personal voice; does not use Organization Brand assets.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "为公司下周的合规与客户信任汇报制作一份可编辑 PPTX。",
+      "expected_output": "Routes to Work, requests or uses authorized organization assets and an approved template, and keeps Martin only as an optional byline.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "把这篇个人年度反思做成 Martin-Borealis 风格的数字封面。",
+      "expected_output": "Routes to Life / Martin-Borealis, uses the new Balanced Signal M and artistic Martin wordmark, dark navy canvas, and restrained blue-green aurora treatment.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Apply Anthropic's official brand styling to this one-pager.",
+      "expected_output": "Uses the archived Anthropic reference because the user explicitly requested it; does not apply Martin defaults.",
+      "files": []
+    }
+  ]
+}
