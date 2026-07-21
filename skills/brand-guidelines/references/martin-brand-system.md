@@ -147,6 +147,15 @@ Mission: cybersecurity capability and transparency, external cooperation, compli
 - Verify the final HTML and PDF render independently. For a shared-edge lockup, the visible Logo edge and metadata edge should differ by no more than `2 px` on screen or `1 pt` in print.
 - At the intended output size, confirm that the emblem remains legible, the byline reads as part of the same unit, and neither element appears to float away from the other.
 
+### Fixed-canvas footer QA
+
+- For a hard one-page A4 artifact, anchor the footer to the bottom of the page content box rather than placing it immediately after the last content block. The content-box height is the physical page height minus the declared top and bottom margins; for A4 with `15 mm` margins, it is `267 mm`.
+- In WeasyPrint, do not rely on root `body` `min-height` plus flex auto margins for this contract; paged-media layout may leave the footer visibly high. Use a page wrapper with an explicit fixed-canvas height and a bottom-anchored footer, then enforce the one-page limit and overlap checks.
+- Verify the rendered PDF geometrically. For standard editorial footers, the footer text bottom should sit `15-22 mm` from the physical page bottom. More than `30 mm` of unexplained space below the footer is a QA failure.
+- Verify that the footer does not overlap the final content block and that the PDF page count remains within the document contract. Absolute positioning is allowed only for a hard single-page canvas whose content fit has been verified.
+- Browser HTML must have a narrow-screen fallback. Below the document breakpoint, release the fixed height, return the footer to normal flow, and retain a visible content-to-footer gap; never let a print-oriented footer cover reflowed mobile content.
+- Inspect PDF and HTML independently: PDF at physical-page geometry, desktop HTML at the intended canvas width, and mobile HTML at `375 px` when the HTML is delivered.
+
 ## 8. Governance
 
 - Brand system owner: Martin Xie.

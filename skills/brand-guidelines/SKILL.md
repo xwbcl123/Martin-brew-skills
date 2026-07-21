@@ -57,6 +57,12 @@ If Life versus Work is genuinely ambiguous and the choice changes Logo or author
 - Work template contract: `references/public-portability.md`
 - Kami vault profile: `references/kami-brand-profile.md`
 
+## Reference samples
+
+- `references/martin-brand-system-visual-reference.html` is the broad visual system gallery for comparing identity modes, Logo variants, tokens, and Life versus Work scenarios.
+- `references/martin-brand-system-one-pager-reference.html` is an approved implementation reference for a Life / Light Editorial one-page HTML/PDF. Read it when building a personal one-pager or reviewing Logo/metadata alignment, fixed A4 footer placement, or narrow-screen footer fallback.
+- Treat both files as reference samples, not mandatory templates. Reuse their verified principles and QA patterns while adapting composition, density, evidence, and content to the actual artifact.
+
 ## Delivery check
 
 Before handoff, confirm:
