@@ -15,6 +15,7 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 ### Changed
 
 - Updated the root README and agent guidance to include the new portable brand system.
+- Added Identity Lockup QA: two-zone headers, explicit alignment axes, optical-bound checks, and independent HTML/PDF render verification.
 
 ## 2026-06-18
 

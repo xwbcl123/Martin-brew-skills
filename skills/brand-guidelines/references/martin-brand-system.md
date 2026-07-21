@@ -138,6 +138,15 @@ Mission: cybersecurity capability and transparency, external cooperation, compli
 - Confirm fonts exist or use documented fallbacks.
 - Verify small-size Logo legibility, slide overflow, document density, and dark/light reversal before shipping.
 
+### Identity lockup alignment QA
+
+- A document header has at most two primary zones: the title/content zone and one identity lockup. Do not place the Logo, byline, and metadata as independent flex or grid siblings.
+- Group the Logo and byline/metadata in one container and choose one explicit alignment axis. Right alignment is the default for editorial one-pagers and reports; centered alignment is reserved for ceremonial compositions; left alignment is appropriate for horizontal wordmark lockups.
+- Never mix a parent container aligned to one edge with a child Logo independently aligned to another edge unless the offset is part of a documented lockup.
+- Measure the visible optical bounds of raster and SVG assets, not only their canvas or `viewBox`. Prefer tight-bound production assets; when transparent padding is intentional, record the optical inset and compensate explicitly.
+- Verify the final HTML and PDF render independently. For a shared-edge lockup, the visible Logo edge and metadata edge should differ by no more than `2 px` on screen or `1 pt` in print.
+- At the intended output size, confirm that the emblem remains legible, the byline reads as part of the same unit, and neither element appears to float away from the other.
+
 ## 8. Governance
 
 - Brand system owner: Martin Xie.

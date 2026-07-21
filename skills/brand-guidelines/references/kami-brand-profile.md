@@ -24,5 +24,6 @@ Classify `Life` versus `Work` before applying visual defaults.
 - Method: 由此及彼，由表及里，去粗存精，去伪存真.
 - Lead with a judgment or tension, then evidence, implications, and the next useful decision.
 - Prefer real screenshots, artifacts, sources, and diagrams over generic imagery.
+- For one-pagers and reports that show both a Logo and byline/metadata, group them into one identity lockup. Default to a right-aligned vertical stack; verify visible Logo bounds and shared-edge alignment in both HTML and PDF.
 - Do not invent facts, pad sparse pages, or use corporate filler.
 - Treat this profile as fallback context. The explicit prompt and editorial judgment always win.

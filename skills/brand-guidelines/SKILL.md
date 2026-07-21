@@ -64,6 +64,7 @@ Before handoff, confirm:
 - the artifact uses one primary brand;
 - Life/Work routing is visible in asset and template selection;
 - the Logo variant matches background and size;
+- every Logo/byline or Logo/metadata lockup shares one explicit alignment axis and is checked by visible optical bounds, not canvas bounds alone;
 - body text meets contrast/readability requirements;
 - images and charts are evidence-bearing rather than decorative;
 - the result contains no fabricated facts, broken asset paths, obsolete Logos, or unrequested co-branding.
