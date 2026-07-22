@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare R2 Publisher"
+  short_description: "Publish and safely govern immutable R2 artifacts"
+  default_prompt: "Publish this validated artifact to the dedicated R2 Bucket, verify the public URL, and record the immutable revision."

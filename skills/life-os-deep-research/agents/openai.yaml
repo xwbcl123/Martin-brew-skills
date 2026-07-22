@@ -1,0 +1,4 @@
+interface:
+  display_name: "Life-OS Deep Research"
+  short_description: "Route Telegram topics into verified MD and Kami PDF research"
+  default_prompt: "Use $life-os-deep-research to clarify, research, challenge, validate, and deliver a Deep Research report."

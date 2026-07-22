@@ -44,6 +44,7 @@ It does not keep:
 
 - `audio-transcriber`
 - `brand-guidelines`
+- `cloudflare-r2-publisher`
 - `codex-fluent`
 - `codex-retrospective`
 - `conference-video-deck-transcript`
@@ -53,6 +54,7 @@ It does not keep:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `life-os-deep-research`
 - `life-os-smart-clipper`
 - `martin-agent-roster`
 - `martin-outcome-package`
@@ -73,6 +75,7 @@ Martin-brew-skills/
 ├── skills/
 │   ├── audio-transcriber/
 │   ├── brand-guidelines/
+│   ├── cloudflare-r2-publisher/
 │   ├── codex-fluent/
 │   ├── codex-retrospective/
 │   ├── create-cover-illustration/
@@ -80,6 +83,7 @@ Martin-brew-skills/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
 │   ├── grill-me/
+│   ├── life-os-deep-research/
 │   ├── life-os-smart-clipper/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
@@ -146,6 +150,14 @@ If you reuse these skills in your own workspace, replace the templates with your
 - keeps the public Work route sanitized through an `Organization Brand` adapter instead of publishing private organization names, Logos, templates, or local paths
 - defines `From complexity to clarity / 化繁为简，洞见本质` plus evidence-led editorial and accessibility rules
 
+### `cloudflare-r2-publisher`
+
+- publishes validated artifact bundles to a dedicated Cloudflare R2 Bucket only after explicit authorization
+- creates immutable version URLs and verifies public byte readback before reporting success
+- maintains task-local manifests plus an append-only lifecycle registry for inventory, pinning, unpublishing, and cleanup
+- requires a dry-run plan and exact plan-ID confirmation before batch deletion
+- ships only placeholder configuration; credentials and public infrastructure remain external
+
 ### `audio-transcriber`
 
 - Gemini-based audio workflow
@@ -209,6 +221,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - enforces the rule that cover generation starts only after the journal is complete
 - includes babysitting rules for approvals, `/btw` progress checks, and the 15-minute writing window
 - verifies journal path, local image, hosted image URL, and operation log before final reporting
+
+### `life-os-deep-research`
+
+- turns a Telegram topic, URL, or research theme into a persisted, source-backed Deep Research package
+- requires a one-question-at-a-time `grill-me` brief before dispatching Gemini as lead and Codex as challenger
+- defaults to canonical Markdown plus a Kami PDF; `#html` adds local visual HTML and `#publish` explicitly enables R2 publication
+- validates source ledgers, report structure, PDF integrity, HTML safety, and publication manifests before delivery
 
 ### `life-os-smart-clipper`
 

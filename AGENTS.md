@@ -22,6 +22,7 @@ Current in-scope skills:
 
 - `audio-transcriber`
 - `brand-guidelines`
+- `cloudflare-r2-publisher`
 - `codex-fluent`
 - `codex-retrospective`
 - `conference-video-deck-transcript`
@@ -30,6 +31,7 @@ Current in-scope skills:
 - `doc-intelligent-summary`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `life-os-deep-research`
 - `martin-agent-roster`
 - `martin-outcome-package`
 - `martin-pptx-skill`
@@ -93,6 +95,12 @@ If content is useful structurally but not safe to publish:
 - keep the HTML visual reference free of remote dependencies and validate all packaged relative asset paths
 - preserve the single-primary-brand rule and keep personal identity subordinate on organization-authorized artifacts
 
+### cloudflare-r2-publisher
+
+- keep Bucket names, account IDs, public URLs, credentials, and machine-specific Hermes paths out of the public package
+- preserve explicit publish authorization, immutable version keys, public readback, append-only lifecycle records, and exact plan-ID cleanup confirmation
+- keep configuration examples placeholder-only and require credentials to remain external in a mode-`600` environment file
+
 ### audio-transcriber
 
 - keep the script and public prompts
@@ -147,6 +155,12 @@ If content is useful structurally but not safe to publish:
 - keep terminal orchestration rules generic; do not commit real journal paths, dates, screenshots, or worker transcripts
 - avoid hardcoded hosted image domains, asset folders, or local upload pipeline paths
 - preserve the strict ordering: finish reflection before assigning cover generation
+
+### life-os-deep-research
+
+- keep task/session and report-library paths repo-relative or discoverable through `LIFE_OS_ROOT`
+- preserve the grill-first gate, asymmetric Gemini/Codex roles, source ledger, and evidence-backed delivery validation
+- keep public publishing opt-in through `#publish`; do not commit real reports, Telegram IDs, cmux surface IDs, runtime logs, or infrastructure URLs
 
 ### martin-agent-roster
 
