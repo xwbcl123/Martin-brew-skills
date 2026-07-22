@@ -28,8 +28,8 @@ When the user explicitly requests Anthropic styling, read `references/anthropic-
    - `Life`: personal life, learning, reflection, insight, or creative work.
    - `Work`: company responsibilities, organizational communication, compliance, customer trust, market access, or a department-authorized artifact.
 2. Select one primary brand:
-   - Life → M/Martin.
-   - Work → Organization Brand.
+   - Life → M/Martin; sign and credit as `Martin Lanse`.
+   - Work → Organization Brand; if a personal byline is needed, use `Martin Xie`.
 3. Select the mode:
    - Life default → Light Editorial.
    - Life explicit dark/expressive/keynote/cover → Martin-Borealis.
@@ -44,6 +44,8 @@ If Life versus Work is genuinely ambiguous and the choice changes Logo or author
 
 - Personal promise: `From complexity to clarity` / `化繁为简，洞见本质`.
 - Personal method: `由此及彼，由表及里，去粗存精，去伪存真`.
+- Life author/byline/metadata uses the pen name `Martin Lanse`, not `Martin Xie`.
+- Work uses `Martin Xie` only when an authorized personal byline or author field is appropriate; do not carry the Life pen name into organization work.
 - Never make the personal Logo a co-equal mark on Work artifacts.
 - Never import the obsolete organization Publish Logo into Martin-Borealis.
 - Never import the personal blue-green system into Organization Brand by default.
@@ -71,6 +73,7 @@ Before handoff, confirm:
 - Life/Work routing is visible in asset and template selection;
 - the Logo variant matches background and size;
 - every Logo/byline or Logo/metadata lockup shares one explicit alignment axis and is checked by visible optical bounds, not canvas bounds alone;
+- the displayed byline and document author metadata match the Life/Work name route;
 - body text meets contrast/readability requirements;
 - images and charts are evidence-bearing rather than decorative;
 - the result contains no fabricated facts, broken asset paths, obsolete Logos, or unrequested co-branding.

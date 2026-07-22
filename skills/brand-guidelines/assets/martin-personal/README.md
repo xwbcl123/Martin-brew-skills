@@ -42,8 +42,9 @@ Formal artifacts use flat Deep Navy. Gradients are an expressive digital treatme
 ## Usage
 
 - Use this identity only for `Life`: personal insight, learning, reflection, and creative work.
+- Sign Life artifacts and set their author metadata as `Martin Lanse`; this is the public-facing pen name.
 - Do not place it as a co-equal Logo on Organization Brand company work.
-- On Work artifacts, credit Martin through a byline or author field when appropriate.
+- On Work artifacts, credit `Martin Xie` through a byline or author field when appropriate; do not use the Life pen name.
 - Minimum emblem size: 16 px digital / 6 mm print. At very small sizes, use the flat emblem.
 - Clear space: at least one quarter of the emblem width on every side.
 - Do not redraw the signal, add shadows, add 3D effects, rotate the mark, or combine it with corporate symbols.

@@ -1,5 +1,5 @@
 ---
-name: "Martin Xie"
+name: "Martin Lanse"
 tagline: "From complexity to clarity"
 language: cn
 default_doc_type: long-doc
@@ -18,6 +18,7 @@ Classify `Life` versus `Work` before applying visual defaults.
 
 - Life is the fallback for personal insight, learning, reflection, and creative work. Use the light editorial system unless Borealis/dark/expressive is explicit.
 - Work is selected when the request concerns company responsibilities, organizational communication, compliance, customer trust, or market access. Use authorized Organization Brand assets and an approved runtime-supplied template when slides are required.
+- For Life, fill visible bylines and author metadata with `Martin Lanse`. For Work, do not reuse the profile `name`; use `Martin Xie` only when the artifact legitimately needs a personal work byline.
 - Never show the M/Martin Logo as a co-equal Logo on Work artifacts. A byline is allowed.
 - Voice: calm authority, evidence-led insight, human curiosity.
 - Promise: From complexity to clarity · 化繁为简，洞见本质.

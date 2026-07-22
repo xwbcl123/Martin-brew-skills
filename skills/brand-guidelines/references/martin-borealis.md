@@ -2,7 +2,7 @@
 brand_name: "Martin-Borealis"
 theme_style: "Northern Lights Dark Editorial"
 version: 2.0
-author: "Martin Xie"
+author: "Martin Lanse"
 description: "The expressive dark variant of Martin's Life brand: stable navy structure, blue-green signal accents, artistic wordmark, and restrained aurora atmosphere."
 logo: "assets/martin-personal/final/martin-logo-horizontal-dark.svg"
 emblem: "assets/martin-personal/final/martin-m-emblem-digital.svg"
@@ -37,6 +37,7 @@ Martin-Borealis is the named dark expressive variant of the `Life` personal bran
 ## Identity
 
 - Use the Balanced Signal M and artistic `Martin` wordmark from `assets/martin-personal/final/`.
+- Use `Martin Lanse` for visible signatures and document author metadata in this Life variant.
 - The obsolete organization Publish Logo is prohibited.
 - Keep the Logo clear of cards, borders, and bright aurora details.
 - Prefer the horizontal dark Logo on covers and the emblem for compact navigation or avatars.
@@ -79,4 +80,4 @@ Open with a useful tension, move from observation to pattern to implication, and
 
 ## Relationship to Work
 
-Life and Work remain separate. If the artifact represents Organization Brand or company responsibilities, switch to the Work brand and its templates. A Martin byline may remain; the personal Logo does not.
+Life and Work remain separate. If the artifact represents Organization Brand or company responsibilities, switch to the Work brand and its templates. A `Martin Xie` work byline may remain; the personal Logo and `Martin Lanse` pen name do not.

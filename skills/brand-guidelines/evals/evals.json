@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "把我这篇关于 AI 与个人学习的博客排成一份 Martin 风格的 PDF，不要暗色。",
-      "expected_output": "Routes to Life / Light Editorial, uses the M/Martin identity, blue-green accents, and personal voice; does not use Organization Brand assets.",
+      "expected_output": "Routes to Life / Light Editorial, uses the M/Martin identity, blue-green accents, Martin Lanse as the visible author and document metadata, and personal voice; does not use Martin Xie or Organization Brand assets.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "为公司下周的合规与客户信任汇报制作一份可编辑 PPTX。",
-      "expected_output": "Routes to Work, requests or uses authorized organization assets and an approved template, and keeps Martin only as an optional byline.",
+      "expected_output": "Routes to Work, requests or uses authorized organization assets and an approved template, and uses Martin Xie only as an optional work byline; it does not use Martin Lanse.",
       "files": []
     },
     {

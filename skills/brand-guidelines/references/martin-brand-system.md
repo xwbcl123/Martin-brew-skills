@@ -13,6 +13,13 @@ Classify the artifact before styling:
 
 Use one primary brand per artifact. On Work outputs, Martin may appear as a byline, not as a co-equal Logo. A co-branded lockup requires an explicit brief.
 
+### Name and byline routing
+
+- `Life` artifacts use the pen name `Martin Lanse` in visible signatures, bylines, author fields, PDF metadata, social profiles, and personal-site credits. Do not publish `Martin Xie` as the Life-facing author.
+- `Work` artifacts use `Martin Xie` only when an authorized personal byline or author field is appropriate. The Life pen name does not replace the professional name in organization work.
+- The M emblem and artistic `Martin` wordmark remain name-neutral assets and may be used across Life formats without spelling out either surname.
+- Governance and ownership records may retain `Martin Xie`; governance identity is not a public-facing Life byline.
+
 ## 2. Shared foundation
 
 **Verbal personality**: Calm Authority · Evidence-led Insight · Human Curiosity.
@@ -123,7 +130,7 @@ Mission: cybersecurity capability and transparency, external cooperation, compli
 
 | Artifact | Life default | Work default |
 |---|---|---|
-| Blog/essay | Light Editorial; personal byline | Not normally applicable |
+| Blog/essay | Light Editorial; `Martin Lanse` byline | Not normally applicable |
 | Insight report | Light Editorial, dense evidence | Work Editorial, department Logo |
 | One-pager | Light Editorial | Work palette and organization identity |
 | Slides/PPTX | Personal light or Borealis if requested | Organization-approved PPTX template supplied at runtime |
@@ -146,6 +153,7 @@ Mission: cybersecurity capability and transparency, external cooperation, compli
 - Measure the visible optical bounds of raster and SVG assets, not only their canvas or `viewBox`. Prefer tight-bound production assets; when transparent padding is intentional, record the optical inset and compensate explicitly.
 - Verify the final HTML and PDF render independently. For a shared-edge lockup, the visible Logo edge and metadata edge should differ by no more than `2 px` on screen or `1 pt` in print.
 - At the intended output size, confirm that the emblem remains legible, the byline reads as part of the same unit, and neither element appears to float away from the other.
+- Verify that Life signatures and author metadata say `Martin Lanse`; Work personal credits, when present, say `Martin Xie`.
 
 ### Fixed-canvas footer QA
 
