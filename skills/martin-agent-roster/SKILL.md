@@ -10,7 +10,7 @@ Use this Skill when Martin asks to update, inspect, restart, cold-start, or main
 ## Core Model
 
 - `agent_harness`: the CLI harness that hosts the agent, such as `claude-code`, `codex`, `antigravity`, or `cursor-agent`.
-- `model_slot`: the intended model lane named by the tab/surface, such as `deepseek`, `gpt-5.5-high`, or `gemini-3.5-flash`. For Codex GPT-5.5 lanes, `high` / `xhigh` are reasoning effort values, not model names.
+- `model_slot`: the intended model lane named by the tab/surface, such as `deepseek`, `gpt-5.6-sol-high`, or `gemini-3.5-flash`. For Codex GPT-5.6 Sol/Terra lanes, `high` / `xhigh` are reasoning effort values, not model names.
 - `observed_model`: runtime state inferred from screen/status/process inspection.
 - `layout`: terminal topology, such as cmux `workspace -> pane -> surface`.
 - `service`: desired semantic agent slot attached to a layout selector.
@@ -72,9 +72,9 @@ Use `scripts/bootstrap-cmux-workspaces` to render Life/Work cmux workspace layou
   - Sonnet: `zsh -lic 'ccs reset && claude --model sonnet'`
   - Opus: `zsh -lic 'ccs reset && claude --model opus'`
 - Special aliases:
-  - `master`: `codex -m gpt-5.5 -c 'model_reasoning_effort="high"'`
+  - `master`: `codex -m gpt-5.6-sol -c 'model_reasoning_effort="high"'`
   - `planner`: `zsh -lic 'ccs reset && claude --model opus'`
-  - `reviewer`: `codex -m gpt-5.5 -c 'model_reasoning_effort="xhigh"'`
+  - `reviewer`: `codex -m gpt-5.6-sol -c 'model_reasoning_effort="xhigh"'`
   - `gpt-5.3-codex-spark`: `codex -m gpt-5.3-codex-spark -c 'model_reasoning_effort="high"'`
 
 ## Gotchas

@@ -102,7 +102,7 @@ For Codex cover work on Windows, prefer a fresh pane if the old Codex pane is st
 
 ```powershell
 wezterm cli spawn --window-id <window-id> --cwd '<Life-OS root>' powershell.exe
-wezterm cli send-text --pane-id <new-pane-id> --no-paste "codex -m gpt-5.5`r"
+wezterm cli send-text --pane-id <new-pane-id> --no-paste "codex -m gpt-5.6-sol`r"
 ```
 
 After restart, read the screen again and confirm it shows the expected agent/model and the Life-OS directory before sending the task.

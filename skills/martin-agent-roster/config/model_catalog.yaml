@@ -22,10 +22,15 @@ models:
     provider: minimax
     capacity_note: "ccs should export MiniMax-M3[1m] for 1M context accounting."
     best_for: [general, backup]
-  gpt-5.5:
+  gpt-5.6-sol:
     provider: openai
     supported_efforts: [medium, high, xhigh]
-    best_for: [general, coding, master, review, final_integration]
+    best_for: [coding, master, review, final_integration]
+  gpt-5.6-terra:
+    provider: openai
+    default_effort: medium
+    supported_efforts: [medium, high, xhigh]
+    best_for: [general, everyday_coding]
   gpt-5.3-codex-spark:
     provider: openai
     default_effort: high
@@ -50,7 +55,7 @@ preference_groups:
     fallback_models: [opus-4.8, opus-4.6]
   high_reasoning:
     primary_model: opus-4.8
-    fallback_models: [gpt-5.5, sonnet-4.6]
+    fallback_models: [gpt-5.6-sol, sonnet-4.6]
   fast_chores:
     primary_model: gemini-3.5-flash
     fallback_models: [gpt-5.3-codex-spark, composer-2.5]
@@ -58,6 +63,6 @@ preference_groups:
     primary_model: gpt-5.3-codex-spark
     fallback_models: [composer-2.5, sonnet-4.6]
   final_review:
-    primary_model: gpt-5.5
+    primary_model: gpt-5.6-sol
     primary_effort: xhigh
     fallback_models: [opus-4.8]
