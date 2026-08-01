@@ -185,9 +185,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 ### `create-cover-illustration`
 
-- creates hand-drawn 16:9 journal and writing cover illustrations
-- uses Codex image generation as the primary path
-- includes a portable Gemini fallback script for agents without built-in image generation
+- creates hand-drawn 16:9 journal memory maps and minimal editorial covers
+- uses Codex image generation first, with a frozen-prompt initial call plus at most two retries after verified network or service failures
+- routes journals through a source-grounded central scene, 5-8 event clusters, and a bottom timeline before rendering
+- includes a portable Gemini fallback with explicit layout profiles and output MIME normalization
 - keeps configuration generic through `.env` placeholders, with no private workspace paths or secrets
 
 ### `daily-knowledge-brief`
@@ -292,6 +293,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-08-01
+
+- upgrade `create-cover-illustration` with journal-memory-map and minimal-editorial profiles, source-grounded storyboarding, fixed-prompt retry and quality gates, candidate comparison, and MIME-safe Gemini fallback output
 
 ### 2026-07-11
 

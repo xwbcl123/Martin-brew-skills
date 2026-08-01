@@ -1,4 +1,4 @@
 interface:
   display_name: "Cover Illustrator"
-  short_description: "Generate journal covers and hand-drawn article illustrations."
-  default_prompt: "Generate a hand-drawn 16:9 cover illustration for this journal or article."
+  short_description: "Create journal memory maps and editorial covers."
+  default_prompt: "Use $create-cover-illustration to turn this source into a hand-drawn 16:9 journal memory map or editorial cover."
