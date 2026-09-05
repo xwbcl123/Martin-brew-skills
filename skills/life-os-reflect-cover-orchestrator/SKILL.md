@@ -1,6 +1,6 @@
 ---
 name: "life-os-reflect-cover-orchestrator"
-description: "Orchestrate Life-OS daily journal reflection and cover creation across cmux or WezTerm workers. Use when the user asks to send `/reflect YYYYMMDD` to sonnet, babysit approvals, then assign Codex or another worker to run `$create-cover-illustration` only after the journal is complete."
+description: "Orchestrate Life-OS daily journal reflection and cover creation across cmux or WezTerm workers. Use when the user asks to send `/reflect YYYYMMDD` to Sonnet, babysit approvals, accept the journal, then run an approved cover workflow only after the journal is complete."
 ---
 
 # Life-OS Reflect Cover Orchestrator
@@ -11,8 +11,8 @@ The common pattern is:
 
 1. Assign `/reflect YYYYMMDD` to a writing worker, usually `sonnet`.
 2. Babysit the writing worker without taking over too early.
-3. After the journal exists and is no longer a template, assign a cover task to a Codex worker using `create-cover-illustration`.
-4. Verify the image pipeline, hosted URL, and operation log.
+3. After the journal exists and is no longer a template, assign a cover task to an approved worker using the project's configured cover skill, usually `create-cover-illustration`.
+4. Verify the local image, any requested hosted URL, and the operation log.
 
 ## Preconditions
 
@@ -98,7 +98,7 @@ wezterm cli send-text --pane-id <id> --no-paste "/exit`r"
 wezterm cli send-text --pane-id <id> --no-paste "Set-Location -LiteralPath '<Life-OS root>'`rclaude --model sonnet`r"
 ```
 
-For Codex cover work on Windows, prefer a fresh pane if the old Codex pane is stuck in command completion or cannot cleanly exit:
+For explicitly requested Codex CLI cover work on Windows, prefer a fresh pane if the old Codex pane is stuck in command completion or cannot cleanly exit:
 
 ```powershell
 wezterm cli spawn --window-id <window-id> --cwd '<Life-OS root>' powershell.exe
@@ -111,7 +111,7 @@ If both cmux and WezTerm are present, prefer the surface the user named. Otherwi
 
 ## Assignment Order
 
-Never assign the cover task until the journal file is complete enough to summarize.
+At task startup, record the complete target-date set and requested phases in the existing task state or operation log. Do not create a parallel state database. Never assign the cover task until each target journal is complete enough to summarize.
 
 Reflect assignment packet:
 
@@ -129,17 +129,17 @@ Cover assignment packet, after journal completion:
 
 ```text
 DELEGATION TASK
-Objective: Use create-cover-illustration journal-cover workflow for <journal-path>.
-Repo/Vault: <Life-OS path>
-Scope: <journal file>, 13.10 _assets/YYYY/MM, matching 90_logs operation log, URL map produced by the image pipeline.
+Objective: Use the approved journal-cover workflow for <journal-path>.
+Repo/Vault: <Life-OS root>
+Scope: <journal file>, the configured local cover asset, and the matching operation log.
 Constraints:
-- Read AGENTS.md, nearest _meta.md, the journal note, and .agents/skills/create-cover-illustration/SKILL.md.
-- If running in Codex with built-in image_gen available, use built-in image_gen first.
-- Save the source image under _assets/YYYY/MM/YYYYMMDD_journal-cover.png.
+- Read AGENTS.md, the nearest `_meta.md`, the journal note, and the configured cover skill.
+- Use the configured cover skill and its documented primary and fallback routes; do not substitute another image service without explicit authorization.
+- Save the source image at the configured local cover path.
 - Insert Markdown image syntax immediately after the H1.
 - Keep the journal visually scannable with emoji markers. If the reflection worker did not add emoji to the cover caption and major section headings, add a minimal emoji pass during cover insertion without rewriting the prose.
-- Run the 13.10 image pipeline dry-run and then real execution.
-- Verify the note points to a hosted URL and curl HEAD returns HTTP 200 with image content-type.
+- Run the configured image pipeline in dry-run mode and then real execution when publication is requested.
+- Verify the note points to the expected local or hosted image and that the available readback reports image content when hosted.
 - Append or create the operation log; do not overwrite existing log content from another agent.
 Completion marker: END_DELEGATION_RESULT
 ```
@@ -149,7 +149,14 @@ Completion marker: END_DELEGATION_RESULT
 - Approve visible prompts that are consistent with the assigned scope.
 - Use `/btw` or a non-interruptive status message before interrupting a worker.
 - For writing-heavy reflection tasks, give `sonnet` a full 15 minutes after it clearly enters the writing/reflection phase before taking over.
+- This protects against premature takeover, not early acceptance: if the writer finishes sooner and the journal passes checks, continue to the next eligible phase immediately.
 - Before the 15-minute threshold, do not rewrite the target journal unless the worker reports a blocker, shows an explicit error, or waits at an approval/confirmation prompt.
+- After a phase passes acceptance, continue automatically through the next eligible phase and every requested date. One completed date is not batch completion.
+- For shared transcripts, preserve the date-to-source mapping and assign each date's context, journal, and image paths explicitly.
+- Resume from the first unfinished phase using current artifacts and saved evidence. Reuse accepted outputs; reconcile uncertain external writes before retrying.
+- Reuse valid in-scope authorization. A new date, content scope, destination, account, or publication scope requires resolving that authority before proceeding.
+- A blocked phase must report the date, phase, actual error, bounded recovery attempted, and smallest required user action. Continue independent dates or phases where safe.
+- A dispatch receipt or buffered command is not proof that a worker started; verify the worker state before proceeding, and do not overlap active workers.
 - If another agent has edited the same file, send a fact sync before the worker writes:
 
 ```text
@@ -169,16 +176,18 @@ sed -n '1,80p' <journal-path>
 For the cover:
 
 ```bash
-rg -n "img\\.bruxelles|journal-cover|_assets" <journal-path> <urls-json> <operation-log>
-ls -la 10-19_Me-Health/13.10_personal-journal-lib/_assets/YYYY/MM/ | rg YYYYMMDD
-curl -I -L --max-time 20 "<hosted-image-url>"
+rg -n "journal-cover|cover|https?://" <journal-path> <operation-log>
+test -f "<local-cover-path>"
+<hosted-readback-command> "<hosted-image-url>"
 ```
+
+Report one row per requested date: `Date | Journal | Cover | Hosted verification | Blocker`. Mark intentionally excluded phases as `not requested` and distinguish a verified no-op from pending work.
 
 Final report must include:
 
 - which worker received `/reflect`
 - whether the 15-minute rule was respected or why it was bypassed
-- which worker ran cover generation
+- which worker ran cover generation or why the cover phase was not run
 - journal path
 - local image paths
 - hosted URL and HTTP/content-type verification
