@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "skill-comprehension scaffold-input",
+  "type": "object",
+  "required": ["schema_version", "unit_id", "hypothesis_slug", "steps", "mapping_status"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1" },
+    "unit_id": { "type": "string", "minLength": 1 },
+    "hypothesis_slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "label": { "type": "string" },
+          "inputs": { "type": "array", "items": { "type": "string" } },
+          "outputs": { "type": "array", "items": { "type": "string" } },
+          "gates": { "type": "array", "items": { "type": "string" } },
+          "evidence_locator": { "type": "string" }
+        }
+      }
+    },
+    "composition_notes": { "type": "array", "items": { "type": "string" } },
+    "mapping_status": { "enum": ["mapped", "manual_required"] },
+    "mapping_notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

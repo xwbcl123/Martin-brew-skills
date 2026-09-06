@@ -37,6 +37,7 @@ Current in-scope skills:
 - `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
+- `skill-comprehension`
 - `prompt-crafter`
 - `visual-mail`
 
@@ -188,6 +189,13 @@ If content is useful structurally but not safe to publish:
 - treat it as an integration skill
 - do not hardcode private infrastructure paths
 - document external prerequisites through placeholders and examples
+
+### skill-comprehension
+
+- keep the package self-contained: scripts, references, and templates only
+- do not commit real learning-unit dumps, Notebook receipts, or quiz answers
+- keep path examples repo-relative; never add workstation or vault absolute paths
+- preserve Stage 7/8 as human mastery gates; wiki compile and experiment scaffold are not completion
 
 ### slide-renamer
 

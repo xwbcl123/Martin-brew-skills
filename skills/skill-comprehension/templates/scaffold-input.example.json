@@ -1,0 +1,26 @@
+{
+  "schema_version": "1",
+  "unit_id": "example-skill",
+  "hypothesis_slug": "probe-primary-path",
+  "steps": [
+    {
+      "id": "prepare",
+      "label": "Prepare input",
+      "inputs": ["brief"],
+      "outputs": ["normalized-input"],
+      "gates": [],
+      "evidence_locator": "dossier.md#workflow"
+    },
+    {
+      "id": "run",
+      "label": "Run primary path",
+      "inputs": ["normalized-input"],
+      "outputs": ["artifact"],
+      "gates": ["manifest"],
+      "evidence_locator": "dossier.md#workflow"
+    }
+  ],
+  "composition_notes": ["optional branches stay notes, never extra steps"],
+  "mapping_status": "mapped",
+  "mapping_notes": []
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Comprehension"
+  short_description: "Turn unfamiliar Skills into tested understanding"
+  default_prompt: "Use $skill-comprehension to understand and test the Target Skill in this workspace."

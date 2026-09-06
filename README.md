@@ -64,6 +64,7 @@ It does not keep:
 - `martin-pptx-skill`
 - `publish-assets`
 - `slide-renamer`
+- `skill-comprehension`
 - `prompt-crafter`
 - `llm-wiki-builder`
 - `visual-mail`
@@ -94,6 +95,7 @@ Martin-brew-skills/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
+│   ├── skill-comprehension/
 │   ├── slide-renamer/
 │   └── visual-mail/
 ├── .env.example

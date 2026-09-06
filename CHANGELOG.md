@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-09-07
+
+### Added
+
+- Added `skill-comprehension`, a self-contained Skill-learning package with a workflow-native experiment scaffold and a deterministic skill wiki compiler.
+
+### Changed
+
+- Updated the root README and agent guidance to include `skill-comprehension`.
+
 ## 2026-07-21
 
 ### Added
