@@ -35,38 +35,32 @@ Read `source_report`. Extract:
 
 See `references/brand-selection.md` for full policy.
 
-1. User-specified `brand_guideline` → use it.
-2. Else: pick from `40 Resources/brand-styles/*.brand_guideline.md` by content tone.
-   - Compliance / policy / regulation → Blue-Steel, Blue-Tone, Martin-Borealis
-   - Research / insight / trend → Aurora, Nebulae, Nova
-   - External market-facing → Martin-Gradient-1, Martin-Spectrum
-   - Formal enterprise → Huawei-Template
-3. Else: use bundled fallback styles in `assets/fallback-styles/`.
+1. Use the user's explicit brand or template.
+2. Otherwise read `brand-guidelines` and classify Life versus Work.
+3. Use only the assets and typography of that selected identity. Use a neutral bundled fallback only when no applicable brand is available.
+
+Before writing, resolve the canonical Task Session and its approved `artifact_class` / authoritative destination. Set `OUTPUT_ROOT` to that destination; working HTML, screenshots and email drafts may use the session's working directories. Do not create new `tasks/shore/` records or default new outputs to global root assets/emails.
 
 ### Step 3 — Generate visual brief HTML
 
 Apply `viz-brief` principles (see `.claude/commands/viz/viz-brief.md`):
 
 - Single-file HTML, Tailwind CDN + Lucide CDN + Inter font (Google Fonts CDN).
-- Output: `assets/viz/YYYYMMDD-<slug>.html`
+- Output: `<OUTPUT_ROOT>/assets/viz/YYYYMMDD-<slug>.html`
 - Apply selected brand colors: header gradient, card accent colors, typography.
 - Content cards by report type:
   - Progress brief: 总体判断 / 关键进展 / 支撑体系 / 下一步
   - Analysis report: 核心发现 / 影响判断 / 风险机会 / 建议
   - Meeting minutes: 决策 / 行动项 / 责任人 / 风险 / 后续
-- Font sizes: Ensure legibility in screenshots by keeping card body text and list items at `text-sm` (14px) or larger. Avoid using `text-xs` (12px) for card body text or list contents; limit `text-xs` only to minor labels, metadata, or timestamps.
-- Footer: `Martin Design ©️ CSTC & EU RSPO All Rights Reserved`
-- **Logo Selection**: Override the default logo URL in brand guidelines. Instead, randomly select one of the following two EU-RSPO logos as the visual brief header image:
-  - Default (Horizontal 3:1): `https://img.bruxelles-ai.ac.cn/feynman-pic/1783701129_eu_rspo_logo_3to1_v3.jpg`
-  - Secondary (Square 1:1): `https://img.bruxelles-ai.ac.cn/feynman-pic/1783700412_eu_rspo_logo_opt5_v3.jpg`
-
-For E2E tests, write to `tasks/shore/<task-slug>/artifacts/e2e/assets/viz/`.
+- Font sizes (Mandatory Legibility Rule): Avoid using `text-xs` entirely across all visual briefs (including badges, footers, metadata, tags, and body copy). Use `text-sm` (14px) as the absolute minimum font size to ensure crystal-clear legibility in screenshot previews and emails.
+- Footer, byline, Logo and Logo dimensions follow the selected brand/template contract. Do not rotate logos or override a user-selected identity.
+- Test intermediates belong under the current canonical session's scoped test directory.
 
 ### Step 4 — Capture screenshot
 
 Load the HTML file and capture a full-page PNG.
 
-Preferred tools (in order):
+Select a currently available capture tool that fits the active harness. These are alternatives, not claims of availability:
 
 1. Chrome DevTools MCP / CDP
 2. Playwright (`playwright screenshot --full-page`)
@@ -74,17 +68,17 @@ Preferred tools (in order):
 
 Wait for Lucide icons, web fonts, and Tailwind CDN to finish rendering before capturing.
 
-Output: `assets/img/YYYYMMDD_<slug>.png`
+Output: `<OUTPUT_ROOT>/assets/img/YYYYMMDD_<slug>.png`
 
 If screenshot is unavailable: record the blocker in `test-report.md` and continue.
 
-For E2E tests, write to `tasks/shore/<task-slug>/artifacts/e2e/assets/img/`.
+Keep test screenshots in the current session's scoped test directory.
 
 ### Step 5 — Draft email
 
-Apply Martin Email Style Guide v2 (see `references/output-contract.md` for summary).
+Apply Martin Email Style Guide v2 (see `references/output-contract.md` for summary). For executive leadership briefings, drill/compliance reports, and formal business communication, follow `references/business-email-style.md` (Three-Paragraph Executive Body Rule, Factual Reconstruction, Highlights model, and no-ai-slop baseline).
 
-- File: `emails/YYYYMMDD_<slug>-to-<audience>.md`
+- File: `<OUTPUT_ROOT>/emails/YYYYMMDD_<slug>-to-<audience>.md`
 - Flow pattern: Update/Briefing
 - Language: Chinese by default
 - No emoji
@@ -100,25 +94,29 @@ Required elements:
 
 Replace placeholders with real links if provided.
 
-For E2E tests, write to `tasks/shore/<task-slug>/artifacts/e2e/emails/`.
+Keep test email drafts in the current session's scoped test directory.
 
 ### Step 6 — Validate outputs
 
 Run cleanup checklist from `references/cleanup-checklist.md`.
 
-Confirm public-facing files contain none of: `Agent`, `worker`, `AI generated`, `Main Agent`, `prompt`, `task.md`, `handoff.md`, internal review comments, automation logs.
+Remove internal production notes, private paths, credentials and review chatter from public content. Preserve legitimate subject matter about agents, prompts or AI; keywords alone are not a deletion rule. Check links and screenshot fidelity. Draft placeholders must be resolved before sending.
+
+Creating this package does not send an email or publish its assets. Send only when the user has authorized the recipients and content; reuse that authorization without repeated confirmation. Check existing send receipts before retrying an uncertain send.
 
 ## Output Summary
 
 | File          | Location                                    |
 | ------------- | ------------------------------------------- |
-| Email `.md` | `emails/YYYYMMDD_<slug>-to-<audience>.md` |
-| Visual HTML   | `assets/viz/YYYYMMDD-<slug>.html`         |
-| Screenshot    | `assets/img/YYYYMMDD_<slug>.png`          |
+| Email `.md` | `<OUTPUT_ROOT>/emails/YYYYMMDD_<slug>-to-<audience>.md` |
+| Visual HTML   | `<OUTPUT_ROOT>/assets/viz/YYYYMMDD-<slug>.html`         |
+| Screenshot    | `<OUTPUT_ROOT>/assets/img/YYYYMMDD_<slug>.png`          |
 
 ## References
 
 - `references/brand-selection.md` — brand guideline selection policy
 - `references/output-contract.md` — email style guide and output format rules
+- `references/business-email-style.md` — executive briefing and business email style guide (three-paragraph rule, factual reconstruction, no-ai-slop)
 - `references/cleanup-checklist.md` — cleanliness and security validation checklist
 - `assets/fallback-styles/` — three bundled fallback brand styles
+

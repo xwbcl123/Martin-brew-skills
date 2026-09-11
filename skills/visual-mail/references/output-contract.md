@@ -2,6 +2,8 @@
 
 ## File Naming
 
+All patterns below are relative to the approved OUTPUT_ROOT, not the vault root. Resolve actual links before delivery.
+
 | Output | Pattern | Example |
 |---|---|---|
 | Email | `emails/YYYYMMDD_<slug>-to-<audience>.md` | `emails/20260424_csa2-progress-brief-to-cspd.md` |
@@ -57,7 +59,7 @@ Martin
 - Width: 1080px fixed container
 - Header: gradient + title + date + audience
 - Main: responsive grid of content cards (2–3 columns desktop)
-- Footer: `Martin Design ©️ CSTC All Rights Reserved`
+- Footer: selected brand/template contract; no fixed CSTC footer on Life or third-party outputs.
 - Font sizes: Keep card body text and list items at `text-sm` (14px) or larger to ensure legibility in screenshots. Avoid using `text-xs` (12px) for card body text or list content; restrict `text-xs` (12px) to minor labels, metadata, or timestamps.
 
 ## Screenshot Contract
