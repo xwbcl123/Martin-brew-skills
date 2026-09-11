@@ -43,7 +43,7 @@ launches:
   codex_53_spark:
     command: "codex -m gpt-5.3-codex-spark -c 'model_reasoning_effort=\"high\"'"
   codex_remote_control:
-    command: "codex remote-control"
+    command: "codex remote-control start"
     notes: "Starts Codex app-server with remote control enabled for mobile ChatGPT app access."
   antigravity:
     command: "agy"
