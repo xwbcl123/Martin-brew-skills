@@ -1,3 +1,5 @@
+> Historical reference: current route and acceptance rules are in `../SKILL.md`. Use this template only to resume a matching old run.
+
 # Multi-Route Assembly QC Template
 
 Use this as the Stage 4 route comparison record for Option 6. A real run should save it as `output/route_scorecard.md`.

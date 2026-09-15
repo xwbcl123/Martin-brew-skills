@@ -1,3 +1,5 @@
+> Historical implementation plan; current routes are in `../SKILL.md`.
+
 # Implementation Plan
 
 ## Objective

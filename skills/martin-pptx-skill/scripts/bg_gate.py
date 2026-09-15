@@ -31,7 +31,9 @@ def main() -> int:
             warnings.append(f"background resolution is low for PPTX: {width}x{height}")
 
     result = {
-        "status": "fail" if failures else "warn" if warnings else "pass",
+        "status": "fail" if failures else "pending_visual_review",
+        "automated_dimensions_status": "fail" if failures else "warn" if warnings else "pass",
+        "semantic_background_hygiene_verified": False,
         "mode": args.mode,
         "background": str(args.background),
         "dimensions": {"width": width, "height": height},

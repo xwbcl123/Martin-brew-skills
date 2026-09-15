@@ -1,3 +1,5 @@
+> Historical reference: current route and acceptance rules are in `../SKILL.md`. Use this template only to resume a matching old run.
+
 # Acceptance Review
 
 ## Required Deliverables

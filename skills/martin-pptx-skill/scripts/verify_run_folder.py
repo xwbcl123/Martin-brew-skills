@@ -30,9 +30,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-folder", required=True, type=Path)
     parser.add_argument("--formal-pptx", default="false")
+    parser.add_argument("--legacy", action="store_true", help="Validate the historical multi-file schema")
     args = parser.parse_args()
-    required = list(BASE_REQUIRED)
-    if args.formal_pptx.lower() in {"1", "true", "yes", "y"}:
+    required = list(BASE_REQUIRED) if args.legacy else ["manifest.json"]
+    if args.legacy and args.formal_pptx.lower() in {"1", "true", "yes", "y"}:
         required.extend(FORMAL_REQUIRED)
     missing = [p for p in required if not (args.run_folder / p).exists()]
     if missing:

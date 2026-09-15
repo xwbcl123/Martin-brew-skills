@@ -1,3 +1,5 @@
+> Historical reference: current route and acceptance rules are in `../SKILL.md`. Use this template only to resume a matching old run.
+
 # Option 6 Deck Outline Template
 
 Use this as the Stage 1 narrative contract for Option 6. A real run should save it as `output/deck-outline.md`.

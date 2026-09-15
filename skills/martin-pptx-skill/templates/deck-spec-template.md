@@ -1,3 +1,5 @@
+> Historical reference: current route and acceptance rules are in `../SKILL.md`. Use this template only to resume a matching old run.
+
 # Deck Spec Template
 
 Use this as the Stage 2 production contract for Option 6. A real run should save it as `output/deck-spec.md`.
