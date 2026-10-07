@@ -1,0 +1,14 @@
+{
+ "version": "1.2.2",
+ "note": "Page patterns. A new page picks one pattern and one register; it may use only components listed here with status stable or draft. Pattern changes bump the pattern version; pages declare the version they use.",
+ "patterns": [
+  {"id": "home", "version": 1, "register": "paper", "components": ["header-nav", "page-top-section-heading", "publication-feature-page", "button", "icon", "footer"], "rules": ["Two balanced hero columns; serif statement, quiet lede, real entry links", "Reading index is data-driven (pages.json featured order)"]},
+  {"id": "section-index", "version": 1, "register": "paper", "components": ["header-nav", "breadcrumb", "page-top-section-heading", "status-tag", "icon", "footer"], "rules": ["Flat ruled rows, not card walls"]},
+  {"id": "publication", "version": 1, "register": "paper", "components": ["publication-feature-page", "button", "status-tag", "reader-toc-scrolly"], "rules": ["Paper pane + ink pane", "Real Download PDF and Read online actions; show version and date"]},
+  {"id": "reading", "version": 1, "register": "paper", "components": ["reader-toc-scrolly", "breadcrumb"], "rules": ["Full canonical text readable without JS", "Scrolly is progressive enhancement; no scroll hijack"]},
+  {"id": "event-record", "version": 1, "register": "paper", "components": ["page-top-section-heading", "agenda-programme", "media-frame-film", "status-tag"], "rules": ["True event status in text", "Conceptual artwork is not photographic evidence"]},
+  {"id": "podcast", "version": 1, "register": "paper", "components": ["podcast-episode-player", "icon", "status-tag"], "rules": ["Native user-controlled player", "AI-generated disclosure where applicable", "Transcript and chapters where verified"]},
+  {"id": "roadmap", "version": 1, "register": "paper", "components": ["roadmap", "status-tag"], "rules": ["Distinguish confirmed record, upcoming confirmed and unconfirmed plan", "Countdowns only for confirmed targets"]},
+  {"id": "brand", "version": 1, "register": "paper", "components": ["page-top-section-heading", "button", "status-tag", "icon"], "rules": ["Content generated from tokens.json and registry/", "Downloads: guideline PDF, logo kit, tokens", "Copy-to-clipboard for every token value"]}
+ ]
+}

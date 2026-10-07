@@ -1,0 +1,17 @@
+{
+  "tag": "v1.2.2",
+  "commit": "13741fedd7d3b28b57aa9e74d99700c2f663aa9c",
+  "tag_object": "dd07a281cf22bed7287e53cdde39e3fbb8222866",
+  "files": {
+    "DESIGN.md": "6ce00b39e55a2fdf582eae7dd5ef255c95fa1f9f5492497231a9f52935acd672",
+    "llms.txt": "886e384edb098135cd4d075f7f1ff097c3f60c77ff4eb1fab5a638655471bfc9",
+    "tokens/tokens.json": "438b66da0378fc8f6f82d11ac8c2213b829acca18e7757362bb5da6364991336",
+    "tokens/tokens.css": "9a850fb1fd107cadff2a1bf7c613c885b85c3a3eefa3ce2d548922dc8dc4c64e",
+    "logo/asf-logo-paper.svg": "9ec2bd26fad877cda236295ad36069f8207c68279725c551aced14a4cd2af8ab",
+    "logo/asf-logo-ink.svg": "2643819bd3162a960ec01c5da7a22d4da3ba853d6fc6bb97a3e6aa38b24213c2",
+    "icons/asf-icons.svg": "d638d28f9ef840b200b6bbb234fed743e5f71ef3d04bf0972c6c37efbdd8c168",
+    "registry/icons.json": "f662dea9a3a3df9d4c1141023c30dfd3e2987535363a52a89899c303cac09cd5",
+    "fonts/SplineSans-Bold.woff2": "c4d10d4be28e93ba2e55f9f9cfe67173a1bb6530549037983109f636de3012d5",
+    "fonts/OFL.txt": "45b2aa0796f435bd620d864b6b44ff08855dc575524f23ffb43161e69cb5dbfc"
+  }
+}

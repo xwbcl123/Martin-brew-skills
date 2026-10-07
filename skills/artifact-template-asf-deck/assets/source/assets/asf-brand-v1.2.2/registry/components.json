@@ -1,0 +1,269 @@
+{
+ "version": "1.2.2",
+ "statuses": [
+  "stable",
+  "draft",
+  "gap",
+  "retire"
+ ],
+ "components": [
+  {
+   "id": "header-nav",
+   "name": "Header / nav",
+   "status": "stable",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "Header.astro"
+    ]
+   },
+   "legacy": "Navbar.vue",
+   "spec": "DESIGN.md §6",
+   "next": "Done in asf-website S4: ring-mark + Spline Sans lockup"
+  },
+  {
+   "id": "footer",
+   "name": "Footer",
+   "status": "stable",
+   "registers": "P→I band",
+   "implementations": {
+    "asf-website": [
+     "Footer.astro"
+    ]
+   },
+   "legacy": "Footer.vue",
+   "spec": "DESIGN.md §6",
+   "next": null
+  },
+  {
+   "id": "button",
+   "name": "Button (primary / secondary / text link)",
+   "status": "stable",
+   "registers": "P, I",
+   "implementations": {
+    "asf-website": [
+     ".button",
+     "ArrowLink.astro"
+    ]
+   },
+   "legacy": ".btn-mint (chamfer + glow)",
+   "spec": "DESIGN.md §5",
+   "next": "Old `.btn-mint` gradient and glow → retire"
+  },
+  {
+   "id": "status-tag",
+   "name": "Status tag",
+   "status": "stable",
+   "registers": "P, I",
+   "implementations": {
+    "asf-website": [
+     "Status.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": "DESIGN.md §5",
+   "next": "Map `data-state` → semantic tokens"
+  },
+  {
+   "id": "breadcrumb",
+   "name": "Breadcrumb",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "Breadcrumb.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": null,
+   "next": "Spec"
+  },
+  {
+   "id": "page-top-section-heading",
+   "name": "Page top / section heading",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "PageTop.astro",
+     "SectionHeading.astro"
+    ]
+   },
+   "legacy": "Thesis.vue",
+   "spec": "DESIGN.md §4",
+   "next": "Spec type scale per level"
+  },
+  {
+   "id": "publication-feature-page",
+   "name": "Publication feature / page",
+   "status": "stable",
+   "registers": "P + I pane",
+   "implementations": {
+    "asf-website": [
+     "PublicationFeature.astro",
+     "PublicationPage.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": "DESIGN.md §5",
+   "next": null
+  },
+  {
+   "id": "reader-toc-scrolly",
+   "name": "Reader + TOC + Scrolly",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "Reader.astro",
+     "Toc.astro",
+     "Scrolly.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": null,
+   "next": "Motion spec: `--asf-duration-step`, marker shadow"
+  },
+  {
+   "id": "podcast-episode-player",
+   "name": "Podcast episode + player",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "PodcastEpisode.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": "DESIGN.md §6",
+   "next": "Controls use `--asf-radius-control`; transcript search spec"
+  },
+  {
+   "id": "media-frame-film",
+   "name": "Media frame / film",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "MediaFrame.astro",
+     "CommunityRoadmapFilm.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": null,
+   "next": "Caption + provenance pattern"
+  },
+  {
+   "id": "roadmap",
+   "name": "Roadmap",
+   "status": "draft",
+   "registers": "P",
+   "implementations": {
+    "asf-website": [
+     "Roadmap.astro"
+    ]
+   },
+   "legacy": null,
+   "spec": null,
+   "next": "Confirmed / upcoming / unconfirmed → semantic status"
+  },
+  {
+   "id": "icon",
+   "name": "Icon",
+   "status": "stable",
+   "registers": "P, I",
+   "implementations": {
+    "asf-website": [
+     "Icon.astro"
+    ]
+   },
+   "legacy": "lucide-vue-next",
+   "spec": "DESIGN.md §icons/",
+   "next": "Done in asf-website S6: single Icon on icons/asf-icons.svg"
+  },
+  {
+   "id": "agenda-programme",
+   "name": "Agenda / programme",
+   "status": "draft",
+   "registers": "P (new) · I (old)",
+   "implementations": {
+    "asf-website": [
+     ".programme"
+    ]
+   },
+   "legacy": "Agenda.vue (timeline)",
+   "spec": null,
+   "next": "Paper: spec the 3-slot grid. Ink: nodes use ring geometry and mint/blue/amber, no glow"
+  },
+  {
+   "id": "speaker-card-grid",
+   "name": "Speaker card / grid",
+   "status": "gap",
+   "registers": "I",
+   "implementations": {},
+   "legacy": "Speakers.vue",
+   "spec": null,
+   "next": "Square portrait, mono org line"
+  },
+  {
+   "id": "highlights-stats",
+   "name": "Highlights / stats",
+   "status": "gap",
+   "registers": "I",
+   "implementations": {},
+   "legacy": "Highlights.vue",
+   "spec": null,
+   "next": "Numbers must be sourced (no invented stats)"
+  },
+  {
+   "id": "audience-venue-register-cta",
+   "name": "Audience / venue / register CTA",
+   "status": "gap",
+   "registers": "I",
+   "implementations": {},
+   "legacy": "Audience.vue, Venue.vue, Register.vue",
+   "spec": null,
+   "next": "Next event site (ASF 2027)"
+  },
+  {
+   "id": "generative-background",
+   "name": "Generative background",
+   "status": "gap",
+   "registers": "I",
+   "implementations": {},
+   "legacy": "SignalField.vue (canvas)",
+   "spec": null,
+   "next": "Motion track: must respect reduced motion, static fallback"
+  },
+  {
+   "id": "data-dashboard",
+   "name": "Data dashboard (internal briefing)",
+   "status": "gap",
+   "registers": "I",
+   "implementations": {},
+   "legacy": "Briefing.vue",
+   "spec": "DESIGN.md §3 (semantic)",
+   "next": "Replace Tailwind emerald/sky/rose/amber with `--asf-*` semantic tokens"
+  },
+  {
+   "id": "glass-panel",
+   "name": "Glass panel .glass / .glass-strong",
+   "status": "retire",
+   "registers": "—",
+   "implementations": {},
+   "legacy": "style.css",
+   "spec": "DESIGN.md §5",
+   "next": "Use ink-800 raised + rule"
+  },
+  {
+   "id": "gradient-glow-utilities",
+   "name": "Gradient text / glow utilities",
+   "status": "retire",
+   "registers": "—",
+   "implementations": {},
+   "legacy": "style.css",
+   "spec": "DESIGN.md §5",
+   "next": null
+  }
+ ]
+}

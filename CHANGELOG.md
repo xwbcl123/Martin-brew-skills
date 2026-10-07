@@ -139,3 +139,8 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 - Migrated prompt files from mixed `.txt` usage to `.md`-based workflow prompts
 - Added sanitized public demo files for MoM and voice-note brief outputs
 - Kept public `glossary.md` and reference examples sanitized instead of copying private working data
+
+## 2026-10-08 — ASF deck family
+
+- Added ASF profile routing to brand-guidelines while preserving existing identity adapters.
+- Added the Paper / Georgia Ink template family with locked brand dependency, native generators and generic samples.

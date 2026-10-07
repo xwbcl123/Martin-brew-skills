@@ -1,0 +1,7 @@
+interface:
+  display_name: "ASF Deck"
+  short_description: "Create presentations with the ASF Deck template"
+  icon_large: "./assets/preview.png"
+  default_prompt: "Use $artifact-template-asf-deck to create a presentation with this template."
+policy:
+  allow_implicit_invocation: true

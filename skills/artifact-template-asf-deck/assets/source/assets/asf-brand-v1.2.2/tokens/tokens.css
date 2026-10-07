@@ -1,0 +1,171 @@
+/*
+ * ASF Brand Tokens v1.2.2 — Field Notes (Paper) × Borealis (Ink)   · changelog: CHANGELOG.md
+ * One brand, two registers. Single source for website, decks, social, newsletter, podcast art.
+ * Sources: asf-website@b607d1c design-system/tokens.css (Field Notes 1.0);
+ *          05_styled-whitepaper/assets/design-system/tokens/*.css (Borealis, ASF-2026).
+ * Decisions: tasks/sessions/2026-10-02/asf-brand-guideline-reconciliation/context/decision_log.md
+ */
+
+@font-face { font-family: "Spline Sans"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/SplineSans-Bold.woff2") format("woff2"); }
+
+:root {
+  /* ── Ink: one dark family, two depths (D-04) ── */
+  --asf-ink-900: #0B0F19;          /* ground on Ink register; text colour on Paper. Merges FN --fg #0B1118 + Borealis --base */
+  --asf-ink-800: #16212C;          /* raised: cards, bands, footer, publication pane. = FN --deep */
+  --asf-ink-700: #263241;          /* rules and borders on ink */
+
+  /* ── Paper ── */
+  --asf-paper: #F4F1E9;            /* FN --bg */
+  --asf-surface: #FFFFFF;          /* FN --surface */
+  --asf-rule: #D7D2C7;             /* FN --border */
+  --asf-muted: #5F6971;            /* D-01: darkened from FN #667078 → 4.97:1 on paper */
+
+  /* ── Signal ramp: teal → mint, one hue family (≈170–184°) ── */
+  --asf-signal-600: #137B70;       /* teal. Text-safe on paper (4.54:1) and white (5.13:1). FN --accent */
+  --asf-signal-400: #29DDDA;       /* cyan. Charts, secondary rules on ink. Borealis --cyan */
+  --asf-signal-300: #62D7BF;       /* signal light. Focus ring + kicker on ink. FN --signal-light */
+  --asf-signal-200: #16FFBB;       /* mint. Logo + primary accent on ink ONLY (1.16:1 on paper). Borealis --mint */
+  --asf-blue: #37A7E7;             /* Borealis timeline blue. Data viz only */
+  --asf-amber: #F1C84B;            /* status: unconfirmed / warning, on ink only */
+
+  /* ── Text on ink ── */
+  --asf-on-ink: #EEF5F2;           /* FN --deep-fg. 14.7:1 on ink-800 */
+  --asf-on-ink-muted: #B9CBC0;     /* Borealis --text-secondary. 9.6:1 on ink-800 */
+  --asf-on-mint: #06120F;          /* text on mint buttons */
+  --asf-wordmark-on-ink: #F0FCFF;  /* logo wordmark only */
+
+  /* ── Typography: four roles (D-02). Spline Sans max weight is 700 (latin subset, OFL-1.1, fonts/OFL.txt) ── */
+  --asf-font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", serif;
+  --asf-font-body: "Avenir Next", Avenir, "Segoe UI", Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --asf-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --asf-font-brand: "Spline Sans", "Avenir Next", "PingFang SC", sans-serif;
+  --asf-font-condensed: "Barlow Condensed", "Arial Narrow", sans-serif;
+
+  --asf-text-meta: 11px;           /* mono metadata floor (D-05) */
+  --asf-text-xs: 12px;
+  --asf-text-caption: 13px;        /* captions, secondary UI */
+  --asf-text-sm: 14px;
+  --asf-text-ui: 15px;             /* navigation, controls, dense lists */
+  --asf-text-md: 16px;
+  --asf-text-body: 17px;           /* default reading size on the website */
+  --asf-text-lg: 18px;
+  --asf-text-xl: 20px;
+  --asf-text-2xl: 24px;
+  --asf-text-h3: 28px;
+  --asf-text-3xl: 32px;
+  --asf-text-4xl: 48px;
+  --asf-text-display: clamp(44px, 6.3vw, 94px);
+  --asf-leading-body: 1.62;
+  --asf-leading-tight: 1.05;
+  --asf-tracking-meta: 0.08em;
+  --asf-measure: 67ch;
+
+  /* ── Space, shape, motion ── */
+  --asf-space-1: 4px;
+  --asf-space-2: 8px;
+  --asf-space-3: 12px;
+  --asf-space-4: 16px;
+  --asf-space-6: 24px;
+  --asf-space-8: 32px;
+  --asf-space-12: 48px;
+  --asf-space-16: 64px;
+  --asf-space-24: 96px;
+  --asf-rule-width: 1px;
+  --asf-focus-width: 3px;
+  --asf-target-min: 44px;
+  --asf-shell: min(1220px, calc(100% - 64px));
+
+  /* ── Shape (v1.1: matches live asf-website site.css) ── */
+  --asf-radius: 0px;               /* panels, cards, bands, status tags */
+  --asf-radius-control: 2px;       /* buttons, inputs, chips, player controls */
+  --asf-radius-media: 4px;         /* photos and illustrations */
+  --asf-radius-round: 50%;         /* ring-mark, avatars, timeline nodes only */
+
+  /* Chamfer: stage + social frames ONLY (D-03). Never on website UI. */
+  --asf-chamfer-frame: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+
+  /* ── Elevation: hard offset "paper stack", no blur (v1.1). Glow/glass are retired. ── */
+  --asf-paper-edge: color-mix(in oklch, var(--asf-rule) 70%, var(--asf-paper));
+  --asf-shadow-stack-sm: 4px 4px 0 var(--asf-paper-edge);
+  --asf-shadow-stack-md: 7px 7px 0 var(--asf-paper-edge);
+  --asf-shadow-stack-lg: 17px 17px 0 var(--asf-rule);
+  --asf-shadow-stack-ink: 7px 7px 0 color-mix(in oklch, var(--asf-on-ink) 13%, var(--asf-ink-800));
+  --asf-shadow-marker: inset 3px 0 0 var(--asf-accent);   /* current item in TOC / lists */
+
+  /* ── Motion (v1.1). Track: motion. ── */
+  --asf-ease: cubic-bezier(.2, .65, .3, 1);               /* feedback: hover, press, toggle */
+  --asf-ease-reveal: cubic-bezier(.16, 1, .3, 1);         /* entrance: Ink register, scrolly steps */
+  --asf-duration: 180ms;                                   /* feedback */
+  --asf-duration-step: 320ms;                              /* scrolly highlight, accordion */
+  --asf-duration-reveal: 800ms;                            /* Ink-register entrance only */
+  --asf-move-max: 2px;                                     /* hover travel limit */
+
+  /* ── Icons (v1.1). Track: icon. Sprite: icons/asf-icons.svg ── */
+  --asf-icon-size: 24px;
+  --asf-icon-size-sm: 18px;
+  --asf-icon-stroke: 1.7;
+
+  /* ── Layout. Media queries cannot read custom properties; values are the contract. ── */
+  --asf-bp-nav: 900px;             /* navigation collapses */
+  --asf-bp-mobile: 620px;          /* content reflows to one column */
+  --asf-bp-small: 360px;           /* small-device adjustments; test down to 320px */
+  --asf-z-raised: 1;
+  --asf-z-sticky: 20;
+  --asf-z-progress: 30;
+  --asf-z-overlay: 100;
+
+  /* ── Semantic status + data viz (v1.1). Paper value / Ink value. ── */
+  --asf-positive-paper: #137B70;   --asf-positive-ink: #16FFBB;
+  --asf-info-paper: #1F6FA8;       --asf-info-ink: #37A7E7;
+  --asf-warning-paper: #8A6100;    --asf-warning-ink: #F1C84B;
+  --asf-critical-paper: #B3261E;   --asf-critical-ink: #FF8A7A;
+  /* Categorical order for charts: signal-600 → blue → amber → cyan → muted. Max 5 series. */
+}
+
+/* Register B — apply to any container that should render in Ink */
+[data-register="ink"] {
+  background: var(--asf-ink-900);
+  color: var(--asf-on-ink);
+  --asf-accent: var(--asf-signal-200);
+  --asf-kicker: var(--asf-signal-300);
+  --asf-focus: var(--asf-signal-300);
+  --asf-border: var(--asf-ink-700);
+  --asf-text-muted: var(--asf-on-ink-muted);
+  --asf-raised: var(--asf-ink-800);
+  --asf-positive: var(--asf-positive-ink);
+  --asf-info: var(--asf-info-ink);
+  --asf-warning: var(--asf-warning-ink);
+  --asf-critical: var(--asf-critical-ink);
+}
+
+/* Register A — default */
+:root, [data-register="paper"] {
+  --asf-accent: var(--asf-signal-600);
+  --asf-kicker: var(--asf-signal-600);
+  --asf-focus: var(--asf-signal-600);
+  --asf-border: var(--asf-rule);
+  --asf-text-muted: var(--asf-muted);
+  --asf-raised: var(--asf-surface);
+  --asf-positive: var(--asf-positive-paper);
+  --asf-info: var(--asf-info-paper);
+  --asf-warning: var(--asf-warning-paper);
+  --asf-critical: var(--asf-critical-paper);
+}
+
+/* Reduced motion: every ASF consumer inherits this */
+@media (prefers-reduced-motion: reduce) {
+  :root { --asf-duration: 0.01ms; --asf-duration-step: 0.01ms; --asf-duration-reveal: 0.01ms; --asf-move-max: 0px; }
+}
+
+/* Field Notes compatibility aliases — lets asf-website adopt this file without renaming (W4) */
+:root {
+  --bg: var(--asf-paper);
+  --surface: var(--asf-surface);
+  --fg: var(--asf-ink-900);
+  --muted: var(--asf-muted);
+  --border: var(--asf-rule);
+  --accent: var(--asf-signal-600);
+  --deep: var(--asf-ink-800);
+  --deep-fg: var(--asf-on-ink);
+  --signal-light: var(--asf-signal-300);
+}

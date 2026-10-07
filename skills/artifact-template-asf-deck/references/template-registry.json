@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "brand": {
+    "version": "1.2.2",
+    "commit": "13741fedd7d3b28b57aa9e74d99700c2f663aa9c"
+  },
+  "variants": {
+    "paper": {
+      "reference": "assets/reference.pptx",
+      "preview": "assets/preview.png",
+      "input": "assets/native/inputs/paper.sample.json",
+      "layout": "assets/native/layouts/paper.json"
+    },
+    "ink": {
+      "reference": "assets/reference-ink.pptx",
+      "preview": "assets/preview-ink.png",
+      "input": "assets/native/inputs/ink.sample.json",
+      "layout": "assets/native/layouts/ink.json"
+    }
+  }
+}

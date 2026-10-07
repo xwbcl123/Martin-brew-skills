@@ -1,0 +1,6 @@
+__pycache__/
+node_modules/
+assets/source/qa/evidence/
+new-build/
+.DS_Store
+~$*.pptx

@@ -1,0 +1,6 @@
+<svg width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>

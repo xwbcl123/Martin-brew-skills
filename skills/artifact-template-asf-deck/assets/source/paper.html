@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASF Paper — Template Family v1.0.0</title>
+  <style>
+    /* ===========================================================
+       Deck framework — shared fixes are maintained in both registers.
+       Edit only inside the second <style> block below (per-deck
+       styles) and inside <section class="slide"> bodies.
+
+       Contract this framework provides:
+         - 1920×1080 fixed canvas, scaled to fit the viewport
+         - Only .slide.active is visible at a time
+         - Programmatic prev/next + counter elements kept outside the scaled
+           stage but hidden by default so the host can render the UI chrome
+         - Keyboard (← → space PgUp PgDn Home End R), half-slide click, and stored
+           position survive iframe focus quirks
+         - "Save as PDF" produces a multi-page vertical PDF, one slide
+           per page, by toggling every slide visible under @media print
+       =========================================================== */
+    :root {
+      /* SLOT: theme tokens — the only top-level CSS the agent edits.
+         Add or override --bg / --fg / --accent / etc. here. */
+      --bg: var(--asf-paper);
+      --fg: var(--asf-ink-900);
+      --muted: var(--asf-text-muted);
+      --accent: var(--asf-accent);
+      --surface: var(--asf-raised);
+      --shell: var(--asf-ink-900);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--shell);
+      color: var(--fg);
+      font: 18px/1.5 -apple-system, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .deck-shell {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+    .deck-stage {
+      width: 1920px;
+      height: 1080px;
+      background: var(--bg);
+      position: relative;
+      transform-origin: top left;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    /* Visibility toggle hardened with :not(.active) + !important so cascade
+       order can't break it. The previous `.slide { display:none }` rule
+       lost the cascade whenever a per-slide variant class (e.g.
+       `.s-cold { display:grid }`) was declared after it on the same
+       element — every slide silently became visible at once. The
+       `!important` is a belt-and-suspenders against agent code that adds
+       `!important` on variant classes too. */
+    .slide:not(.active) { display: none !important; }
+    /* The active default uses :where() so it has zero specificity. Per-slide
+       variant classes like `.s-cold { display:grid }` or
+       `.s-magazine { display:block }` can override the default flex layout
+       just by declaring `display` — no need for the variant to be more
+       specific than `.slide.active`. The hide rule above still wins for
+       inactive slides. */
+    :where(.slide.active) { display: flex; flex-direction: column; }
+
+    /* Programmatic chrome — counter + prev/next live outside the scaled
+       stage so the host bridge can read/update them, but they stay hidden
+       in preview, presentation, fullscreen, and new-tab modes. */
+    .deck-counter {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: rgba(10, 14, 26, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: 0.18em;
+      z-index: 1000;
+    }
+    .deck-counter button {
+      width: 36px; height: 36px;
+      background: transparent;
+      color: #fff;
+      border: 0;
+      border-radius: 50%;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.15s;
+    }
+    .deck-counter button:hover { background: rgba(255, 255, 255, 0.12); }
+    .deck-counter button[disabled] { opacity: 0.3; cursor: default; }
+    .deck-counter .deck-count {
+      padding: 0 14px;
+      letter-spacing: 0.22em;
+    }
+    .deck-counter .deck-count .total { color: rgba(255, 255, 255, 0.5); }
+    .deck-hint {
+      position: fixed;
+      bottom: 26px;
+      right: 28px;
+      color: rgba(255, 255, 255, 0.4);
+      font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      z-index: 999;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* Print / PDF stitching — every slide stacks top-to-bottom, one per
+       page. The viewer's "Share → PDF" relies on this; do not remove. */
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      html, body {
+        width: 1920px !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+      .deck-shell {
+        position: static !important;
+        display: block !important;
+        inset: auto !important;
+      }
+      .deck-stage {
+        width: 1920px !important;
+        height: auto !important;
+        transform: none !important;
+        box-shadow: none !important;
+        position: static !important;
+      }
+      .slide, .slide:not(.active) {
+        display: flex !important;
+        flex-direction: column !important;
+        position: relative !important;
+        inset: auto !important;
+        width: 1920px !important;
+        height: 1080px !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .deck-counter, .deck-hint { display: none !important; }
+    }
+  </style>
+  <style>
+
+@import url("assets/asf-brand-v1.2.2/tokens/tokens.css");
+:root{--bg:var(--asf-paper);--fg:var(--asf-ink-900);--muted:var(--asf-text-muted);--accent:var(--asf-accent);--surface:var(--asf-raised);--shell:var(--asf-ink-900);--deck-display:Georgia,"Times New Roman",serif;--deck-body:Arial,Helvetica,sans-serif;--deck-meta:Consolas,"Courier New",monospace;--deck-margin:128px;--deck-title:88px;--deck-cover:120px;--deck-body-size:36px;--deck-small:28px;--deck-meta-size:24px;--deck-gap:48px;--deck-safe-height:604px}
+.sheet{padding:var(--deck-margin);background:var(--bg);color:var(--fg);font:var(--deck-body-size)/1.5 var(--deck-body)}
+.sheet[data-register="ink"]{--bg:var(--asf-ink-900);--fg:var(--asf-on-ink)}
+.page-top{height:100px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:var(--asf-rule-width) solid var(--asf-border);margin-bottom:48px}
+.logo{width:325px;height:60px;display:block;overflow:visible}
+.page-top .logo{margin-top:-12px}
+.meta{font:var(--deck-meta-size)/1.5 var(--deck-meta);letter-spacing:var(--asf-tracking-meta);text-transform:uppercase;color:var(--asf-text-muted)}
+.kicker{color:var(--asf-kicker);margin-bottom:24px}
+h1,h2,h3,blockquote{font-family:var(--deck-display);font-weight:400;letter-spacing:-.02em}
+h1{font-size:var(--deck-cover);line-height:1.1;max-width:1350px}
+h2{font-size:var(--deck-title);line-height:1.12;max-width:1550px}
+h3{font-size:48px;line-height:1.2}
+p{max-width:56ch}em{font-weight:400}.lede{margin-top:32px;max-width:1000px;color:var(--asf-text-muted)}
+.main{height:var(--deck-safe-height)}
+.foot{position:absolute;bottom:56px;left:128px;right:128px;display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:var(--asf-rule-width) solid var(--asf-border)}
+.foot a{color:var(--asf-text-muted);text-decoration:none;display:inline-flex;min-height:44px;align-items:center}.foot a:hover{color:var(--fg);text-decoration:underline}
+:focus-visible{outline:var(--asf-focus-width) solid var(--asf-focus);outline-offset:6px}
+.cover .main{padding-top:78px}.cover h1{max-width:1230px}.cover .cover-note{margin-top:56px;width:820px;border-top:var(--asf-rule-width) solid var(--asf-border);padding-top:28px}
+.cover .register-label{position:absolute;right:128px;top:445px;writing-mode:vertical-rl}
+.cover em{color:var(--asf-accent)}
+.divider .main{padding-top:24px}.divider h1{font-size:104px}.divider h1{max-width:1300px}.section-code{font:48px/1 var(--deck-meta);letter-spacing:-.02em;color:var(--asf-kicker);margin-bottom:32px}
+.divider .lede{margin-top:32px}.divider .route{display:flex;gap:40px;margin-top:32px;align-items:center}
+.route span+span:before{content:'—';margin-right:40px;color:var(--asf-border)}
+.arguments{display:grid;grid-template-columns:1fr 1fr 1fr;gap:64px;margin-top:68px}.argument{padding-top:24px;border-top:var(--asf-rule-width) solid var(--asf-border)}.argument h3{margin:20px 0 24px}.argument p{font-size:32px;color:var(--asf-text-muted);max-width:26ch}
+.claim h2{max-width:1350px}
+.chart-layout{display:grid;grid-template-columns:1fr 400px;gap:64px;margin-top:40px}.plot{border-top:var(--asf-rule-width) solid var(--asf-border);padding-top:20px}.legend{display:flex;gap:36px;margin:0 0 24px;font-size:28px}.legend span{display:flex;align-items:center;gap:12px}.key{width:22px;height:22px;background:var(--asf-positive)}.key.b{background:var(--asf-info)}.key.c{background:var(--asf-warning)}
+.chart-group{display:grid;grid-template-columns:210px 1fr;gap:28px;margin-bottom:18px;align-items:center}.group-name{font-size:28px}.bars{display:grid;gap:6px}.bar-line{display:grid;grid-template-columns:1fr 60px;gap:20px;align-items:center}.track{height:20px;border-left:var(--asf-rule-width) solid var(--asf-border)}.bar{height:20px;width:calc(var(--v)/var(--max)*100%);background:var(--asf-positive)}.bar.b{background:var(--asf-info)}.bar.c{background:var(--asf-warning)}.value{font:24px/1 var(--deck-meta)}.chart-note{font-size:28px;border-left:var(--asf-rule-width) solid var(--asf-border);padding-left:40px}.chart-note h3{font-size:32px;margin-bottom:24px}.chart-note p{color:var(--asf-text-muted)}.chart-note .meta{margin-top:30px}.axis{display:flex;justify-content:space-between;margin-left:238px;margin-right:80px;border-top:var(--asf-rule-width) solid var(--asf-border);padding-top:10px}
+.evidence{width:100%;border-collapse:collapse;margin-top:44px;font-size:28px;table-layout:fixed}.evidence th{text-align:left;font:24px/1.5 var(--deck-meta);letter-spacing:.08em;text-transform:uppercase;padding:22px 24px;background:var(--asf-raised);border-top:var(--asf-rule-width) solid var(--asf-border);border-bottom:var(--asf-rule-width) solid var(--asf-border)}.evidence td{padding:26px 24px;border-bottom:var(--asf-rule-width) solid var(--asf-border);vertical-align:middle}.evidence th:nth-child(1){width:24%}.evidence th:nth-child(2){width:34%}.evidence th:nth-child(3){width:22%}.evidence th:nth-child(4){width:20%}.status{font:24px/1.5 var(--deck-meta);letter-spacing:.04em;padding:6px 12px;display:inline-block;border:var(--asf-rule-width) solid currentColor;color:var(--asf-text-muted)}.status.review{color:var(--asf-info)}.status.ready{color:var(--asf-positive)}.status.open{color:var(--asf-warning)}.caption{font-size:28px;color:var(--asf-text-muted);margin-top:24px}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:68px}.step{position:relative;border-top:var(--asf-rule-width) solid var(--asf-border);padding-top:30px;min-height:250px}.step:not(:last-child):after{content:'→';position:absolute;top:20px;right:4px;color:var(--asf-text-muted)}.step h3{margin:24px 0}.step p{font-size:28px;max-width:20ch;color:var(--asf-text-muted)}.loop{border-top:var(--asf-rule-width) solid var(--asf-border);margin-top:52px;padding-top:24px;color:var(--asf-text-muted);font-size:28px}.loop strong{color:var(--fg);font-weight:400}
+.quote .main{padding:0 100px 0}.quote-mark{font:120px/.7 var(--deck-display);color:var(--asf-accent);height:96px}.quote blockquote{font-size:80px;line-height:1.15;max-width:1340px}.quote .quote-source{margin-top:48px;padding-top:28px;border-top:var(--asf-rule-width) solid var(--asf-border)}
+.story-layout{display:grid;grid-template-columns:1.55fr 1fr;gap:64px;margin-top:42px}.photo-slot{height:360px;background:var(--asf-raised);border:var(--asf-rule-width) solid var(--asf-border);padding:48px;display:flex;align-items:center;justify-content:center;text-align:center}.photo-slot span{font:28px/1.5 var(--deck-meta);max-width:26ch;color:var(--asf-text-muted)}.story-copy h3{margin:16px 0 30px}.story-copy p{color:var(--asf-text-muted);font-size:28px;max-width:30ch}.story-copy .meta{margin-top:40px}.story figcaption{margin-top:20px;font-size:24px;color:var(--asf-text-muted)}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:44px}.option{padding:32px 40px;border:var(--asf-rule-width) solid var(--asf-border)}.option h3{margin:20px 0}.option p{font-size:28px;color:var(--asf-text-muted);max-width:38ch}.option.recommended{background:var(--asf-raised)}.decision-slot{display:flex;gap:48px;align-items:baseline;margin-top:34px;padding-top:28px;border-top:var(--asf-rule-width) solid var(--asf-border)}.decision-slot p{font-size:32px}.decision-slot .meta{min-width:290px}
+.closing .main{padding-top:24px}.closing h1{font-size:104px}.closing h1{max-width:1450px}.next-line{display:flex;align-items:flex-start;gap:52px;margin-top:54px}.next-line .meta{padding-top:12px}.contact{margin-top:32px;padding-top:28px;border-top:var(--asf-rule-width) solid var(--asf-border);width:1080px}.contact p{font-size:28px;color:var(--asf-text-muted)}
+.table-page h2,.story h2{font-size:64px}.evidence{margin-top:32px}.evidence th{padding:16px 24px}.evidence td{padding:16px 24px}.table-page .caption{font-size:24px}.story-copy h3{font-size:40px}.next-line p{font-size:32px;max-width:1040px}
+.sheet[data-register="ink"] .argument p{font-size:28px}.sheet[data-register="ink"] .argument h3{margin:16px 0 20px}
+/* Ink is a register treatment, not a second identity. Geometry below is a proposal. */
+.sheet[data-register="ink"] .page-top{border-bottom:0}
+.sheet[data-register="ink"].cover .main{padding-top:94px}
+.sheet[data-register="ink"].cover h1{max-width:1450px}
+.sheet[data-register="ink"].cover .cover-note{border-top:2px solid var(--asf-accent);width:1000px}
+.sheet[data-register="ink"].divider .main{padding-left:200px;border-left:var(--asf-rule-width) solid var(--asf-border);padding-top:48px}
+.sheet[data-register="ink"] .argument{background:var(--asf-raised);border:0;padding:32px;min-height:300px}
+.sheet[data-register="ink"] .arguments{gap:32px;margin-top:64px}
+.sheet[data-register="ink"] .chart-note{background:var(--asf-raised);border:0;padding:32px}
+.sheet[data-register="ink"] .step{background:var(--asf-raised);padding:32px 24px;border-top:0;min-height:270px}
+.sheet[data-register="ink"] .step:not(:last-child):after{right:20px;top:24px}
+.sheet[data-register="ink"].quote .main{padding-left:160px;border-left:var(--asf-rule-width) solid var(--asf-border)}
+.sheet[data-register="ink"].story .photo-slot{border:var(--asf-rule-width) solid var(--asf-border)}
+.sheet[data-register="ink"].closing .next-line{padding:32px;background:var(--asf-raised);max-width:1400px}
+
+  /* Review controls sit in the lower safe margin, outside the slide canvas. */
+.deck-counter{display:flex;bottom:8px;padding:2px;border-radius:var(--asf-radius-control);background:var(--asf-ink-800);border-color:var(--asf-ink-700);color:var(--asf-on-ink);backdrop-filter:none;-webkit-backdrop-filter:none}
+.deck-counter button{width:44px;height:44px;border-radius:var(--asf-radius-control);color:var(--asf-on-ink)}
+.deck-counter button:hover:not([disabled]){background:var(--asf-ink-700);color:var(--asf-on-ink)}
+.deck-counter button:focus-visible{outline:var(--asf-focus-width) solid var(--asf-signal-300);outline-offset:2px}
+.deck-counter .deck-count .total{color:var(--asf-on-ink-muted)}
+@media (max-width:600px){.deck-counter{bottom:4px}.deck-counter .deck-count{padding:0 8px}}
+
+
+/* Visual grammar: local geometry proposals; official colors and icon paths. */
+.deck-icon{width:48px;height:48px;flex:none;display:inline-block;color:var(--asf-accent);vertical-align:middle}
+.node-icon{float:right;width:52px;height:52px;margin-top:0}
+.argument .node-icon{margin-top:0}
+.pipeline{position:relative}.sheet[data-register="ink"] .step{min-height:286px}
+.step .node-icon{float:none;display:block;margin-bottom:16px}
+.step .meta{position:absolute;right:76px;top:38px}.step h3{margin:16px 0}.step p{max-width:22ch}
+.loop{display:flex;gap:20px;align-items:center;margin-top:34px}.loop .deck-icon{width:32px;height:32px}
+.photo-slot{flex-direction:column;gap:24px}.photo-slot .deck-icon{width:64px;height:64px;color:var(--asf-text-muted)}
+.option>.deck-icon{float:right;width:40px;height:40px}
+.cover h1{position:relative;z-index:1;max-width:940px!important}.cover .cover-note{width:880px!important}
+.cover-architecture{position:absolute;right:180px;top:365px;width:510px;font-size:28px}
+.architecture-core{display:flex;align-items:center;gap:24px;border:var(--asf-rule-width) solid var(--asf-border);padding:36px;background:var(--asf-raised);justify-content:center}
+.architecture-leaves{position:relative;display:grid;grid-template-columns:repeat(3,1fr);margin-top:56px;border-top:var(--asf-rule-width) solid var(--asf-border)}
+.architecture-leaves:before{content:"";position:absolute;left:50%;top:-56px;height:56px;border-left:var(--asf-rule-width) solid var(--asf-border)}
+.architecture-leaves>div{position:relative;padding-top:32px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.architecture-leaves>div:before{content:"";position:absolute;top:0;height:16px;border-left:var(--asf-rule-width) solid var(--asf-border)}
+.cover-architecture>p{margin-top:40px;text-align:center}
+.icon-library{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:40px;border-top:var(--asf-rule-width) solid var(--asf-border)}
+.icon-sample{display:flex;align-items:center;gap:20px;padding:26px 16px;border-bottom:var(--asf-rule-width) solid var(--asf-border)}
+.icon-sample span{font-size:26px;display:block}.icon-sample code{display:block;font:24px/1.5 var(--deck-meta);color:var(--asf-text-muted);margin-top:6px}.icon-sample .deck-icon{width:40px;height:40px}
+.appendix h2{font-size:72px}.library-guidance{font-size:26px;color:var(--asf-text-muted);margin-top:28px;max-width:none}.appendix .main>p.meta{font-size:24px;margin-top:16px;max-width:100%}
+.architecture-examples{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:40px}.architecture-examples article{border-top:var(--asf-rule-width) solid var(--asf-border);padding-top:24px}.architecture-examples h3{font-size:40px}.architecture-examples p{font-size:26px;color:var(--asf-text-muted);margin:12px 0 28px}
+.mini-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}.mini-node{position:relative;background:var(--asf-raised);padding:24px 8px;display:flex;flex-direction:column;align-items:center;gap:16px;font-size:26px}.mini-node:not(:last-child):after{content:'→';position:absolute;right:-23px;top:55px;color:var(--asf-text-muted)}
+.mini-return{display:flex;gap:20px;align-items:center;border-bottom:var(--asf-rule-width) solid var(--asf-border);padding:24px 0;font-size:26px}.mini-return .deck-icon{width:32px;height:32px}
+.layer-input{display:flex;gap:20px}.layer-input span{flex:1;text-align:center;border:var(--asf-rule-width) solid var(--asf-border);padding:18px;font-size:26px}.layer-core,.layer-output{position:relative;display:flex;gap:24px;align-items:center;justify-content:center;margin-top:28px;padding:24px;font-size:28px}.layer-core{background:var(--asf-raised)}.layer-output{border:var(--asf-rule-width) solid var(--asf-border)}.layer-core:before,.layer-output:before{content:'';height:28px;position:absolute;top:-28px;left:50%;border-left:var(--asf-rule-width) solid var(--asf-border)}
+/* Three explicit inputs feed the judgment layer; geometry is editable CSS. */
+.layer-input{position:relative}
+.layer-input:after{content:"";position:absolute;left:16%;right:16%;bottom:-14px;border-top:var(--asf-rule-width) solid var(--asf-border)}
+.layer-input span{position:relative}
+.layer-input span:after{content:"";position:absolute;left:50%;bottom:-14px;height:14px;border-left:var(--asf-rule-width) solid var(--asf-border)}
+.layer-core:before{height:14px;top:-14px}
+.deck-stage{box-shadow:none}
+
+/* Low-contrast surfaces: paired local proposal; colors only, no geometry changes. */
+.sheet[data-register="paper"] .architecture-core,
+.sheet[data-register="paper"] .evidence th,
+.sheet[data-register="paper"] .photo-slot,
+.sheet[data-register="paper"] .option.recommended,
+.sheet[data-register="paper"] .mini-node,
+.sheet[data-register="paper"] .layer-core{background:oklch(0.93100730 0.01191615 133.380526);}
+.sheet[data-register="paper"] .architecture-core,
+.sheet[data-register="paper"] .photo-slot,
+.sheet[data-register="paper"] .option,
+.sheet[data-register="paper"] .evidence th,
+.sheet[data-register="paper"] .mini-node,
+.sheet[data-register="paper"] .layer-core,
+.sheet[data-register="paper"] .layer-input span,
+.sheet[data-register="paper"] .layer-output,
+.sheet[data-register="paper"] .architecture-leaves,
+.sheet[data-register="paper"] .architecture-leaves:before,
+.sheet[data-register="paper"] .architecture-leaves>div:before,
+.sheet[data-register="paper"] .mini-return,
+.sheet[data-register="paper"] .layer-core:before,
+.sheet[data-register="paper"] .layer-output:before{border-color:color-mix(in oklch,var(--asf-accent) 18%,var(--bg) 82%);}
+
+/* User-approved hierarchy: left icon rail, number directly above live title. */
+.sheet .argument,.sheet .step{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:20px;align-content:start}
+.sheet .argument>.node-icon,.sheet .step>.node-icon{float:none;grid-column:1;grid-row:2;width:44px;height:44px;margin:8px 0 0}
+.sheet .argument>.meta,.sheet .step>.meta{position:static;grid-column:2;grid-row:1;justify-self:start}
+.sheet .argument>h3,.sheet .step>h3{grid-column:2;grid-row:2;margin:8px 0 16px}
+.sheet .argument>p,.sheet .step>p{grid-column:2;grid-row:3}
+.sheet[data-register="paper"] .step{padding-right:24px}
+.sheet .step:not(:last-child):after{top:74px;right:4px}
+.sheet[data-register="ink"] .step:not(:last-child):after{top:76px;right:8px}
+</style>
+</head>
+<body>
+<svg id="asf-icon-defs" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs>
+<symbol id="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+<symbol id="archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4zM3 4h18v4H3zM9 12h6"/></symbol>
+<symbol id="record" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"/></symbol>
+<symbol id="concept" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13V9a5 5 0 0 1 10 0v5M14 14a5 5 0 0 0 5 5h2"/><path stroke-dasharray="2 3" d="M4 16v4h8"/></symbol>
+<symbol id="publication" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/></symbol>
+<symbol id="reserved" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v16h5M15 4h5v16h-5M9 12h6"/></symbol>
+<symbol id="development" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h11M4 18h7"/><path stroke-dasharray="1 3" d="M15 18h5"/></symbol>
+<symbol id="download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/></symbol>
+<symbol id="audio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4m4-7v10m4-13v16m4-12v8m4-5v2"/></symbol>
+<symbol id="chapters" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 12h10M5 18h14M18 11v2"/></symbol>
+<symbol id="read" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h6a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H5zM19 5h-3a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h3z"/></symbol>
+<symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm9 2-4.5-4.5"/></symbol>
+<symbol id="back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 1 0 2.2-5.1M5 4v4h4"/></symbol>
+<symbol id="forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12a7 7 0 1 1-2.2-5.1M19 4v4h-4"/></symbol>
+<symbol id="video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h11v12H4zM15 10l5-3v10l-5-3"/></symbol>
+</defs></svg>
+  <div class="deck-shell">
+    <div class="deck-stage" id="deck-stage">
+      <section class="slide active sheet cover" data-register="paper" data-slide-id="1" data-screen-label="01 Cover" data-od-id="paper-01" data-notes="Open with the shared purpose. Replace the subtitle with the actual audience and session context."><header class="page-top"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Cover</span></header><div class="main"><div class="kicker meta">A shared starting point</div><h1 data-od-id="title-1">One forum.<br><em>Shared evidence.</em></h1><p class="cover-note">Turn a useful conversation into<br>a record others can build on.</p><aside class="cover-architecture" aria-label="Sample shared-evidence architecture"><div class="architecture-core" data-od-id="paper-cover-shared-record"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#record"/></svg><span>Shared record</span></div><div class="architecture-leaves"><div><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#concept"/></svg><span>Question</span></div><div><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><span>Review</span></div><div><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><span>Publication</span></div></div><p class="meta">Questions converge · Evidence shared</p></aside><span class="register-label meta">Template exploration · 2026</span></div><footer class="foot meta"><a href="index.html" data-od-id="return-1" aria-label="Return to design comparison">ASF · Template exploration</a><span>№01 / 10</span></footer></section>
+<section class="slide sheet divider" data-register="paper" data-slide-id="2" data-screen-label="02 Section divider" data-od-id="paper-02" data-notes="Introduce the shift from conversation to material others can inspect and reuse."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Section divider</span></header><div class="main"><div class="section-code">01 /</div><h1 data-od-id="title-2">From discussion<br>to <em>evidence</em></h1><p class="lede">A common question. A visible record. A clearer next step.</p><div class="route meta"><span>Frame</span><span>Test</span><span>Share</span></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-2" aria-label="Return to design comparison">ASF · Template exploration</a><span>№02 / 10</span></footer></section>
+<section class="slide sheet claim" data-register="paper" data-slide-id="3" data-screen-label="03 Governing claim" data-od-id="paper-03" data-notes="State the governing claim first, then connect each argument to audience needs. Sample editorial copy, not an ASF policy."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Governing claim</span></header><div class="main"><div class="kicker meta">The governing claim</div><h2 data-od-id="title-3">A forum becomes useful<br>when its evidence can travel.</h2><div class="arguments"><article class="argument" data-od-id="argument-question"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#concept"/></svg><span class="meta">01 / Relevance</span><h3>Start with a<br>shared question.</h3><p>A precise question gives different perspectives a common task.</p></article><article class="argument" data-od-id="argument-reasoning"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><span class="meta">02 / Scrutiny</span><h3>Make the<br>reasoning visible.</h3><p>Sources and limitations let others examine the claim.</p></article><article class="argument" data-od-id="argument-record"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#archive"/></svg><span class="meta">03 / Continuity</span><h3>Leave a<br>reusable record.</h3><p>A clear record helps the next conversation start further ahead.</p></article></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-3" aria-label="Return to design comparison">ASF · Template exploration</a><span>№03 / 10</span></footer></section>
+<section class="slide sheet comparison" data-register="paper" data-slide-id="4" data-screen-label="04 Comparison chart" data-od-id="paper-04" data-notes="All values are illustrative layout data. Replace the three series, categories, units and source together before use."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Comparison chart</span></header><div class="main"><div class="kicker meta">Illustrative data · not ASF metrics</div><h2 data-od-id="title-4">Make the difference visible.</h2><div class="chart-layout"><div class="plot" style="--max:100" role="img" aria-label="Illustrative scores, scale zero to one hundred. Working notes: 40,55,35. Shared record: 65,70,60. Reviewed brief: 85,80,90."><div class="legend"><span><i class="key"></i>Working notes</span><span><i class="key b"></i>Shared record</span><span><i class="key c"></i>Reviewed brief</span></div><div class="chart-group"><span class="group-name">Traceability</span><div class="bars"><div class="bar-line"><div class="track"><div class="bar " style="--v:40"></div></div><span class="value">40</span></div><div class="bar-line"><div class="track"><div class="bar b" style="--v:65"></div></div><span class="value">65</span></div><div class="bar-line"><div class="track"><div class="bar c" style="--v:85"></div></div><span class="value">85</span></div></div></div><div class="chart-group"><span class="group-name">Comparability</span><div class="bars"><div class="bar-line"><div class="track"><div class="bar " style="--v:55"></div></div><span class="value">55</span></div><div class="bar-line"><div class="track"><div class="bar b" style="--v:70"></div></div><span class="value">70</span></div><div class="bar-line"><div class="track"><div class="bar c" style="--v:80"></div></div><span class="value">80</span></div></div></div><div class="chart-group"><span class="group-name">Reusability</span><div class="bars"><div class="bar-line"><div class="track"><div class="bar " style="--v:35"></div></div><span class="value">35</span></div><div class="bar-line"><div class="track"><div class="bar b" style="--v:60"></div></div><span class="value">60</span></div><div class="bar-line"><div class="track"><div class="bar c" style="--v:90"></div></div><span class="value">90</span></div></div></div><div class="axis meta"><span>0</span><span>50</span><span>100</span></div></div><aside class="chart-note"><h3>Compare the record,<br>not the rhetoric.</h3><p>Three series.<br>One common scale.</p><p class="meta">Illustrative only.<br>Not ASF metrics.<br>Sample score / 100.</p></aside></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-4" aria-label="Return to design comparison">ASF · Template exploration</a><span>№04 / 10</span></footer></section>
+<section class="slide sheet table-page" data-register="paper" data-slide-id="5" data-screen-label="05 Evidence table" data-od-id="paper-05" data-notes="Sample workflow only. Replace evidence and status with verified project records; keep each status written in text."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Evidence table</span></header><div class="main"><div class="kicker meta">A record that can be inspected</div><h2 data-od-id="title-5">Evidence needs a visible state.</h2><table class="evidence"><thead><tr><th>Record</th><th>Evidence to retain</th><th>Checkpoint</th><th>Status</th></tr></thead><tbody><tr><td>Question brief</td><td>A bounded question</td><td>Scope review</td><td><span class="status open">Open</span></td></tr><tr><td>Source log</td><td>Links and limitations</td><td>Source check</td><td><span class="status review">In review</span></td></tr><tr><td>Review memo</td><td>Comments and responses</td><td>Editorial check</td><td><span class="status ready">Ready</span></td></tr><tr><td>Publication draft</td><td>Summary and references</td><td>Release check</td><td><span class="status ">Pending</span></td></tr></tbody></table><p class="caption">Sample workflow · Status labels illustrate a review process, not current ASF activity.</p></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-5" aria-label="Return to design comparison">ASF · Template exploration</a><span>№05 / 10</span></footer></section>
+<section class="slide sheet system" data-register="paper" data-slide-id="6" data-screen-label="06 Systems diagram" data-od-id="paper-06" data-notes="Explain the four stages, then the review loop. Replace stage descriptions with the actual agreed process."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Systems diagram</span></header><div class="main"><div class="kicker meta">A sample evidence workflow</div><h2 data-od-id="title-6">Give every discussion a path.</h2><div class="pipeline"><article class="step" data-od-id="step-1"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#concept"/></svg><span class="meta">01</span><h3>Question</h3><p>Define what needs an answer.</p></article><article class="step" data-od-id="step-2"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#record"/></svg><span class="meta">02</span><h3>Evidence</h3><p>Gather sources and limitations.</p></article><article class="step" data-od-id="step-3"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><span class="meta">03</span><h3>Review</h3><p>Challenge the claim and reasoning.</p></article><article class="step" data-od-id="step-4"><svg class="deck-icon node-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><span class="meta">04</span><h3>Publication</h3><p>Share a record others can inspect.</p></article></div><p class="loop"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#back"/></svg><strong>Review loop ↶</strong> &nbsp; If evidence is insufficient, refine the question before publication.</p></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-6" aria-label="Return to design comparison">ASF · Template exploration</a><span>№06 / 10</span></footer></section>
+<section class="slide sheet quote" data-register="paper" data-slide-id="7" data-screen-label="07 Pull quote" data-od-id="paper-07" data-notes="Original unattributed sample copy. Do not attribute it to a real speaker. Pause after the first sentence."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Pull quote</span></header><div class="main"><div class="quote-mark" aria-hidden="true">“</div><blockquote>The value of a forum is not<br>that everyone agrees.<br>It is that the next question<br>starts from better evidence.</blockquote><div class="quote-source meta">Original sample copy · Unattributed</div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-7" aria-label="Return to design comparison">ASF · Template exploration</a><span>№07 / 10</span></footer></section>
+<section class="slide sheet story" data-register="paper" data-slide-id="8" data-screen-label="08 Event story" data-od-id="paper-08" data-notes="Replace the placeholder only with an approved photograph; record creator, date, permission and descriptive alt text."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Event story</span></header><div class="main"><div class="kicker meta">From the room to the record</div><h2 data-od-id="title-8">Show the moment. Explain the outcome.</h2><div class="story-layout"><figure><div class="photo-slot" role="img" aria-label="Deliberate placeholder for an approved event photograph"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#reserved"/></svg><span>Replace with approved event photograph</span></div><figcaption>Caption slot · Event / date / photographer / permission</figcaption></figure><div class="story-copy"><h3>A photograph is context.<br>The story is the outcome.</h3><p>Pair the approved image with a short account of the question explored and the evidence to carry forward.</p><p class="meta">Editorial guidance · No event claimed</p></div></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-8" aria-label="Return to design comparison">ASF · Template exploration</a><span>№08 / 10</span></footer></section>
+<section class="slide sheet decision" data-register="paper" data-slide-id="9" data-screen-label="09 Discussion & decision" data-od-id="paper-09" data-notes="Frame the trade-off without implying a decision has already been made. Replace the recommendation and record the actual outcome."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Discussion & decision</span></header><div class="main"><div class="kicker meta">Discussion / decision</div><h2 data-od-id="title-9">What should leave the room?</h2><div class="options"><article class="option" data-od-id="option-a"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#chapters"/></svg><span class="meta">Option A / Capture</span><h3>A summary of the conversation.</h3><p>Fast to circulate. Preserves themes, but may leave claims difficult to examine.</p></article><article class="option recommended" data-od-id="option-b"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><span class="meta">Option B / Substantiate</span><h3>A short, reviewed evidence brief.</h3><p>Requires a review step. Makes sources, limitations and open questions explicit.</p></article></div><div class="decision-slot"><span class="meta">Recommended action<br>Sample slot</span><p>Agree one question and commission a reviewed brief.<br><span class="caption">Decision owner / review date: to be confirmed.</span></p></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-9" aria-label="Return to design comparison">ASF · Template exploration</a><span>№09 / 10</span></footer></section>
+<section class="slide sheet closing" data-register="paper" data-slide-id="10" data-screen-label="10 Closing" data-od-id="paper-10" data-notes="Confirm the next step. Replace the contact placeholder with an approved address before presenting externally."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">paper / Closing</span></header><div class="main"><div class="kicker meta">The next step</div><h1 data-od-id="title-10">Bring a question.<br><em>Build a shared record.</em></h1><div class="next-line"><span class="meta">Proposed action</span><p>Choose the question and agree a review checkpoint.</p></div><div class="contact"><p>Contact: [approved ASF contact]</p><span class="meta">Replace before external use</span></div></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" data-od-id="return-10" aria-label="Return to design comparison">ASF · Template exploration</a><span>№10 / 10</span></footer></section>
+<section class="slide sheet appendix" data-register="paper" data-slide-id="11" data-screen-label="Appendix 1" data-od-id="paper-11" data-notes="Choose icons by meaning. Supplement with Lucide at 1.7 stroke. No shield, lock or brain icons."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">Paper / Appendix</span></header><div class="main"><div class="kicker meta">Appendix A / Icon library</div><h2>Small icons. Clear meaning.</h2><div class="icon-library"><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#concept"/></svg><div><span>Concept / Question</span><code>concept</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#record"/></svg><div><span>Activity / Record</span><code>record</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><div><span>Document / Publication</span><code>publication</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#archive"/></svg><div><span>Archive / Reuse</span><code>archive</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><div><span>Search / Verify</span><code>search</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#reserved"/></svg><div><span>Reserved / Pending</span><code>reserved</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#development"/></svg><div><span>Development / Progress</span><code>development</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#arrow"/></svg><div><span>Next step / Navigate</span><code>arrow</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#download"/></svg><div><span>Download / Export</span><code>download</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#chapters"/></svg><div><span>Chapters / Contents</span><code>chapters</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#read"/></svg><div><span>Read / Reference</span><code>read</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#audio"/></svg><div><span>Audio / Podcast</span><code>audio</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#video"/></svg><div><span>Video / Footage</span><code>video</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#back"/></svg><div><span>Return / Recheck</span><code>back</code></div></div><div class="icon-sample"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#forward"/></svg><div><span>Forward / Continue</span><code>forward</code></div></div></div><p class="library-guidance">ASF icons first · 24px grid / 1.7 stroke / round caps / no fill. Always pair icons with text.</p><p class="meta">Supplement: Lucide. Font Awesome is a discovery reference; avoid mixing filled and outlined styles. Freeze CDN assets as local SVGs for delivery.</p></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" aria-label="Return to design comparison">ASF · Template exploration</a><span>Appendix 1 / 2</span></footer></section><section class="slide sheet appendix" data-register="paper" data-slide-id="12" data-screen-label="Appendix 2" data-od-id="paper-12" data-notes="Local architecture proposals, not approved ASF components. Adapt labels to the actual workflow."><header class="page-top" style="margin-top:-80px;height:64px;margin-bottom:32px"><svg class="logo" width="650" height="120" viewBox="0 0 650 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Security Forum">
+  <!-- ASF lockup · B · Paper, for paper/white grounds. Geometry from ASF-2026 asf-logo.svg; Spline Sans 700 (max available weight). -->
+  <circle cx="60" cy="60" r="45" stroke="#0B0F19" stroke-width="4"/>
+  <text x="60" y="74" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="38" fill="#137B70" text-anchor="middle">AI</text>
+  <text x="125" y="75" font-family="'Spline Sans', 'Avenir Next', sans-serif" font-weight="700" font-size="48" fill="#0B0F19">AI SECURITY <tspan fill="#137B70">FORUM</tspan></text>
+</svg>
+<span class="meta">Paper / Appendix</span></header><div class="main"><div class="kicker meta">Appendix B / Editable architectures</div><h2>Let shapes explain relationships.</h2><div class="architecture-examples"><article><h3>01 / Sequential flow</h3><p>For methods, handoffs and stage progression.</p><div class="mini-flow"><div class="mini-node"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#concept"/></svg><span>Question</span></div><div class="mini-node"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#record"/></svg><span>Evidence</span></div><div class="mini-node"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><span>Review</span></div><div class="mini-node"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><span>Publication</span></div></div><div class="mini-return"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#back"/></svg><span>Insufficient review → Refine the question</span></div></article><article><h3>02 / Layered architecture</h3><p>For inputs, judgement and outputs.</p><div class="layer-input"><span>Question</span><span>Sources</span><span>Constraints</span></div><div class="layer-core"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#search"/></svg><span>Shared review / Judgement</span></div><div class="layer-output"><svg class="deck-icon " viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#publication"/></svg><span>Shared record for publication</span></div></article></div><p class="library-guidance">Editable DOM / SVG shapes and connectors; selectable text. Maintain architecture, icons and backgrounds separately.</p></div><footer class="foot meta" style="bottom:24px;padding-top:12px"><a href="index.html" aria-label="Return to design comparison">ASF · Template exploration</a><span>Appendix 2 / 2</span></footer></section>
+    </div>
+  </div>
+
+  <!-- Shared review controls; behavior is maintained in deck.js. -->
+  <nav class="deck-counter" role="navigation" aria-label="Deck navigation">
+    <button type="button" id="deck-prev" aria-label="Previous slide">‹</button>
+    <span class="deck-count"><span id="deck-cur">01</span> <span class="total">/ <span id="deck-total">01</span></span></span>
+    <button type="button" id="deck-next" aria-label="Next slide">›</button>
+  </nav>
+  <div class="deck-hint">← / → · space · R reset</div>
+
+
+<script src="deck.js"></script>
+</body>
+</html>

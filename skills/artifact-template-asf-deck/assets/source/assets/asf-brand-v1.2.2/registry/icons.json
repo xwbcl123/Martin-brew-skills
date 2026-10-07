@@ -1,0 +1,104 @@
+{
+ "version": "1.2.2",
+ "sprite": "icons/asf-icons.svg",
+ "grid": 24,
+ "stroke": 1.7,
+ "fallback": "lucide (stroke-width 1.7)",
+ "forbidden": [
+  "Shield*",
+  "Lock*",
+  "BrainCircuit"
+ ],
+ "icons": [
+  {
+   "id": "arrow",
+   "set": "editorial",
+   "meaning": "outbound / next (↗)",
+   "status": "stable"
+  },
+  {
+   "id": "archive",
+   "set": "editorial",
+   "meaning": "archive, past records",
+   "status": "stable"
+  },
+  {
+   "id": "record",
+   "set": "editorial",
+   "meaning": "event record",
+   "status": "stable"
+  },
+  {
+   "id": "concept",
+   "set": "editorial",
+   "meaning": "concept / idea (dashed)",
+   "status": "stable"
+  },
+  {
+   "id": "publication",
+   "set": "editorial",
+   "meaning": "document / report",
+   "status": "stable"
+  },
+  {
+   "id": "reserved",
+   "set": "editorial",
+   "meaning": "reserved / planned slot",
+   "status": "stable"
+  },
+  {
+   "id": "development",
+   "set": "editorial",
+   "meaning": "in development (dotted)",
+   "status": "stable"
+  },
+  {
+   "id": "download",
+   "set": "ui",
+   "meaning": "download",
+   "status": "stable"
+  },
+  {
+   "id": "audio",
+   "set": "ui",
+   "meaning": "podcast / audio",
+   "status": "stable"
+  },
+  {
+   "id": "chapters",
+   "set": "ui",
+   "meaning": "chapter list",
+   "status": "stable"
+  },
+  {
+   "id": "read",
+   "set": "ui",
+   "meaning": "read online",
+   "status": "stable"
+  },
+  {
+   "id": "search",
+   "set": "ui",
+   "meaning": "search",
+   "status": "stable"
+  },
+  {
+   "id": "back",
+   "set": "ui",
+   "meaning": "seek −/+",
+   "status": "stable"
+  },
+  {
+   "id": "forward",
+   "set": "ui",
+   "meaning": "seek −/+",
+   "status": "stable"
+  },
+  {
+   "id": "video",
+   "set": "ui",
+   "meaning": "video / film",
+   "status": "stable"
+  }
+ ]
+}

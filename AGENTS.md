@@ -20,6 +20,8 @@ Only include skills that Martin built or substantially shaped by hand.
 
 Current in-scope skills:
 
+- `artifact-template-asf-deck`
+
 - `audio-transcriber`
 - `brand-guidelines`
 - `cloudflare-r2-publisher`

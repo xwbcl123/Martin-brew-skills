@@ -1,6 +1,6 @@
 ---
 name: brand-guidelines
-description: Applies Martin's default brand system to documents, decks, blogs, reports, visual assets, and Kami outputs. Use whenever the user mentions branding, visual identity, style guidelines, Logo usage, Martin, Martin-Borealis, Life versus Work, an organization-authorized artifact, or asks to make an artifact feel consistent with Martin's style. Classifies Life versus Work first, routes to the correct identity, and preserves explicit Anthropic styling only when requested.
+description: Applies Martin's default brand system to documents, decks, blogs, reports, visual assets, and Kami outputs. Use whenever the user mentions branding, visual identity, style guidelines, Logo usage, Martin, Martin-Borealis, Life versus Work, an organization-authorized artifact, or asks to make an artifact feel consistent with Martin's style. Routes explicit ASF / AI Security Forum first; otherwise classifies Life versus Work, routes to the correct identity, and preserves explicit Anthropic styling only when requested.
 license: Complete terms for the archived Anthropic source are in LICENSE.txt
 metadata:
   origin_vendor: martin-custom
@@ -9,6 +9,11 @@ metadata:
 ---
 
 # Martin Brand Guidelines
+
+## ASF / AI Security Forum
+
+When this identity is explicit, read `references/asf-brand-profile.md` and resolve its locked upstream source with `scripts/resolve_asf_brand.py`. Use `artifact-template-asf-deck` for Paper / Ink presentations. ASF takes precedence over generic Life/Work defaults and does not inherit personal or employer marks. Other uses of the acronym ASF do not activate this identity. Existing non-ASF adapters remain unchanged.
+
 
 Use this skill as the default brand router. Do not start by choosing colors. First determine whose artifact it is and what authority it represents.
 

@@ -1,0 +1,8 @@
+[
+ {"prompt":"ASF论坛活动，使用Ink做开场","expected_brand":"ASF","expected_variant":"ink","forbidden":"employer default"},
+ {"prompt":"AI Security Forum evidence handout","expected_brand":"ASF","expected_variant":"paper","forbidden":"Martin-Borealis"},
+ {"prompt":"ASF，请保留Georgia编辑风","expected_brand":"ASF","expected_display":"Georgia","forbidden":"Spline headline replacement"},
+ {"prompt":"Organization monthly update","expected_brand":"Organization Brand or supplied organization adapter","forbidden":"ASF inferred from work context"},
+ {"prompt":"Personal learning reflection","expected_brand":"Martin","forbidden":"ASF inferred from cybersecurity topic"},
+ {"prompt":"Apache Software Foundation presentation","expected_brand":"explicit external identity","forbidden":"AI Security Forum acronym collision"}
+]

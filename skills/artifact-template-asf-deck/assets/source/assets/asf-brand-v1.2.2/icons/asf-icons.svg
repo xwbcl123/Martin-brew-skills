@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!-- ASF icon sprite v1.1.0. 24x24, stroke 1.7, round caps/joins, currentColor. Sources: asf-website@b607d1c editorial-icons.svg (editorial) + Glyph.astro (ui). Registry: icons/README.md -->
+<defs>
+<symbol id="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+<symbol id="archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4zM3 4h18v4H3zM9 12h6"/></symbol>
+<symbol id="record" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"/></symbol>
+<symbol id="concept" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13V9a5 5 0 0 1 10 0v5M14 14a5 5 0 0 0 5 5h2"/><path stroke-dasharray="2 3" d="M4 16v4h8"/></symbol>
+<symbol id="publication" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/></symbol>
+<symbol id="reserved" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v16h5M15 4h5v16h-5M9 12h6"/></symbol>
+<symbol id="development" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h11M4 18h7"/><path stroke-dasharray="1 3" d="M15 18h5"/></symbol>
+<symbol id="download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/></symbol>
+<symbol id="audio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4m4-7v10m4-13v16m4-12v8m4-5v2"/></symbol>
+<symbol id="chapters" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 12h10M5 18h14M18 11v2"/></symbol>
+<symbol id="read" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h6a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H5zM19 5h-3a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h3z"/></symbol>
+<symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm9 2-4.5-4.5"/></symbol>
+<symbol id="back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 1 0 2.2-5.1M5 4v4h4"/></symbol>
+<symbol id="forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12a7 7 0 1 1-2.2-5.1M19 4v4h-4"/></symbol>
+<symbol id="video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h11v12H4zM15 10l5-3v10l-5-3"/></symbol>
+</defs>
+</svg>

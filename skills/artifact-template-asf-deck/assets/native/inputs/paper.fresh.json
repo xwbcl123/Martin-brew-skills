@@ -1,0 +1,338 @@
+{
+  "schema": 1,
+  "register": "paper",
+  "slides": [
+    {
+      "texts": {
+        "text-0": "PAPER / COVER",
+        "text-1": "A SHARED STARTING POINT",
+        "text-2": "Review session.",
+        "text-3": "Shared evidence.",
+        "text-4": "Turn a useful conversation into",
+        "text-5": "a record others can build on.",
+        "text-6": "Shared record",
+        "text-7": "Question",
+        "text-8": "Review",
+        "text-9": "Publication",
+        "text-10": "QUESTIONS CONVERGE \u00b7 EVIDENCE",
+        "text-11": "SHARED",
+        "text-12": "TEMPLATE EXPLORATION \u00b7 2026",
+        "text-13": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-14": "\u211601 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / SECTION DIVIDER",
+        "text-1": "01 /",
+        "text-2": "Review agenda",
+        "text-3": "to",
+        "text-4": "evidence",
+        "text-5": "A common question. A visible record. A clearer next step.",
+        "text-6": "FRAME",
+        "text-7": "TEST",
+        "text-8": "SHARE",
+        "text-9": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-10": "\u211602 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / GOVERNING CLAIM",
+        "text-1": "THE GOVERNING CLAIM",
+        "text-2": "A shared review question.",
+        "text-3": "when its evidence can travel.",
+        "text-4": "01 / RELEVANCE",
+        "text-5": "Start with a",
+        "text-6": "shared question.",
+        "text-7": "A precise question gives",
+        "text-8": "different perspectives a",
+        "text-9": "common task.",
+        "text-10": "02 / SCRUTINY",
+        "text-11": "Make the",
+        "text-12": "reasoning visible.",
+        "text-13": "Sources and limitations let",
+        "text-14": "others examine the claim.",
+        "text-15": "03 / CONTINUITY",
+        "text-16": "Leave a",
+        "text-17": "reusable record.",
+        "text-18": "A clear record helps the next",
+        "text-19": "conversation start further",
+        "text-20": "ahead.",
+        "text-21": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-22": "\u211603 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / COMPARISON CHART",
+        "text-1": "ILLUSTRATIVE DATA \u00b7 NOT ASF METRICS",
+        "text-2": "Sample evidence comparison.",
+        "text-3": "Compare the record,",
+        "text-4": "not the rhetoric.",
+        "text-5": "Three series.",
+        "text-6": "One common scale.",
+        "text-7": "ILLUSTRATIVE ONLY.",
+        "text-8": "NOT ASF METRICS.",
+        "text-9": "SAMPLE SCORE / 100.",
+        "text-10": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-11": "\u211604 / 10"
+      },
+      "chart": {
+        "categories": [
+          "Traceability",
+          "Comparability",
+          "Reusability"
+        ],
+        "series": [
+          {
+            "name": "Working notes",
+            "values": [
+              30,
+              45,
+              50
+            ],
+            "fill": "#137b70"
+          },
+          {
+            "name": "Shared record",
+            "values": [
+              65,
+              70,
+              60
+            ],
+            "fill": "#1f6fa8"
+          },
+          {
+            "name": "Reviewed brief",
+            "values": [
+              85,
+              80,
+              90
+            ],
+            "fill": "#8a6100"
+          }
+        ]
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / EVIDENCE TABLE",
+        "text-1": "A RECORD THAT CAN BE INSPECTED",
+        "text-2": "The evidence register",
+        "text-3": "Sample workflow \u00b7 Status labels illustrate a review process, not",
+        "text-4": "current ASF activity.",
+        "text-5": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-6": "\u211605 / 10"
+      },
+      "table": [
+        [
+          "RECORD",
+          "EVIDENCE TO RETAIN",
+          "CHECKPOINT",
+          "STATUS"
+        ],
+        [
+          "Question brief",
+          "A sample review question",
+          "Scope review",
+          "Open"
+        ],
+        [
+          "Source log",
+          "Links and limitations",
+          "Source check",
+          "In review"
+        ],
+        [
+          "Review memo",
+          "Comments and responses",
+          "Editorial check",
+          "Ready"
+        ],
+        [
+          "Publication draft",
+          "Summary and references",
+          "Release check",
+          "Pending"
+        ]
+      ],
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / SYSTEMS DIAGRAM",
+        "text-1": "A SAMPLE EVIDENCE WORKFLOW",
+        "text-2": "A repeatable review process.",
+        "text-3": "01",
+        "text-4": "Question",
+        "text-5": "Define what needs an",
+        "text-6": "answer.",
+        "text-7": "02",
+        "text-8": "Evidence",
+        "text-9": "Gather sources and",
+        "text-10": "limitations.",
+        "text-11": "03",
+        "text-12": "Review",
+        "text-13": "Challenge the claim and",
+        "text-14": "reasoning.",
+        "text-15": "04",
+        "text-16": "Publication",
+        "text-17": "Share a record others",
+        "text-18": "can inspect.",
+        "text-19": "If evidence is insufficient, refine the question",
+        "text-20": "before publication.",
+        "text-21": "Review",
+        "text-22": "loop \u21b6",
+        "text-23": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-24": "\u211606 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / PULL QUOTE",
+        "text-1": "\u201c",
+        "text-2": "A clear record helps the next question.",
+        "text-3": "that everyone agrees.",
+        "text-4": "It is that the next question",
+        "text-5": "starts from better evidence.",
+        "text-6": "ORIGINAL SAMPLE COPY \u00b7 UNATTRIBUTED",
+        "text-7": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-8": "\u211607 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / EVENT STORY",
+        "text-1": "FROM THE ROOM TO THE RECORD",
+        "text-2": "An approved event record.",
+        "text-3": "Replace with approved",
+        "text-4": "event photograph",
+        "text-5": "Caption slot \u00b7 Event / date / photographer / permission",
+        "text-6": "A photograph is context.",
+        "text-7": "The story is the outcome.",
+        "text-8": "Pair the approved image with a short",
+        "text-9": "account of the question explored and",
+        "text-10": "the evidence to carry forward.",
+        "text-11": "EDITORIAL GUIDANCE \u00b7 NO",
+        "text-12": "EVENT CLAIMED",
+        "text-13": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-14": "\u211608 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / DISCUSSION & DECISION",
+        "text-1": "DISCUSSION / DECISION",
+        "text-2": "The publication decision.",
+        "text-3": "OPTION A / CAPTURE",
+        "text-4": "A summary of the conversation.",
+        "text-5": "Fast to circulate. Preserves themes, but may",
+        "text-6": "leave claims difficult to examine.",
+        "text-7": "OPTION B / SUBSTANTIATE",
+        "text-8": "A short, reviewed evidence brief.",
+        "text-9": "Requires a review step. Makes sources,",
+        "text-10": "limitations and open questions explicit.",
+        "text-11": "RECOMMENDED ACTION",
+        "text-12": "SAMPLE SLOT",
+        "text-13": "Agree one question and commission a reviewed brief.",
+        "text-14": "Decision owner / review date: to be confirmed.",
+        "text-15": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-16": "\u211609 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / CLOSING",
+        "text-1": "THE NEXT STEP",
+        "text-2": "A review checkpoint.",
+        "text-3": "Build a shared record.",
+        "text-4": "PROPOSED ACTION",
+        "text-5": "Choose the question and agree a review checkpoint.",
+        "text-6": "Contact: [approved ASF contact]",
+        "text-7": "REPLACE BEFORE EXTERNAL USE",
+        "text-8": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-9": "\u211610 / 10"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / APPENDIX",
+        "text-1": "APPENDIX A / ICON LIBRARY",
+        "text-2": "ASF icon reference.",
+        "text-3": "Concept / Question",
+        "text-4": "concept",
+        "text-5": "Activity / Record",
+        "text-6": "record",
+        "text-7": "Document /",
+        "text-8": "Publication",
+        "text-9": "publication",
+        "text-10": "Archive / Reuse",
+        "text-11": "archive",
+        "text-12": "Search / Verify",
+        "text-13": "search",
+        "text-14": "Reserved / Pending",
+        "text-15": "reserved",
+        "text-16": "Development /",
+        "text-17": "Progress",
+        "text-18": "development",
+        "text-19": "Next step / Navigate",
+        "text-20": "arrow",
+        "text-21": "Download / Export",
+        "text-22": "download",
+        "text-23": "Chapters / Contents",
+        "text-24": "chapters",
+        "text-25": "Read / Reference",
+        "text-26": "read",
+        "text-27": "Audio / Podcast",
+        "text-28": "audio",
+        "text-29": "Video / Footage",
+        "text-30": "video",
+        "text-31": "Return / Recheck",
+        "text-32": "back",
+        "text-33": "Forward / Continue",
+        "text-34": "forward",
+        "text-35": "ASF icons first \u00b7 24px grid / 1.7 stroke / round caps / no fill. Always pair icons with text.",
+        "text-36": "SUPPLEMENT: LUCIDE. FONT AWESOME IS A DISCOVERY REFERENCE; AVOID MIXING FILLED AND OUTLINED STYLES.",
+        "text-37": "FREEZE CDN ASSETS AS LOCAL SVGS FOR DELIVERY.",
+        "text-38": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-39": "APPENDIX 1 / 2"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    },
+    {
+      "texts": {
+        "text-0": "PAPER / APPENDIX",
+        "text-1": "APPENDIX B / EDITABLE ARCHITECTURES",
+        "text-2": "A reusable review architecture.",
+        "text-3": "01 / Sequential flow",
+        "text-4": "For methods, handoffs and stage progression.",
+        "text-5": "Question",
+        "text-6": "Evidence",
+        "text-7": "Review",
+        "text-8": "Publication",
+        "text-9": "Insufficient review \u2192 Refine the question",
+        "text-10": "02 / Layered architecture",
+        "text-11": "For inputs, judgement and outputs.",
+        "text-12": "Question",
+        "text-13": "Sources",
+        "text-14": "Constraints",
+        "text-15": "Shared review / Judgement",
+        "text-16": "Shared record for publication",
+        "text-17": "Editable DOM / SVG shapes and connectors; selectable text. Maintain architecture, icons and backgrounds separately.",
+        "text-18": "ASF \u00b7 TEMPLATE EXPLORATION",
+        "text-19": "APPENDIX 2 / 2"
+      },
+      "notes": "Generic reuse smoke fixture. No real event, result or decision is asserted."
+    }
+  ]
+}

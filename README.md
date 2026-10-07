@@ -398,3 +398,7 @@ If you reuse these skills in your own workspace, replace the templates with your
 ## License
 
 MIT
+
+## ASF Paper / Ink family
+
+`skills/artifact-template-asf-deck/` contains the reusable ASF family; `brand-guidelines` routes explicit AI Security Forum requests to its locked profile. Paper uses the selected editorial layout; Ink retains Georgia. Samples use generic illustrative content. See the skill for runtime dependencies, font fallback and actual validation boundaries.

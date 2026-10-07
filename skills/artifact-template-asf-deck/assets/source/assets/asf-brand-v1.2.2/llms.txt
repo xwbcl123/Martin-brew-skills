@@ -1,0 +1,15 @@
+# ASF Brand System v1.2.2
+> Brand source of truth for the AI Security Forum. Read AGENTS.md first.
+
+- AGENTS.md: consumption and change rules — read first
+- DESIGN.md: brand rules (registers, logo, colour, typography, UI, channels, Office documents, layout)
+- tokens/tokens.css: SSOT for every --asf-* value, register blocks, reduced-motion override, Field Notes aliases
+- tokens/tokens.json: generated machine-readable tokens (core, registers, reducedMotion, aliases)
+- registry/components.json: components with status, registers and implementations
+- registry/patterns.json: page patterns, required components and rules
+- registry/icons.json: icon ids and meanings; sprite at icons/asf-icons.svg
+- logo/: 7 SVG logo files (4 lockups, 3 ring-marks)
+- fonts/: Spline Sans 700 woff2 + OFL licence
+- docs/: components, icons, coverage audit (human-readable)
+- CHANGELOG.md, migrations/: version history and executable renames
+- dist/: release downloads (guideline PDF, logo kit, tokens)

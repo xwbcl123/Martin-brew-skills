@@ -1,0 +1,10 @@
+{
+  "tag": "v1.2.2",
+  "commit": "13741fedd7d3b28b57aa9e74d99700c2f663aa9c",
+  "source": "asf-brand (upstream Git repository; immutable v1.2.2 snapshot)",
+  "files": {
+    "icons/asf-icons.svg": "d638d28f9ef840b200b6bbb234fed743e5f71ef3d04bf0972c6c37efbdd8c168",
+    "docs/icons.md": "7f587bc674f8b5ff7746e553ee7099ede9a307358f763420954871773b6bdbd8"
+  },
+  "tag_object": "dd07a281cf22bed7287e53cdde39e3fbb8222866"
+}

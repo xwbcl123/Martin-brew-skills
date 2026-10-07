@@ -1,0 +1,31 @@
+{
+  "tag": "v1.2.2",
+  "commit": "13741fedd7d3b28b57aa9e74d99700c2f663aa9c",
+  "source": "asf-brand (upstream Git repository; immutable v1.2.2 snapshot)",
+  "files": {
+    "AGENTS.md": "02c602b6b97799c51a120169361509a2074c5f7f54f5fe3f354715b07caac62e",
+    "CHANGELOG.md": "1b390f9672c2c939b286c3a8e7e394cbc7197b4db1d9ca3aae6221a7c87d8365",
+    "DESIGN.md": "6ce00b39e55a2fdf582eae7dd5ef255c95fa1f9f5492497231a9f52935acd672",
+    "fonts/OFL.txt": "45b2aa0796f435bd620d864b6b44ff08855dc575524f23ffb43161e69cb5dbfc",
+    "fonts/SplineSans-Bold.woff2": "c4d10d4be28e93ba2e55f9f9cfe67173a1bb6530549037983109f636de3012d5",
+    "llms.txt": "886e384edb098135cd4d075f7f1ff097c3f60c77ff4eb1fab5a638655471bfc9",
+    "logo/asf-logo-ink.svg": "2643819bd3162a960ec01c5da7a22d4da3ba853d6fc6bb97a3e6aa38b24213c2",
+    "logo/asf-logo-mono-ink.svg": "7468f2b17ecb8a2610c80626904d8c680b34c29c7694ad60d71173a9a51841c4",
+    "logo/asf-logo-mono-white.svg": "d25f7c20866f8c9437338314c9d3755f872000ac2f7ffb04f390c5e9380d8ec5",
+    "logo/asf-logo-paper.svg": "9ec2bd26fad877cda236295ad36069f8207c68279725c551aced14a4cd2af8ab",
+    "logo/asf-mark-ink.svg": "eb800d068fc8be4b093a6e3851260751b92982def2248e6bb92bf65fa37aa1f3",
+    "logo/asf-mark-paper.svg": "a98d590b5a064cb9cfbba394acc42da1d36a3cacf8d3a0cccd7e57032bae7906",
+    "logo/asf-mark-reverse.svg": "afd7a035df96d6795747a9040cca322ada6ee18fecb8b9f9e7f93e6cdc992e3f",
+    "registry/components.json": "9aed18dd962a29af4b907d79b94f4d9eac0b62b39d3aa051a329bce476cf16a6",
+    "registry/icons.json": "f662dea9a3a3df9d4c1141023c30dfd3e2987535363a52a89899c303cac09cd5",
+    "registry/patterns.json": "0db00acc4312c03b97ab9faaa5a0f65995a5ae527a849d2eec967cec012a3e54",
+    "tokens/tokens.css": "9a850fb1fd107cadff2a1bf7c613c885b85c3a3eefa3ce2d548922dc8dc4c64e",
+    "tokens/tokens.json": "438b66da0378fc8f6f82d11ac8c2213b829acca18e7757362bb5da6364991336"
+  },
+  "tag_object": "dd07a281cf22bed7287e53cdde39e3fbb8222866",
+  "documentation_redaction": {
+    "file": "AGENTS.md",
+    "reason": "Private governance path omitted; all brand assets and core resolver hashes unchanged.",
+    "upstream_sha256": "04e529f3904a36de8455b3919a4174d0d95db1af00876f9e80b94dad9a38d505"
+  }
+}
