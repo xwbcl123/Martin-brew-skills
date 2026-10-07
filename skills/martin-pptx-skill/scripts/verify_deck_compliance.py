@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-CSTC x EU-RSPO Deck Compliance & Formatting Gate Validator
-Strictly verifies PowerPoint (.pptx) deliverables against CSTC x EU-RSPO Modernist & ICBC guidelines:
+Organization Deck Compliance & Formatting Gate Validator
+Strictly verifies PowerPoint (.pptx) deliverables against Organization Modernist formatting guidelines:
 1. Prohibits full-bleed canvas background shapes (Rectangle 1 ban)
 2. Prohibits excessive corner radius on rounded rectangles (Anti-kindergarten rounded corners: adj <= 0.05)
 3. Enforces strict typography floors (H1 >= 20/24/28pt, Body >= 14pt, Pills >= 10pt, Captions >= 10pt, Footers >= 9pt)
@@ -94,7 +94,7 @@ class DeckComplianceValidator:
                         )
                     })
 
-            # Check 3: Rounded Rectangle Corner Radius (ICBC Benchmark: adj <= 0.055 for cards)
+            # Check 3: Rounded Rectangle Corner Radius (reference Benchmark: adj <= 0.055 for cards)
             for shape in slide.shapes:
                 try:
                     is_round_rect = False
@@ -118,7 +118,7 @@ class DeckComplianceValidator:
                                     "message": (
                                         f"Rounded rectangle '{shape.name}' ({w:.2f}\" x {h:.2f}\") has excessive corner radius "
                                         f"(adj={adj:.3f} > 0.055; default is 0.167). Giant rounded corners appear childish and unprofessional "
-                                        f"('kindergarten' aesthetic). Explicitly set shape.adjustments[0] = 0.03 ~ 0.05 (ICBC benchmark)."
+                                        f"('kindergarten' aesthetic). Explicitly set shape.adjustments[0] = 0.03 ~ 0.05 (reference benchmark)."
                                     )
                                 })
                             else:
@@ -250,7 +250,7 @@ class DeckComplianceValidator:
                     else:
                         role = "body"
 
-                # Check 6a: Text box internal margins (Tight Padding Technique from ICBC proposal)
+                # Check 6a: Text box internal margins (Tight Padding Technique from reference proposal)
                 # If body text frame inside a card has bulky default margins (>0.15" left/right or >0.12" top/bottom)
                 if not is_cover and role in ("body", "card_heading"):
                     ml = tf.margin_left.inches if tf.margin_left is not None else 0.1
@@ -368,7 +368,7 @@ class DeckComplianceValidator:
 def format_cli_output(report: dict[str, Any], verbose: bool = False) -> str:
     lines = []
     lines.append("================================================================================")
-    lines.append(f"CSTC x EU-RSPO Deck Compliance Verification Report: {Path(report['file']).name}")
+    lines.append(f"Organization Deck Compliance Verification Report: {Path(report['file']).name}")
     lines.append("================================================================================")
     
     if report["passed"]:
@@ -404,7 +404,7 @@ def format_cli_output(report: dict[str, Any], verbose: bool = False) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Verify PPTX deliverables against CSTC x EU-RSPO Modernist formatting standards."
+        description="Verify PPTX deliverables against Organization Modernist formatting standards."
     )
     parser.add_argument("pptx_path", type=Path, help="Path to the PowerPoint presentation file (.pptx)")
     parser.add_argument("--strict", action="store_true", help="Treat warnings as errors (fail on warnings)")

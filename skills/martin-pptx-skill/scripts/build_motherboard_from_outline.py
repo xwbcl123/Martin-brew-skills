@@ -111,7 +111,7 @@ def base_canvas(spec, total):
 def draw_footer(draw, spec):
     footer = spec.source or spec.evidence_label or "source-backed"
     draw.text((42, 840), "Motherboard visual reference", font=font(14), fill=BLUE)
-    draw.text((1260, 840), "Huawei Light Blue", font=font(14), fill=BLUE)
+    draw.text((1260, 840), "Organization Light Blue", font=font(14), fill=BLUE)
     draw.text((42, 862), f"Source: {footer[:150]}", font=font(12), fill=MUTED)
 
 

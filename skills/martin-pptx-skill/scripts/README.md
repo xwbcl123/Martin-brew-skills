@@ -2,6 +2,14 @@
 
 Resolve Node/Python/packages through the current host dependency tool. Do not install substitutes into the bundle. In Codex, read the current Presentations implementation, call its operation marker once before authoring, and use its finalizer after composition. If LibreOffice is needed, use the absolute bundled binary path returned by the host, never the user's desktop installation.
 
+## Visual Contract verifier (all production routes)
+
+Read [schema, review records and commands](../references/verification.md). `verify_visual_contract.py` uses Python standard library only. Plan/assets/final checks enforce frozen file bindings, label/component geometry and recorded phase order; final also inspects actual PPTX objects and bound render reviews. It cannot certify image semantics or reviewer truth. `tests/test_visual_contract.py` creates synthetic positive/tamper/failure cases only in auto-cleaned temporary directories:
+
+```bash
+python3 -B -m unittest discover -s <skill>/tests -v
+```
+
 ## Two-layer composer
 
 ```bash

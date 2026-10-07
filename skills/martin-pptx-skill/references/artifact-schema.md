@@ -1,4 +1,6 @@
-# Deck manifest v2
+# Image composer manifest v2
+
+This schema is the existing image/two-layer composer input, not the deck-wide Visual Contract. New/material production uses [Visual Contract v1](verification.md) for plan/assets/final checks. Generate this composer input from the same accepted sources when needed; do not replace or silently reinterpret its v2 fields. Native builders need only the Visual Contract plus host inputs.
 
 One UTF-8 JSON manifest is enough. Content, design and QC can be sections of it; no duplicate outline/spec is required. Paths resolve relative to the manifest. Keep source hashes immutable. Example shape:
 

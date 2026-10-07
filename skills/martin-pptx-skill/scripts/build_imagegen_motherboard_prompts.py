@@ -20,7 +20,7 @@ DEFAULT_AVOID = [
     "browser chrome",
     "mockup frame",
     "invented legal claims",
-    "Huawei logo",
+    "organization logo",
     "any brand logo unless explicitly supplied as an asset",
     "wrong year such as 2024",
 ]
@@ -57,7 +57,7 @@ Canvas: 16:9 landscape, high-resolution, clean PowerPoint-like slide, premium fo
 Motherboard role: This is a visual reference image, not the final editable PPTX. It should raise the visual ceiling for later editable reconstruction.
 Generation mode: {sample_line}
 Language/text: Preserve the slide title and core message exactly where possible. Keep all visible text readable at presentation distance.
-Brand/logo rule: Use the visual language and palette only. Do not draw Huawei logo, Huawei wordmark, or any other brand logo unless a logo asset is explicitly provided for this run.
+Brand/logo rule: Use the visual language and palette only. Do not draw organization logo, organization wordmark, or any other brand logo unless a logo asset is explicitly provided for this run.
 Date rule: If a date/year is shown, it must come from the outline/source. For this run, CSA2 source dates are in 2026; never show 2024.
 
 Design system from design.md:
