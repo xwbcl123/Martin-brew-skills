@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-10-07
+
+### Added
+
+- Added `duolingo-math-solver`, an `agent-browser` driver for Duolingo Math lessons with read-back before every submit, offline fixture selftests, and an in-page solver for the timed Match the pairs / Match Madness board.
+
+### Changed
+
+- Updated the root README and agent guidance to include `duolingo-math-solver`.
+
 ## 2026-09-07
 
 ### Added

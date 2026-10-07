@@ -1,0 +1,6 @@
+interface:
+  display_name: "Duolingo Math Solver"
+  short_description: "Solve Duolingo Math lessons in a dedicated agent-browser session"
+  default_prompt: "Use $duolingo-math-solver to finish the Duolingo Math lesson that is currently open."
+policy:
+  allow_implicit_invocation: true

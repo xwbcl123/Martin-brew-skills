@@ -52,6 +52,7 @@ It does not keep:
 - `daily-knowledge-brief`
 - `ds-citations`
 - `doc-intelligent-summary`
+- `duolingo-math-solver`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
 - `life-os-deep-research`
@@ -83,6 +84,7 @@ Martin-brew-skills/
 │   ├── daily-knowledge-brief/
 │   ├── ds-citations/
 │   ├── doc-intelligent-summary/
+│   ├── duolingo-math-solver/
 │   ├── grill-me/
 │   ├── life-os-deep-research/
 │   ├── life-os-smart-clipper/
@@ -212,6 +214,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes persisted source chunks, `run_log.md`, and `--validate-only` for auditability
 - prefers medium-sized chunks instead of over-fragmented slices, with summary depth tuned for reusable wiki notes
 
+### `duolingo-math-solver`
+
+- drives Duolingo Math lessons in a dedicated `agent-browser` session: choice, follow-the-pattern, number-line drag, tile equations, typed answers and the timed Match the pairs / Match Madness board
+- reads every answer back from the page before submitting and stops instead of guessing; `references/pitfalls.md` records the silent failure modes
+- `scripts/selftest.sh` runs every solver against synthetic fixture pages on localhost, with no account access
+- note: Duolingo's Terms of Service prohibit automation; use it only on your own account and at your own risk
+
 ### `grill-me`
 
 - adapts Matt Pocock's `grill-with-docs` idea for Martin's task/session workflow
@@ -295,6 +304,10 @@ If you reuse these skills in your own workspace, replace the templates with your
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
 ## Changelog
+
+### 2026-10-07
+
+- add `duolingo-math-solver`, including the in-page Match the pairs / Match Madness solver with two-stage pair read-back
 
 ### 2026-08-01
 
