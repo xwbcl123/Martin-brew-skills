@@ -1,0 +1,90 @@
+<!doctype html><html><head><meta charset="utf-8"><script src="_kit.js"></script>
+<style>
+  .tok { position:absolute; width:255px; height:95px; opacity:1; }
+  .hint { display:none; }
+</style></head><body>
+<h1><math><semantics><annotation encoding="application/x-tex">\textbf{Match the pairs}</annotation></semantics></math></h1>
+<div id="board"></div>
+<script>
+// Mirrors the live Match Madness board (unit 4 level 4): two columns of
+// button[data-test="-challenge-tap-token"]; a matched pair keeps its text, fades out, and the same
+// buttons are refilled in place with a new pair (placed in different rows, so partners stay shuffled).
+// Values may repeat (two "7" cards). When the refill queue is empty, matched cards are removed and
+// the board disappears after the last match, like the star break / end screen.
+//   ?grey=1       the other live mode: a matched pair turns aria-disabled after 870 ms and stays at
+//                 opacity 1; when the whole board is grey it is refilled at once (one right card
+//                 gets the same text it had, which the solver can only release by timeout)
+//   ?unparsed=1   one pair is a word card the solver cannot read  -> solver must stop with ERR
+//   ?preselect=1  a card is already selected                       -> solver must refuse to start
+//   ?ignore=1     correct pairs are consumed but never marked      -> solver must stop with ERR
+// window.__fxWrong counts wrong pairs, window.__fxMatched counts correct ones.
+const q = new URLSearchParams(location.search);
+const TEX = { '6 + 3': 9, '2 + 1': 3, '6 + 1': 7, '4 + 3': 7, '9': 9, '3': 3, '7': 7,
+              '2 + 5': 7, '10 - 4': 6, '6': 6, '\\frac{1}{2}': 0.5, '\\frac{2}{4}': 0.5,
+              '5 \\times 3': 15, '15': 15, '\\text{half}': 'half' };
+const left = ['6 + 3', '2 + 1', '6 + 1', q.has('unparsed') ? '\\text{half}' : '4 + 3'];
+const right = ['7', '7', '9', '3'];
+const refills = q.has('unparsed') ? [] : [['2 + 5', '7'], ['10 - 4', '6'], ['\\frac{1}{2}', '\\frac{2}{4}'], ['5 \\times 3', '15']];
+window.__fxWrong = 0; window.__fxMatched = 0;
+let sel = null, live = 8;
+
+const setTex = (b, t) => {
+  b.dataset.v = String(TEX[t]);
+  b.querySelector('annotation').textContent = '\\mathbf{' + t + '}';
+};
+const mk = (t, col, row, n) => {
+  const b = document.createElement('button');
+  b.className = 'tok';
+  b.setAttribute('data-test', '-challenge-tap-token');
+  b.setAttribute('aria-disabled', 'false');
+  b.dataset.col = col;
+  b.style.left = (col ? 609 : 322) + 'px';
+  b.style.top = (534 + row * 107) + 'px';
+  b.innerHTML = '<span class="hint">' + n + '</span><math><semantics><annotation encoding="application/x-tex"></annotation></semantics></math>';
+  setTex(b, t);
+  b.addEventListener('click', () => onClick(b));
+  document.getElementById('board').appendChild(b);
+  return b;
+};
+const busy = b => b.dataset.fading === '1' || b.getAttribute('aria-disabled') === 'true';
+const boards = [[['2 + 5', '10 - 4', '\\frac{1}{2}', '5 \\times 3'], ['15', '7', '\\frac{2}{4}', '6']]];
+const all = () => [...document.querySelectorAll('.tok')];
+function grey(a, b) {
+  [a, b].forEach(e => { e.dataset.fading = '1'; });
+  setTimeout(() => {
+    [a, b].forEach(e => { e.setAttribute('aria-disabled', 'true'); e.classList.add('done'); });
+    if (all().some(e => e.getAttribute('aria-disabled') !== 'true')) return;
+    const nb = boards.shift();
+    if (!nb) { document.getElementById('board').remove(); return; }
+    all().forEach(e => {
+      const col = +e.dataset.col, row = Math.round((parseFloat(e.style.top) - 534) / 107);
+      setTex(e, nb[col][row]); e.setAttribute('aria-disabled', 'false'); e.classList.remove('done'); e.dataset.fading = '';
+    });
+  }, 870);
+}
+function onClick(b) {
+  if (busy(b)) return;
+  if (!sel) { sel = b; b.classList.add('sel'); return; }
+  if (sel === b) { b.classList.remove('sel'); sel = null; return; }
+  if (sel.dataset.col === b.dataset.col) { sel.classList.remove('sel'); sel = b; b.classList.add('sel'); return; }
+  const a = sel; a.classList.remove('sel'); sel = null;
+  if (a.dataset.v !== b.dataset.v) { window.__fxWrong++; return; }
+  window.__fxMatched++;
+  if (q.has('ignore')) return;
+  if (q.has('grey')) { grey(a, b); return; }
+  [a, b].forEach(e => { e.dataset.fading = '1'; e.style.transition = 'opacity 0.6s linear'; e.style.opacity = '0'; });
+  setTimeout(() => {
+    const r = refills.shift();
+    [a, b].forEach((e, i) => {
+      if (!r) { e.remove(); live--; return; }
+      e.style.transition = 'none'; e.style.opacity = '1'; e.dataset.fading = '';
+      setTex(e, a.dataset.col === '0' ? r[i] : r[1 - i]);
+    });
+    if (!live) document.getElementById('board').remove();
+  }, 700);
+}
+left.forEach((t, i) => mk(t, 0, i, i + 1));
+const rb = right.map((t, i) => mk(t, 1, i, i + 5));
+if (q.has('preselect')) { sel = rb[2]; rb[2].classList.add('sel'); }
+</script>
+</body></html>

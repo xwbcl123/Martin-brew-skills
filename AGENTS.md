@@ -29,6 +29,7 @@ Current in-scope skills:
 - `create-cover-illustration`
 - `ds-citations`
 - `doc-intelligent-summary`
+- `duolingo-math-solver`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
 - `life-os-deep-research`
@@ -143,6 +144,12 @@ If content is useful structurally but not safe to publish:
 - keep the workflow portable and repo-relative
 - do not commit generated output folders or private source documents
 - preserve the audit-oriented structure: source chunks, summary chunks, and run log
+
+### duolingo-math-solver
+
+- never commit login state, cookies, `agent-browser` restore files, screenshots of a real account, or run logs
+- fixtures under `tests/fixtures/` must stay synthetic DOM reproductions
+- preserve the safety invariant: click `player-next` only on `CHECK` after a read-back or on `CONTINUE`; every new question type needs a fixture, a planner that returns `ERR` instead of guessing, and a read-back before acting
 
 ### grill-me
 
