@@ -98,6 +98,8 @@ Keep test email drafts in the current session's scoped test directory.
 
 ### Step 6 — Validate outputs
 
+If the email is sent as HTML, the email body HTML must pass the Outlook font rule (`references/output-contract.md` “Outlook 字体”): run `python3 scripts/outlook_email_fonts.py fix` on it, then `python3 scripts/validate_outputs.py <email_md> [<viz_html>] --email-html <email_body.html>`.
+
 Run cleanup checklist from `references/cleanup-checklist.md`.
 
 Remove internal production notes, private paths, credentials and review chatter from public content. Preserve legitimate subject matter about agents, prompts or AI; keywords alone are not a deletion rule. Check links and screenshot fidelity. Draft placeholders must be resolved before sending.
@@ -118,5 +120,6 @@ Creating this package does not send an email or publish its assets. Send only wh
 - `references/output-contract.md` — email style guide and output format rules
 - `references/business-email-style.md` — executive briefing and business email style guide (three-paragraph rule, factual reconstruction, no-ai-slop)
 - `references/cleanup-checklist.md` — cleanliness and security validation checklist
+- `scripts/outlook_email_fonts.py` — Outlook font check/fix for HTML email bodies (Microsoft YaHei first, mso block, no web fonts); tests in `scripts/test_outlook_email_fonts.py`
 - `assets/fallback-styles/` — three bundled fallback brand styles
 

@@ -3,7 +3,7 @@
 Validate visual-mail output files for cleanliness and required elements.
 
 Usage:
-  python validate_outputs.py <email_md> [<html_file>]
+  python validate_outputs.py <email_md> [<html_file>] [--email-html <email_body.html> ...]
 
 Checks:
   - Email contains BRIEF_LINK_PLACEHOLDER or a real https:// link
@@ -11,6 +11,10 @@ Checks:
   - Email contains screenshot embed ![[...]]
   - No private execution paths; subject-matter terms remain valid
   - --final rejects unresolved delivery placeholders
+  - --email-html: Outlook font safety of the HTML email BODY (see
+    outlook_email_fonts.py): <!--[if mso]> block with mso-fareast-font-family,
+    every text element inline font-family with Microsoft YaHei first, no web
+    fonts. Not applied to <html_file> (the Tailwind visual brief screenshot page).
 
 Exit codes:
   0  all checks passed
@@ -21,6 +25,9 @@ import argparse
 import sys
 import re
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from outlook_email_fonts import check_html as outlook_font_issues  # noqa: E402
 
 
 BANNED = [
@@ -57,6 +64,8 @@ def main():
     parser.add_argument("email_md")
     parser.add_argument("html_file", nargs="?")
     parser.add_argument("--final", action="store_true", help="Reject unresolved delivery placeholders")
+    parser.add_argument("--email-html", action="append", default=[], metavar="FILE",
+                        help="HTML email body to check for Outlook font safety (repeatable)")
     args = parser.parse_args()
 
     failures = []
@@ -72,6 +81,14 @@ def main():
             failures += check_file(html_path, [], "html", final=args.final)
         else:
             failures.append(f"HTML file not found: {html_path}")
+
+    for email_html in args.email_html:
+        if Path(email_html).exists():
+            failures += check_file(email_html, [], "email-html", final=args.final)
+            for line_no, msg in outlook_font_issues(Path(email_html).read_text(encoding="utf-8")):
+                failures.append(f"[email-html][Outlook font] line {line_no}: {msg}")
+        else:
+            failures.append(f"Email HTML file not found: {email_html}")
 
     if failures:
         print("VALIDATION FAILED:")

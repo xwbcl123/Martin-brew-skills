@@ -52,7 +52,27 @@ Martin
 - Chinese for Chinese audience; English body + Chinese summary for mixed
 - Sentences only — no `> blockquotes` in email body
 
+## Outlook 字体（2026-10-09 Martin 确认）
+
+问题：HTML 邮件在浏览器和 Gmail 里显示正常，到 Outlook 桌面版却变成宋体或 Times New Roman。
+
+原因：Outlook 桌面版用 Word 引擎渲染 HTML 邮件。
+1. Word 引擎不走 CSS 字体回退链。第一个字体（如 Inter、PingFang SC、Spline Sans、-apple-system）没装时，它直接用默认字体，不会往后找。
+2. 中文属于东亚文字，必须另外用 `mso-fareast-font-family` 声明，`font-family` 里的字体管不到中文。
+3. `<style>` 和外层 `body`/`div`/`table` 上的样式经常传不到表格单元格里的文字。
+
+规则（只针对邮件正文 HTML）：
+1. 每个带文字的元素（`td`、`th`、`p`、`span`、`a`、`li`、`div`、`h1` 到 `h6`）都写内联字体，微软雅黑放第一位：`font-family:'Microsoft YaHei','微软雅黑',Arial,'PingFang SC',sans-serif; mso-fareast-font-family:'Microsoft YaHei';`。style 属性用双引号，字体名用单引号。
+2. `<head>` 里放 Outlook 条件注释块 `<!--[if mso]><style>… mso-fareast-font-family: "Microsoft YaHei"; …</style><![endif]-->`。这是邮件正文里唯一允许的 `<style>`。
+3. 不用网页字体：不引 Google Fonts，不写 `@font-face`、`@import`、字体 `<link>`，`font-family` 里不出现 Inter、Spline Sans 等网页字体。
+
+工具：`scripts/outlook_email_fonts.py fix <in.html> <out.html>` 自动补齐，只改标签属性和 `<head>`，正文文字不变；`check <file.html>` 单独检查。visual-mail 的 `validate_outputs.py --email-html` 与 monthly-report-workflow 的 `verify_monthly_report.py`（Gate 7）都会在缺失时报 ERROR。
+
+不在范围内：visual-mail 用来截图的 1080px Tailwind 可视化简报页不是邮件正文，继续按原规则使用 Inter。
+
 ## Visual Brief HTML Contract
+
+(Screenshot page only, not an email body. Its Inter/Tailwind fonts are allowed because it is rendered to PNG.)
 
 - Self-contained single `.html` file
 - Dependencies via CDN only (Tailwind, Lucide, Inter font)

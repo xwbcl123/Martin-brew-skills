@@ -74,7 +74,7 @@ flowchart TD
    - 英文版不是生硬直译，而是同一事实的等价商务英文重构，核心技术术语严格对齐母本标准。
 2. **纯 Table 架构与全内联 CSS**：
    - 邮件安全客户端（尤其是各代 Outlook 与 Exchange）不支持 CSS Grid 与 Flexbox。必须纯嵌套 `<table>` 布局。
-   - 彻底杜绝 `<style>`、`<link>`、`<script>` 标签与任何外部 Web 字体 CDN。
+   - 彻底杜绝 `<style>`、`<link>`、`<script>` 标签与任何外部 Web 字体 CDN。唯一例外是 `<head>` 里的 `<!--[if mso]>` 条件注释字体块（见第 7 节）。
 3. **废弃 1px Spacer，统一采用 Padding**：
    - 严禁使用 `height: 1px; font-size: 1px;` 的表格行充当空白占位符（高分屏与暗黑模式下会被智能拉伸出白缝且违反字号规则）。
    - 间距完全通过单元格内联 `padding` 控制，全篇正文与注释字号严格 $\ge 14\text{px}$。
@@ -98,3 +98,23 @@ flowchart TD
 3. **工程化资产落地**：
    - 邮件 HTML 文件必须同名保存在报告所属权威目录或对应 `emails/` 目录下；
    - 作为可长期复用的历史资产参与版本追踪与归档。
+
+---
+
+## 7. Outlook 字体（2026-10-09 Martin 确认）
+
+问题：HTML 邮件在浏览器和 Gmail 里显示正常，到 Outlook 桌面版却变成宋体或 Times New Roman。
+
+原因：Outlook 桌面版用 Word 引擎渲染 HTML 邮件。
+1. Word 引擎不走 CSS 字体回退链。第一个字体（如 Inter、PingFang SC、Spline Sans、-apple-system）没装时，它直接用默认字体，不会往后找。
+2. 中文属于东亚文字，必须另外用 `mso-fareast-font-family` 声明，`font-family` 里的字体管不到中文。
+3. `<style>` 和外层 `body`/`div`/`table` 上的样式经常传不到表格单元格里的文字。
+
+规则（只针对邮件正文 HTML）：
+1. 每个带文字的元素（`td`、`th`、`p`、`span`、`a`、`li`、`div`、`h1` 到 `h6`）都写内联字体，微软雅黑放第一位：`font-family:'Microsoft YaHei','微软雅黑',Arial,'PingFang SC',sans-serif; mso-fareast-font-family:'Microsoft YaHei';`。style 属性用双引号，字体名用单引号。
+2. `<head>` 里放 Outlook 条件注释块 `<!--[if mso]><style>… mso-fareast-font-family: "Microsoft YaHei"; …</style><![endif]-->`。这是邮件正文里唯一允许的 `<style>`。
+3. 不用网页字体：不引 Google Fonts，不写 `@font-face`、`@import`、字体 `<link>`，`font-family` 里不出现 Inter、Spline Sans 等网页字体。
+
+工具：`scripts/outlook_email_fonts.py fix <in.html> <out.html>` 自动补齐，只改标签属性和 `<head>`，正文文字不变；`check <file.html>` 单独检查。visual-mail 的 `validate_outputs.py --email-html` 与 monthly-report-workflow 的 `verify_monthly_report.py`（Gate 7）都会在缺失时报 ERROR。
+
+不在范围内：visual-mail 用来截图的 1080px Tailwind 可视化简报页不是邮件正文，继续按原规则使用 Inter。
