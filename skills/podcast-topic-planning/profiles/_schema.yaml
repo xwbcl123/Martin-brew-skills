@@ -1,0 +1,75 @@
+# ==============================================================================
+# Podcast Brand Profile Contract Schema (v1.0.0)
+# ==============================================================================
+# 规范说明: 每一个播客品牌通过独立的 Profile YAML 文件定义其受众定位、录制形态、
+# 角色矩阵 (Personas)、观点张力 (Tension Matrix) 以及输出路由。
+# 开发者/Agent 可通过 `--profile <id>` 动态加载并驱动全流程策划编译。
+# ==============================================================================
+
+schema_version: "1.0.0"
+
+# 1. 品牌基本信息 (Brand Identity)
+profile:
+  id: "string"                          # 唯一标识符，全小写中划线，如 geek-family, cyber-martin, asf
+  name: "string"                        # 品牌展示全称，如 "极客家庭 (Geek Family Podcast)"
+  show_id: "string"                     # 托管平台 Show ID (如 Transistor 82408, 82999)
+  tagline: "string"                     # 品牌一句话 Slogan / 核心主张
+  description: "string"                 # 品牌背景与深层定位叙事
+
+# 2. 单集形态与节奏规格 (Format & Rhythm Spec)
+format:
+  type: "string"                        # 模式枚举: trio_dialogue (三人对谈) | solo_monologue (单人独白) | ai_duo_discussion (AI双人探讨) | interview_panel (圆桌访谈)
+  target_duration_minutes: 45           # 目标时长 (分钟)
+  unscripted_safe_harbor_ratio: 0.20    # 未排练盲盒/自由碰撞内容占比 (建议 0.15 - 0.25)
+  target_audience: "string"             # 核心受众画像
+
+# 3. 语言风格与表达边界 (Voice & Boundaries)
+tone_and_style:
+  keywords:                             # 核心风格关键词列表
+    - "string"
+  humor_style: "string"                 # 幽默与语调风格，如 "冷幽默与极客自嘲", "技术批判与尖锐设问"
+  discussion_prohibitions:              # 表达禁忌与红线
+    - "string"
+
+# 4. 主持人与嘉宾角色矩阵 (Persona Matrix)
+personas:
+  - id: "string"                        # 角色唯一 ID，如 martin, spring, feynman
+    name: "string"                      # 角色展示名与身份标签，如 "Martin (爸爸 / 架构师)"
+    role: "string"                      # 角色功能: host_moderator (主持控场) | tech_lead (技术硬核) | reality_anchor (现实落地) | youth_perspective (少年感官)
+    perspective: "string"               # 核心视角定位与心智模型
+    voice_traits:                       # 角色语言特征与思维习惯
+      - "string"
+    signature_phrases:                  # 口头禅或标志性提问方式
+      - "string"
+
+# 5. 观点张力与冲突模式 (Tension Patterns)
+tension_matrix:
+  - between:                            # 产生碰撞的角色 ID 组合
+      - "string"
+      - "string"
+    dynamic: "string"                   # 核心冲突维度与交锋逻辑
+    killer_question_template: "string"  # 该组角色间可触发的标志性突袭问题模版
+
+# 6. 默认叙事结构模版 (Narrative Structure Template)
+narrative_structure:
+  acts:
+    - act: 1
+      name: "string"                    # 幕名，如 "前哨战：临行前的系统测试"
+      purpose: "string"                 # 阶段核心目标与冲突破冰点
+    - act: 2
+      name: "string"                    # 幕名，如 "日常破局：无手机的秩序自愈"
+      purpose: "string"                 # 阶段核心目标
+    - act: 3
+      name: "string"                    # 幕名，如 "极限高潮：要塞孤堡速降"
+      purpose: "string"                 # 阶段核心目标
+    - act: 4
+      name: "string"                    # 幕名，如 "极客复盘：什么是真正的安全感"
+      purpose: "string"                 # 阶段核心目标
+
+# 7. 存储、发布与渲染路由 (Storage & Presentation Routing)
+routing:
+  vault_episodes_root: "string"         # Vault 单集根目录，如 "50-59_Knowledge-Writing/53.11_family-podcast-knowledge-lib/notes/episodes"
+  vault_episodes_prefix: "string"       # Vault 单集文件夹前缀，如 "geek-family-"
+  notes_brand_path: "string"            # 对应的品牌资产库路径
+  r2_object_prefix: "string"            # R2 发布前缀，如 "deep-research/geek-family"
+  lavish_theme: "string"                # 预览页面推荐视觉主题 (editorial-warm | hacker-terminal | clean-slate)

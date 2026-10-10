@@ -1,0 +1,80 @@
+# ==============================================================================
+# Brand Profile: AI Security Forum (ASF Podcast)
+# ==============================================================================
+
+schema_version: "1.0.0"
+
+profile:
+  id: "asf"
+  name: "AI Security Forum (ASF Podcast)"
+  show_id: "pending"
+  tagline: "探索前沿 AI 威胁建模、红蓝对抗与确定性安全防护的全球对话。"
+  description: "AI Security Forum (ASF) 官方智库与技术专栏播客。聚焦前沿 Frontier AI 威胁建模、Agent 越狱防御、模型权重安全、欧盟/全球 AI 法规与关键基础设施防护。以高规格研究员深度访谈与多方圆桌辩论为主。"
+
+format:
+  type: "interview_panel"                # 访谈与圆桌模式
+  target_duration_minutes: 35
+  unscripted_safe_harbor_ratio: 0.15
+  target_audience: "AI 安全研究员、红蓝队攻防专家、企业 CISO、政策智库研究员与前沿开发者。"
+
+tone_and_style:
+  keywords:
+    - "全球智库视角"
+    - "实战攻防"
+    - "严谨循证"
+    - "威胁情报"
+    - "防御深度"
+  humor_style: "极度克制、专业英美技术极客对谈、对虚假合规与形式主义防御的温和反思。"
+  discussion_prohibitions:
+    - "严禁泄露未披露的 0-day 实际攻击利用链"
+    - "严禁缺乏学术或工程复现证据的恐慌性末日叙事"
+    - "严禁纯粹的政策概念公文背书"
+
+personas:
+  - id: "martin_host"
+    name: "Martin (主持人 / 安全架构师 / ASF 主理人)"
+    role: "host_moderator"
+    perspective: "安全工程与全球治理连接者。既懂实战攻防代码与 Agent 漏洞利用原理，又理解欧洲及全球监管合规要求；善于将高深的安全问题拆解为清晰的工程模型。"
+    voice_traits:
+      - "中英双语精准表达、术语严谨"
+      - "善于追问攻防假设与实际复现环境"
+    signature_phrases:
+      - "如果攻击者拥有模型上下文注入权限，最底层的信任链条在哪里被打破？"
+      - "从合规要求到真实的工程落地，行业目前最大的断层是什么？"
+
+  - id: "guest_expert"
+    name: "Guest Expert (特邀安全专家 / 论文作者 / 攻防一线)"
+    role: "domain_expert"
+    perspective: "细分领域顶尖研究者。带来最新研究发现、真实攻防数据或标准制定内幕。"
+    voice_traits:
+      - "数据详实、紧贴最新 CVE、论文或实战演练"
+    signature_phrases:
+      - "我们在测试集中观察到了极不寻常的逃逸模式……"
+      - "这并不是理论漏洞，我们在真实环境测试中发现……"
+
+tension_matrix:
+  - between: ["martin_host", "guest_expert"]
+    dynamic: "模型前沿能力突飞猛进 vs 安全边界与攻防验证严重滞后"
+    killer_question_template: "如果大语言模型从本质上就是不可预测的非确定性系统，我们传统的确定性安全防护网是否在做徒劳的修补？"
+
+narrative_structure:
+  acts:
+    - act: 1
+      name: "威胁前沿：最新披露与实战警报"
+      purpose: "引入近期真实漏洞案例、学术论文突破或监管新政，点燃安全从业者的核心关切。"
+    - act: 2
+      name: "攻防推演：攻击链条与信任断裂"
+      purpose: "还原攻击者路径（越狱、提示注入、模型投毒、侧信道），直击底层系统架构缺陷。"
+    - act: 3
+      name: "防御纵深：工程解法与落地权衡"
+      purpose: "深入探讨沙箱、护栏 (Guardrails)、密码学证明与监控体系的实效与性能开销。"
+    - act: 4
+      name: "未来观察：构建可信前沿生态"
+      purpose: "总结全球治理趋势，向开发者与行业领导者输出前瞻性安全架构建议。"
+
+routing:
+  vault_episodes_root: "50-59_Knowledge-Writing/53.11_family-podcast-knowledge-lib/notes/episodes"
+  vault_episodes_prefix: "asf-"
+  notes_brand_path: "50-59_Knowledge-Writing/53.11_family-podcast-knowledge-lib/notes/brand/asf"
+  r2_object_prefix: "deep-research/asf"
+  lavish_theme: "cyber-clean"
