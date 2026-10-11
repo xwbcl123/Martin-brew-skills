@@ -45,10 +45,14 @@ def main() -> None:
     config = json.loads(args.config.read_text(encoding="utf-8")); p = config["paths"]
     execute("bootstrap_audio_roles.py", ["--intake", p["intake"], "--manifest", p["manifest"],
             "--render", p["render_audio"], "--analysis", p["analysis_audio"], "--report", p["s01_report"]])
+    # Per-episode values win; anything omitted falls back to run_whisper_raw.py (CLI > env > personal config > neutral default).
     whisper_arguments = ["--episode-id", config["episode_id"], "--analysis-audio", p["analysis_audio"],
-                         "--model", p["whisper_model"], "--output-base", p["raw_output_base"],
-                         "--report", p["s02_report"], "--log", p["s02_log"],
-                         "--language", config.get("language", "zh"), "--threads", str(config.get("threads", 8))]
+                         "--output-base", p["raw_output_base"],
+                         "--report", p["s02_report"], "--log", p["s02_log"], "--threads", str(config.get("threads", 8))]
+    if p.get("whisper_model"):
+        whisper_arguments.extend(["--model", p["whisper_model"]])
+    if config.get("language"):
+        whisper_arguments.extend(["--language", config["language"]])
     if p.get("whisper_cli"):
         whisper_arguments.extend(["--whisper-cli", p["whisper_cli"]])
     execute("run_whisper_raw.py", whisper_arguments)

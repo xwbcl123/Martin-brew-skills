@@ -55,8 +55,8 @@ class PublicContentTests(unittest.TestCase):
         self.assertNotIn(' open',re.search(r'<details[^>]+id="terminology-review"[^>]*>',page).group())
         self.assertEqual(m.import_terminology_decisions(self.data,exported)['provenance'],'user_preview_attestation')
         self.assertNotIn('human_confirmed',json.dumps(m.import_terminology_decisions(self.data,exported)))
-        exported['decisions'][0].update(decision='edit',text='费曼')
-        self.assertEqual(m.import_terminology_decisions(self.data,exported)['decisions'][0]['text'],'费曼')
+        exported['decisions'][0].update(decision='edit',text='菲利克斯')
+        self.assertEqual(m.import_terminology_decisions(self.data,exported)['decisions'][0]['text'],'菲利克斯')
     def test_terms_stale_duplicate_and_actor_rejected(self):
         source=self.terms()
         for field in source['bindings']:

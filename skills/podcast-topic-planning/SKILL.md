@@ -1,6 +1,6 @@
 ---
 name: podcast-topic-planning
-description: Plan and compile structured podcast episode briefs, dramatized outlines, interactive review pages, and Cloudflare R2 review links using extensible brand profiles (--profile geek-family | cyber-martin | asf). Use for podcast topic ideation, fact-checked briefing, 4-act outline compilation, and human review before recording.
+description: Plan and compile structured podcast episode briefs, dramatized outlines, interactive review pages, and Cloudflare R2 review links using extensible brand profiles (--profile <id>; list with `validate_profile.py --list`). Use for podcast topic ideation, fact-checked briefing, 4-act outline compilation, and human review before recording.
 ---
 
 # Podcast Topic Planning
@@ -18,8 +18,8 @@ description: Plan and compile structured podcast episode briefs, dramatized outl
 ### 核心铁律
 1. **认知亲近度优先 (Proximity-First Input Engine)**:
    - 选题策划严禁凭空构想，优先激活 Vault 内的**亲近度双雷达**：
-     - 📔 **日记通道 (Journal `13.10`)**: 优先检索 `10-19_Me-Health/13.10_personal-journal-lib/10_daily/`，挖掘近期真实亲历、家庭生活切片、突发意外与第一人称情绪（提供不可替代的真实亲历感）；
-     - 📚 **阅读通道 (Reading `51.14`)**: 优先检索 `50-59_Knowledge-Writing/51.14_reading-clippings-lib/`，调取 Martin 最近剪藏、精读并注记的观点对标与行业雷达（提供前沿认知背书）；
+     - 📔 **日记通道 (Journal)**: 优先检索用户指定的个人日记目录（逐日笔记），挖掘近期真实亲历、家庭生活切片、突发意外与第一人称情绪（提供不可替代的真实亲历感）；
+     - 📚 **阅读通道 (Reading)**: 优先检索用户指定的阅读剪藏目录，调取用户最近剪藏、精读并注记的观点对标与行业雷达（提供前沿认知背书）；
    - **切身度加权 (Proximity Weighting)**：具备“一手经历 + 近期阅读”交集的主题拥有最高策划优先级。
    - **零亲近度保护 (Zero-Proximity Termination Gate)**：若日记与剪藏检索结果为 0 条（如抽象纯技术话题）：
      - **严禁 Agent 臆造虚假亲历日记或家庭生活细节**；
@@ -32,7 +32,7 @@ description: Plan and compile structured podcast episode briefs, dramatized outl
 
 3. **多品牌 Profile 契约驱动 (`--profile <id>`)**:
    - 动态加载 `.agents/skills/podcast-topic-planning/profiles/<profile_id>.yaml`；
-   - 严禁将品牌人格硬编码在 Prompt 中。支持 `geek-family`（三人家庭生活碰撞）、`cyber-martin`（单人架构师独白/AI双人探讨）、`asf`（AI安全智库圆桌）以及任意未来通过 Profile 注册的品牌。
+   - 严禁将品牌人格硬编码在 Prompt 中。品牌由 profiles 目录中的 Profile 注册（`--profiles-dir`，或个人配置 `planning_profiles_dir`；随包仅带虚构的 `example-show`）。
    - Profile 必须先通过 `scripts/validate_profile.py` 严格校验。
 
 4. **动态形态与未排练安全港 (Dynamic Format & Unscripted Safe Harbor)**:
@@ -64,15 +64,13 @@ description: Plan and compile structured podcast episode briefs, dramatized outl
 python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --list
 
 # 校验目标 Profile
-python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --profile <profile_id>
+python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py [--profiles-dir DIR] --profile <profile_id>
 ```
 
 ### 路由优先级与消歧规则
 1. **显式指定优先**：用户输入中包含 `--profile <id>` 或明确提及品牌名称时，严格按指定 Profile 加载；
 2. **唯一推断**：
-   - 涉及家庭、海外教育、日常生活、亲子科技启蒙 ➔ `geek-family`；
-   - 涉及 AI 架构、源码审计、Agent 工程、Slop Code 治理 ➔ `cyber-martin`；
-   - 涉及 AI Security Forum、全球治理、大模型攻防对抗 ➔ `asf`；
+   - 仅当话题与某个 Profile 的 `description` / `target_audience` 明确且唯一匹配时才自动选用该 Profile；
 3. **歧义分支**：若上下文同时命中多品牌（如“家庭 AI 科技教育”），或未匹配任何品牌，Agent 必须停下来向用户列出候选 Profile 请求确认，严禁静默乱投递。
 4. **不存在的 Profile**：若指定的 Profile 不存在或校验未通过，立即停止执行并提示报错，严禁静默回退。
 
@@ -88,8 +86,8 @@ python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --prof
 
 ### Phase 1: 亲近度探测与一手事实抽取 (Proximity Intake & Briefing)
 1. **亲近度检索 (Proximity Retrieval)**:
-   - **日记通道**: 检索 `10-19_Me-Health/13.10_personal-journal-lib/10_daily/`，提取关联日期的真实事件、现场细节与情绪记录；
-   - **阅读通道**: 检索 `50-59_Knowledge-Writing/51.14_reading-clippings-lib/`，提取与主题相关的精读笔记；
+   - **日记通道**: 检索用户指定的日记目录，提取关联日期的真实事件、现场细节与情绪记录；
+   - **阅读通道**: 检索用户指定的阅读剪藏目录，提取与主题相关的精读笔记；
    - **零命中分支**: 若两通道均无记录，写入 `no_proximity_evidence`，生成待确认提案并暂停，不伪造亲历日记。
 2. **客观事实验证**:
    - 涉及外部机构、历史、法律、技术规范时，利用已注册搜索能力验证客观硬事实；若环境无搜索能力，标记为 `unverified_external`。
@@ -127,7 +125,7 @@ python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --prof
    - **前提条件**：仅在用户显式要求公网发布或具备预授权时执行；
    - **脱敏核查**：检查 HTML 中是否包含未经脱敏的家庭私人对话、敏感地址或未公开材料；
    - **幂等前检**：写入前核对 `run_key` 与既有 `publish-manifest.json`。若已存在经核实同内容同目标对象则复用；若写入记录中断或证据不完整，先回读确切对象，不可盲目重复上传覆盖；
-   - **发布与回读**：通过已授权发布工具推送到 Martin R2 Bucket：
+   - **发布与回读**：通过已授权发布工具推送到用户自己的 R2 Bucket：
      `${routing.r2_object_prefix}/${slug}/v${timestamp}/preview.html`
    - **回读核实**：发起 HTTPS 回读，比对文件 SHA-256；若回读哈希不符，标记 `publish_status: "publish_failed"`；
    - **清单落盘**：生成 `publish-manifest.json`，完整记录：

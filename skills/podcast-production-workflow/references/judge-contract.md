@@ -14,7 +14,7 @@ Before dispatch, the episode declaration must record:
 - provider/harness and exact observed model identifier;
 - input role and exact SHA-256;
 - bounded transcript/audio window policy;
-- Martin's authorization record for model processing;
+- the user's authorization record for model processing;
 - minor-consent status when a minor is present.
 
 Missing evidence is `blocked`, not implicit consent.

@@ -35,7 +35,7 @@ Confirmed useful patterns:
 
 - Upstream removes every VAD speech burst shorter than a configurable duration (default 2s), treating coughs, markers and false starts as equivalent. In a three-person Chinese family conversation this can delete short meaningful replies or emotion; do not transfer as automatic authority.
 - Upstream restart phrase handling drops an entire merged speech segment. We transfer only a bounded candidate from segment start through the marker, still requiring review/calibration.
-- Upstream uses floating seconds and ephemeral temp state, has no content-addressed cache, immutable provenance, atomic stage promotion, resumable manifests or approval binding. Keep the Life-OS 48 kHz integer-sample and recovery contracts.
+- Upstream uses floating seconds and ephemeral temp state, has no content-addressed cache, immutable provenance, atomic stage promotion, resumable manifests or approval binding. Keep this project's 48 kHz integer-sample and recovery contracts.
 - `crossfade_ms` is documented as reserved and not used by the upstream pipeline. Do not treat that README/config field as implemented splice safety.
 - Optional OpenRouter features silently skip when credentials are absent. This conflicts with auditability; our workflow records explicit `skipped/blocked` states.
 - Per-segment video re-encoding is frame-accurate but expensive and lossy across many cuts. Revisit only in the future video workflow, not the audio master path.

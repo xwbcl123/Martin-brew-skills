@@ -8,11 +8,11 @@
     "source_basename": "2026-08-22 21-44-10.mov",
     "timeline_basis": "release-audio"
   },
-  "provider": {"name": "transistor", "show_id": "82408", "episode_id": null},
+  "provider": {"name": "transistor", "show_id": "12345", "episode_id": null},
   "show": {"title": "家庭时光胶囊播客", "language": "zh-CN"},
   "episode": {
-    "title": "《奥德赛》：一个11岁少年眼中的英雄、战争与归家",
-    "author": "Martin",
+    "title": "《示例》：一期关于英雄与归家的对谈",
+    "author": "Example Host",
     "summary_file": "metadata/summary.txt",
     "summary_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
     "description_file": "metadata/description.html",
@@ -22,7 +22,7 @@
     "number": 1,
     "explicit": false,
     "participants": [
-      {"name": "Martin", "role": "host"},
+      {"name": "Example Host", "role": "host"},
       {"name": "Sage", "role": "guest"},
       {"name": "Felix", "role": "guest"}
     ],
@@ -63,17 +63,17 @@
     "clip_manifest_file": null
   },
   "rights": {
-    "content": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": "2026-08-24T09:00:00+02:00"},
-    "music": {"status": "not_applicable", "reviewed_by": "Martin", "reviewed_at": "2026-08-24T09:00:00+02:00"},
-    "artwork": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": "2026-08-24T09:00:00+02:00"},
-    "minor_consent": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": "2026-08-24T09:00:00+02:00"}
+    "content": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": "2026-08-24T09:00:00+02:00"},
+    "music": {"status": "not_applicable", "reviewed_by": "Example Host", "reviewed_at": "2026-08-24T09:00:00+02:00"},
+    "artwork": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": "2026-08-24T09:00:00+02:00"},
+    "minor_consent": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": "2026-08-24T09:00:00+02:00"}
   },
   "approvals": {
-    "editorial": {"status": "approved", "approved_by": "Martin", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
-    "transcript": {"status": "approved", "approved_by": "Martin", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
-    "mastering": {"status": "approved", "approved_by": "Martin", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
-    "artwork": {"status": "approved", "approved_by": "Martin", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
-    "release_candidate": {"status": "approved", "approved_by": "Martin", "approved_at": "2026-08-24T09:00:00+02:00", "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "release_audio_sha256": "0000000000000000000000000000000000000000000000000000000000000000"}
+    "editorial": {"status": "approved", "approved_by": "Example Host", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    "transcript": {"status": "approved", "approved_by": "Example Host", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    "mastering": {"status": "approved", "approved_by": "Example Host", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    "artwork": {"status": "approved", "approved_by": "Example Host", "approved_at": "2026-08-24T09:00:00+02:00", "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    "release_candidate": {"status": "approved", "approved_by": "Example Host", "approved_at": "2026-08-24T09:00:00+02:00", "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000", "release_audio_sha256": "0000000000000000000000000000000000000000000000000000000000000000"}
   },
   "preview": {"output_file": "preview/episode-release-preview.html"}
 }

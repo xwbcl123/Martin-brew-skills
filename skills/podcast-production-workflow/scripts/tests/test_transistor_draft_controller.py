@@ -30,8 +30,8 @@ class TransistorDraftControllerTests(unittest.TestCase):
         release_sha = controller.sha256(self.root / "media/episode-release.mp3")
         self.manifest = self.root / "manifest.json"
         manifest = {
-            "episode_key": "20990101_fixture", "provider": {"name": "transistor", "show_id": "82408", "episode_id": None},
-            "episode": {"title": "Fixture episode", "author": "Martin", "summary_file": "metadata/summary.txt",
+            "episode_key": "20990101_fixture", "provider": {"name": "transistor", "show_id": "12345", "episode_id": None},
+            "episode": {"title": "Fixture episode", "author": "Example Host", "summary_file": "metadata/summary.txt",
                         "description_file": "metadata/description.html", "explicit": False, "type": "full", "season": 1, "number": 2},
             "media": {"release_audio": "media/episode-release.mp3", "release_audio_sha256": release_sha},
             "transcript": {"text_file": "transcripts/transcript.txt"},
@@ -49,9 +49,9 @@ class TransistorDraftControllerTests(unittest.TestCase):
         self.report.write_text(json.dumps(report), encoding="utf-8")
         self.context = controller.local_contract(self.manifest, self.report)
         self.approval = {"gate": "H6-transistor-draft-upload", "status": "approved", "episode_key": "20990101_fixture",
-                         "show_id": "82408", "acceptance_report_sha256": controller.sha256(self.report),
+                         "show_id": "12345", "acceptance_report_sha256": controller.sha256(self.report),
                          "manifest_sha256": controller.sha256(self.manifest), "release_candidate_payload_sha256": "a" * 64,
-                         "release_audio_sha256": release_sha, "approved_by": "Martin",
+                         "release_audio_sha256": release_sha, "approved_by": "Example Host",
                          "approved_at": "2026-08-24T12:00:00+02:00", "publish_authorized": False}
 
     def tearDown(self) -> None:
@@ -60,7 +60,7 @@ class TransistorDraftControllerTests(unittest.TestCase):
     def test_approval_is_bound_to_all_acceptance_hashes(self) -> None:
         path = self.root / "approval.json"; path.write_text(json.dumps(self.approval), encoding="utf-8")
         validated = controller.validate_approval(path, self.context)
-        self.assertEqual(validated["show_id"], "82408")
+        self.assertEqual(validated["show_id"], "12345")
         payload = dict(self.approval); payload["release_audio_sha256"] = "0" * 64
         path.write_text(json.dumps(payload), encoding="utf-8")
         with self.assertRaisesRegex(controller.DraftError, "release_audio_sha256"):

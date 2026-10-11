@@ -10,6 +10,106 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+# BEGIN podcast-config (byte-identical in every consumer; guarded by podcast-release-package/scripts/test_config_copies.py)
+def _podcast_cfg(_cache={}):
+    """Personal defaults from $PODCAST_CONFIG or ~/.config/podcast-skills/config.json. Read lazily, once; never grants approval/authorization."""
+    import json, os, re
+    from pathlib import Path
+    keys = {'workspace', 'whisper_cli', 'whisper_model', 'transistor_cli', 'transistor_cli_repo',
+            'language', 'approver', 'artwork_registry', 'planning_profiles_dir'}
+    plain = {'language', 'approver'}
+    explicit = os.environ.get('PODCAST_CONFIG')
+    if explicit is not None:
+        if not explicit.strip() or not Path(explicit).expanduser().is_absolute():
+            raise SystemExit('PODCAST_CONFIG must be a non-empty absolute path (unset it to use ~/.config/podcast-skills/config.json)')
+        path = Path(explicit).expanduser()
+    else:
+        path = Path.home() / '.config' / 'podcast-skills' / 'config.json'
+    if str(path) in _cache:
+        return _cache[str(path)]
+    if explicit is not None and not path.is_file():
+        raise SystemExit(f'PODCAST_CONFIG points to a missing file: {path}')
+    data = {}
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+        except ValueError as exc:
+            raise SystemExit(f'invalid JSON in {path}: {exc}')
+    if not isinstance(data, dict):
+        raise SystemExit(f'{path}: top level must be an object')
+    extra = sorted(set(data) - keys - {'shows'})
+    if extra:
+        raise SystemExit(f'{path}: unknown keys {extra}')
+    for key in keys & set(data):
+        value = data[key]
+        if not isinstance(value, str) or not value.strip():
+            raise SystemExit(f'{path}: {key} must be a non-empty string')
+        if key not in plain and not Path(value).expanduser().is_absolute():
+            raise SystemExit(f'{path}: {key} must be an absolute path')
+    shows = data.setdefault('shows', {})
+    if not isinstance(shows, dict):
+        raise SystemExit(f'{path}: shows must be an object keyed by show id')
+    for sid, entry in shows.items():
+        if not re.fullmatch(r'[0-9]+', str(sid)) or not isinstance(entry, dict) or set(entry) - {'author', 'brand_name', 'brand_tagline'}:
+            raise SystemExit(f'{path}: shows[{sid!r}] must be an object with only author/brand_name/brand_tagline')
+        for field in ('author', 'brand_name'):
+            if field in entry and (not isinstance(entry[field], str) or not entry[field].strip()):
+                raise SystemExit(f'{path}: shows[{sid!r}].{field} must be a non-empty string')
+        if 'brand_tagline' in entry and not isinstance(entry['brand_tagline'], str):
+            raise SystemExit(f'{path}: shows[{sid!r}].brand_tagline must be a string')
+    _cache[str(path)] = data
+    return data
+
+
+def _podcast_pick(cli, env_name, key):
+    """Provided CLI value > provided environment variable > config file > None. A provided-but-blank value is an error, never "unset"."""
+    import os
+    for source, value in (('command line', cli), (f'${env_name}', os.environ.get(env_name) if env_name else None)):
+        if value is not None:
+            if not str(value).strip():
+                raise SystemExit(f'{key}: empty value from the {source}; omit it to use the default')
+            return value
+    return _podcast_cfg().get(key)
+
+
+def _podcast_tool(cli, env_name, key, command):
+    """A provided tool path must be an absolute executable file and is used as-is (never re-resolved through PATH); `command` is only looked up when nothing was provided."""
+    import os, shutil
+    value = _podcast_pick(cli, env_name, key)
+    if value is not None:
+        value = os.path.expanduser(str(value))
+        if not os.path.isabs(value):
+            raise SystemExit(f'{key}: {value} must be an absolute path (relative values are never searched on PATH)')
+        if not (os.path.isfile(value) and os.access(value, os.X_OK)):
+            raise SystemExit(f'{key}: {value} is not an executable file (fix --{key.replace("_", "-")}, ${env_name or "PODCAST_CONFIG"} or the podcast-skills config)')
+        return value
+    found = shutil.which(command)
+    if not found:
+        raise SystemExit(f'{command} not found: pass --{key.replace("_", "-")}, set ${env_name or "PODCAST_CONFIG"} or add "{key}" to ~/.config/podcast-skills/config.json')
+    return os.path.abspath(found)
+
+
+def _podcast_model(cli):
+    """Whisper model: CLI > $WHISPER_MODEL > config whisper_model > <workspace>/models/ggml-large-v3-q5_0.bin."""
+    import os
+    value = _podcast_pick(cli, 'WHISPER_MODEL', 'whisper_model')
+    if value is None:
+        workspace = _podcast_pick(None, 'PODCAST_WORKSPACE', 'workspace')
+        if workspace is None:
+            raise SystemExit('no Whisper model: pass --model, set $WHISPER_MODEL, or add whisper_model/workspace to ~/.config/podcast-skills/config.json')
+        workspace = os.path.expanduser(str(workspace))
+        if not os.path.isabs(workspace):
+            raise SystemExit(f'workspace: {workspace} must be an absolute path')
+        value = os.path.join(workspace, 'models', 'ggml-large-v3-q5_0.bin')
+    value = os.path.expanduser(str(value))
+    if not os.path.isabs(value):
+        raise SystemExit(f'whisper_model: {value} must be an absolute path')
+    if not os.path.isfile(value):
+        raise SystemExit(f'Whisper model does not exist: {value}')
+    return value
+# END podcast-config
+
+
 def contained(base, value):
     p = (base / value).resolve()
     if not p.is_relative_to(base.resolve()) or not p.is_file():
@@ -18,18 +118,17 @@ def contained(base, value):
 
 
 def discover_registry():
-    import os
-    configured = os.environ.get('PODCAST_ARTWORK_PROFILE_REGISTRY')
-    if configured:
-        return Path(configured).resolve(strict=True)
-    roots = [Path.cwd(), Path(__file__).resolve().parents[4]]
-    candidates = {p.resolve() for root in roots for p in root.glob('*/*/notes/brand/artwork-profiles.json')}
-    if len(candidates) > 1:
-        raise ValueError('multiple artwork registries; specify --profile-registry')
-    return next(iter(candidates), None)
+    """Explicit registry only: $PODCAST_ARTWORK_PROFILE_REGISTRY or config artwork_registry (absolute). No cwd/vault scanning."""
+    configured = _podcast_pick(None, 'PODCAST_ARTWORK_PROFILE_REGISTRY', 'artwork_registry')
+    if configured is None:
+        return None
+    path = Path(str(configured)).expanduser()
+    if not path.is_absolute():
+        raise ValueError('artwork registry must be an absolute path')
+    return path.resolve(strict=True)
 
 
-def resolve_profile(brief, explicit=None, registry_path=None):
+def resolve_profile(brief, explicit=None, registry_path=None, seen=None):
     metadata_ref = brief.get('metadata', {}).get('artwork', {}).get('profile_ref')
     if explicit is not None:
         if metadata_ref and Path(metadata_ref).resolve() != Path(explicit).resolve():
@@ -40,6 +139,7 @@ def resolve_profile(brief, explicit=None, registry_path=None):
     registry_path = registry_path or discover_registry()
     if registry_path:
         registry = Path(registry_path).resolve(strict=True)
+        if seen is not None: seen.append(registry)
         records = json.loads(registry.read_text())
         if records.get('schema_version') != '1.0':
             raise ValueError('unsupported artwork registry schema')
@@ -51,7 +151,9 @@ def resolve_profile(brief, explicit=None, registry_path=None):
     return None, None
 
 
-def plan(brief, profile_path=None, registry_path=None):
+def plan(brief, profile_path=None, registry_path=None, inputs=None):
+    """`inputs`, when given, receives every file that was read (profile, manifest, composition guide, references)."""
+    seen = inputs if inputs is not None else []
     for key in ('show_id', 'show_name', 'asset_type', 'composition'):
         if not isinstance(brief.get(key), str) or not brief[key].strip():
             raise ValueError(f'brief requires {key}')
@@ -63,9 +165,10 @@ def plan(brief, profile_path=None, registry_path=None):
             raise ValueError(f'brief requires nonempty {key}')
     if kind == 'episode' and (type(brief.get('episode_number')) is not int or brief['episode_number'] < 1):
         raise ValueError('episode brief requires a positive episode_number')
-    profile_path, resolved_by = resolve_profile(brief, profile_path, registry_path)
+    profile_path, resolved_by = resolve_profile(brief, profile_path, registry_path, seen)
     if profile_path is not None:
         path = Path(profile_path).resolve(strict=True)
+        seen.append(path)
         if path.suffix.lower() == '.json':
             profile = json.loads(path.read_text())
         else:
@@ -89,13 +192,14 @@ def plan(brief, profile_path=None, registry_path=None):
         base = path.parent
         manifest = {}
         if profile.get('reference_manifest'):
-            records = json.loads(contained(base, profile['reference_manifest']).read_text())
+            manifest_file = contained(base, profile['reference_manifest']); seen.append(manifest_file)
+            records = json.loads(manifest_file.read_text())
             if not isinstance(records, list):
                 raise ValueError('reference_manifest must be an array')
             for record in records:
                 if record['path'] in manifest:
                     raise ValueError('duplicate reference path')
-                file = contained(base, record['path'])
+                file = contained(base, record['path']); seen.append(file)
                 actual = digest(file)
                 if actual != record['sha256']:
                     raise ValueError(f'reference hash mismatch: {record["path"]}')
@@ -108,7 +212,9 @@ def plan(brief, profile_path=None, registry_path=None):
                     raise ValueError(f'reference absent from manifest: {style[key]}')
         if len({s['id'] for s in profile['styles'].values()}) != len(profile['styles']):
             raise ValueError('duplicate style id')
-        composition_template = contained(base, profile['composition_prompt']).read_text() if profile.get('composition_prompt') else ''
+        composition_file = contained(base, profile['composition_prompt']) if profile.get('composition_prompt') else None
+        if composition_file: seen.append(composition_file)
+        composition_template = composition_file.read_text() if composition_file else ''
         resolution = resolved_by
         identity = {'profile_ref': str(path), 'profile_sha256': digest(path)}
     else:
@@ -149,17 +255,37 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--brief', required=True)
     parser.add_argument('--profile')
-    parser.add_argument('--profile-registry', help='optional show-ID to canonical-profile registry')
+    parser.add_argument('--profile-registry', help='optional show-ID to canonical-profile registry (default: $PODCAST_ARTWORK_PROFILE_REGISTRY, then config artwork_registry)')
     parser.add_argument('--output', required=True)
+    parser.add_argument('--overwrite', action='store_true', help='replace an existing plan file (never an input file)')
     args = parser.parse_args()
+    inputs = []
     try:
-        result = plan(json.loads(Path(args.brief).read_text()), args.profile, args.profile_registry)
+        result = plan(json.loads(Path(args.brief).read_text()), args.profile, args.profile_registry, inputs)
     except (ValueError, OSError, KeyError, TypeError) as error:
         parser.error(str(error))
+    import os, tempfile
+    protected = [Path(args.brief), *inputs]
     output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
-    print(output)
+    if output.is_symlink() or output.parent.is_symlink():
+        parser.error('output and its directory must not be symlinks')
+    target = Path(os.path.realpath(output.parent)) / output.name
+    for source in protected:
+        source = Path(os.path.realpath(source))
+        if source == target or (target.exists() and source.exists() and os.path.samefile(source, target)):
+            parser.error(f'output would overwrite an input file: {source.name}')
+    if target.exists() and not args.overwrite:
+        parser.error('output exists; pass --overwrite to replace an existing plan')
+    target.parent.mkdir(parents=True, exist_ok=True)
+    handle, temporary = tempfile.mkstemp(prefix='.plan.', suffix='.tmp', dir=target.parent)
+    try:
+        with os.fdopen(handle, 'w', encoding='utf-8') as out:
+            out.write(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+        os.replace(temporary, target)
+    except BaseException:
+        if os.path.exists(temporary): os.unlink(temporary)
+        raise
+    print(target)
 
 
 if __name__ == '__main__':

@@ -53,7 +53,7 @@ class MockProvider:
                 raise pub.ProviderFailure('mock unknown upload')
             return {'audio_url': 'https://uploads.transistor.fm/unique.mp3'}
         if op == 'create':
-            self.remote = {'id': '123', 'relationships': {'show': {'data': {'id': '82408'}}},
+            self.remote = {'id': '123', 'relationships': {'show': {'data': {'id': '12345'}}},
                            'attributes': {**self.payload, 'status': 'draft', 'audio_processing': False,
                                           'audio_url': 'https://uploads.transistor.fm/unique.mp3'}}
             if self.mismatch:
@@ -83,7 +83,7 @@ class PublishTests(unittest.TestCase):
         self.package = self.root / 'pkg'
         self.package.mkdir()
         self.payload = dict(title='Fixture title', summary='Summary', description='AI synthetic voice disclosed',
-                            author='Martin', explicit=False, type='full', number=1, season=1,
+                            author='Example Host', explicit=False, type='full', number=1, season=1,
                             image_url='https://example.test/cover.png', transcript_text='Exact transcript')
         (self.package / 'audio.mp3').write_bytes(b'mocked audio fixture')
         pub.persist(self.package / 'payload.json', self.payload)
@@ -91,7 +91,7 @@ class PublishTests(unittest.TestCase):
             p = self.package / name
             return {'path': name, 'sha256': pub.digest_file(p), 'bytes': p.stat().st_size, 'parents': []}
         self.m = {'contract_version': '2.0', 'review_mode': 'delegated_release', 'episode_key': self.tmp.name,
-                  'show_id': '82408', 'package_revision': 2,
+                  'show_id': '12345', 'package_revision': 2,
                   'artifacts': {'delivery_audio': artifact('audio.mp3'), 'transistor_payload': artifact('payload.json')}}
         pub.persist(self.package / 'episode.json', self.m)
         pub.persist(self.package / 'seal.json', {'fixture_only': True})
@@ -103,7 +103,7 @@ class PublishTests(unittest.TestCase):
         self.auth = self.root / 'authority.json'
         self.a = {'contract_version': '2.0', 'actor': 'user', 'revoked': False, 'authorization_id': 'fixture-auth',
                   'source_ref': 'test:original-user-message', 'original_user_quote': 'Publish this fixture.',
-                  'source_ref_kind': 'original_user_message', 'episode_key': self.m['episode_key'], 'show_id': '82408',
+                  'source_ref_kind': 'original_user_message', 'episode_key': self.m['episode_key'], 'show_id': '12345',
                   'package_revision': 2, 'manifest_sha256': pub.digest_file(self.package / 'episode.json'),
                   'release_audio_sha256': pub.digest_file(self.package / 'audio.mp3'),
                   'payload_sha256': pub.digest_bytes(pub.canonical(self.payload)),
@@ -287,7 +287,7 @@ class PublishTests(unittest.TestCase):
             'code': 'network_error', 'exit_code': 6, 'status': 504,
             'message': 'https://secret.test/upload?token=NEVER_LOG',
             'details': {'api_key': 'NEVER_LOG'}}}).encode())
-        with patch.object(pub.subprocess, 'run', return_value=response) as run:
+        with patch.object(pub, 'CLI', '/fixture/transistor'), patch.object(pub.subprocess, 'run', return_value=response) as run:
             with self.assertRaises(pub.ProviderFailure) as raised:
                 pub.CLIProvider(http_timeout=300).call(['episodes', 'upload', 'fixture.mp3'])
         argv = run.call_args.args[0]
@@ -383,7 +383,7 @@ class PublishTests(unittest.TestCase):
                 return self.payload['transcript_text'].encode(), 'text/plain'
             return b'fixture transformed image', 'image/webp'
         self.provider.fetch = fetch
-        proof = {'contract_version': '2.0', 'episode_key': self.m['episode_key'], 'show_id': '82408',
+        proof = {'contract_version': '2.0', 'episode_key': self.m['episode_key'], 'show_id': '12345',
                  'package_revision': 2, 'remote_id': '123', 'source_image_url': self.payload['image_url'],
                  'source_image_sha256': pub.digest_file(art), 'remote_image_url': 'https://img.transistorcdn.com/converted.webp',
                  'remote_image_sha256': pub.digest_bytes(b'fixture transformed image'),

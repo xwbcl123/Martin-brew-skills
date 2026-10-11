@@ -39,14 +39,14 @@ class ValidatePostcutTextTests(unittest.TestCase):
         self.raw_report = self.root / "raw-report.json"
         self.raw_report.write_text(json.dumps({"episode_id": "fixture", "stage": "S11a-postcut-whisper-raw", "run_key": "r" * 64,
                                                "inputs": {"release_audio": {"sha256": sha(self.audio)}}, "outputs": outputs}), encoding="utf-8")
-        self.verbatim = self.root / "verbatim.txt"; self.verbatim.write_text("Martin：这是校准后的逐字稿。\n", encoding="utf-8")
+        self.verbatim = self.root / "verbatim.txt"; self.verbatim.write_text("Host：这是校准后的逐字稿。\n", encoding="utf-8")
         self.subs = self.root / "subs.vtt"; self.subs.write_text("WEBVTT\n\n00:00.000 --> 00:02.000\n这是校准后的\n\n00:02.000 --> 00:04.500\n逐字稿\n", encoding="utf-8")
         self.ledger = self.root / "ledger.json"
         self.ledger.write_text(json.dumps({"schema_version": "1.0", "episode_id": "fixture", "release_audio_sha256": sha(self.audio),
                                            "raw_transcript_json_sha256": outputs["json"]["sha256"], "terminology_sources": [],
                                            "corrections": [{"id": "C1", "start_ms": 0, "end_ms": 2000, "raw_text": "原始",
                                                             "corrected_text": "校准", "evidence": "fixture glossary", "confidence": "high", "status": "applied"}],
-                                           "speaker_decisions": [{"range_start_ms": 0, "range_end_ms": 4500, "speaker": "Martin",
+                                           "speaker_decisions": [{"range_start_ms": 0, "range_end_ms": 4500, "speaker": "Host",
                                                                   "evidence": "single-speaker fixture", "status": "assigned"}]}), encoding="utf-8")
 
     def tearDown(self) -> None:

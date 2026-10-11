@@ -1,0 +1,14 @@
+{
+  "workspace": "/path/to/podcast-workspace",
+  "whisper_cli": "/path/to/whisper-cli",
+  "whisper_model": "/path/to/models/ggml-large-v3-q5_0.bin",
+  "transistor_cli": "/path/to/transistor-cli/.venv/bin/transistor",
+  "transistor_cli_repo": "/path/to/transistor-cli",
+  "language": "auto",
+  "approver": "Example Host",
+  "artwork_registry": "/path/to/artwork-profiles.json",
+  "planning_profiles_dir": "/path/to/private/profiles",
+  "shows": {
+    "12345": {"author": "Example Host", "brand_name": "Example Brand", "brand_tagline": "A fictional tagline"}
+  }
+}

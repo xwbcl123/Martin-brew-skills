@@ -3,6 +3,7 @@
 import argparse
 import importlib.util
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,11 +12,21 @@ import sys
 import publish as pub
 
 
+CLI_REPO=None  # set from --transistor-cli-repo; else config transistor_cli_repo
+
+
 def cli_identity():
-    repo=Path(pub.CLI).parents[2]
+    value=pub._podcast_pick(CLI_REPO,None,'transistor_cli_repo')
+    if not value: raise pub.Blocked('Transistor CLI source checkout required: pass --transistor-cli-repo or set transistor_cli_repo in the podcast-skills config')
+    value=os.path.expanduser(str(value))
+    if not os.path.isabs(value): raise pub.Blocked('transistor_cli_repo must be an absolute path')
+    repo=Path(os.path.realpath(value)); cli=Path(os.path.realpath(pub.cli_path()))
+    if not (repo/'.git').exists() or not (repo/'src').is_dir() or not (repo/'pyproject.toml').is_file(): raise pub.Blocked('Unsupported Transistor CLI layout: transistor_cli_repo must be a Git checkout with src/ and pyproject.toml')
+    try: cli.relative_to(repo)
+    except ValueError: raise pub.Blocked('Unsupported Transistor CLI layout: the executable must live inside transistor_cli_repo (for example <repo>/.venv/bin/transistor)') from None
     if subprocess.check_output(['git','-C',str(repo),'status','--porcelain'],text=True).strip(): raise pub.Blocked('CLI worktree must be clean')
     commit=subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()
-    paths=sorted((repo/'src').rglob('*.py'))+[repo/'pyproject.toml',Path(pub.CLI)]
+    paths=sorted((repo/'src').rglob('*.py'))+[repo/'pyproject.toml',cli]
     return {'commit':commit,'runtime_sha256':pub.digest_bytes(pub.canonical({str(p.relative_to(repo)):pub.digest_file(p) for p in paths}))}
 
 
@@ -178,7 +189,10 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('package','authorization','state-dir'):p.add_argument('--'+n,required=True,type=Path)
     p.add_argument('--mode',choices=['plan','update-existing'],default='plan');p.add_argument('--artwork-verification',type=Path)
+    p.add_argument('--transistor-cli',help='transistor executable (default: $TRANSISTOR_CLI, config transistor_cli, else PATH)')
+    p.add_argument('--transistor-cli-repo',type=Path,help='Git source checkout containing the CLI (default: config transistor_cli_repo)')
     a=p.parse_args()
+    pub.CLI=pub._podcast_tool(a.transistor_cli,'TRANSISTOR_CLI','transistor_cli','transistor');CLI_REPO=a.transistor_cli_repo
     try:
         c=UpdateController(a.package,a.authorization,a.state_dir,artwork_verification=a.artwork_verification,poll_count=12,poll_seconds=5)
         print(json.dumps(c.run(a.mode),ensure_ascii=False,indent=2))

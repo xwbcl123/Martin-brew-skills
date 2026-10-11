@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-10-12
+
+### Changed
+
+- Podcast family: personal defaults moved out of the skills into an optional user config (`~/.config/podcast-skills/config.json`, `$PODCAST_CONFIG`) with the precedence CLI argument > environment variable > config file > neutral default; explicit tool paths that do not exist now fail instead of falling back.
+- `podcast-release-package` assembling takes the author from the selected show (or an explicit `--author`) and requires `--origin-tool` / `--declaration-source`; `--season` and `--episode-type` are now options.
+- `podcast-enrichment` previews carry brand text as content data (`brand_name` / `brand_tagline`) instead of a fixed header; rendering never reads personal configuration.
+- `podcast-production-workflow` benchmark approval requires an expected approver; review pages no longer prefill a reviewer.
+- `podcast-topic-planning` ships a fictional `example-show` profile and reads real profiles from `--profiles-dir`; `podcast-transistor-publish` documents the external Transistor CLI dependency and requires an explicit CLI checkout for `update_existing.py`.
+
 ## 2026-10-11
 
 ### Added

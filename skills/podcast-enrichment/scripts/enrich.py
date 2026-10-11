@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate grounded episode copy and render a local, complete listening/reading edition."""
 import argparse
+import tempfile
 import hashlib
 import html
 import json
@@ -178,11 +179,115 @@ def terminology_html(data):
     return f'<details class="editor terminology" id="terminology-review" data-bindings="{bindings}"><summary>一起核对几个词 · {len(review["terms"])} 处</summary><p>听一小段，再留下你的选择。导出的文件交回后会用于下一版；页面操作不会直接更新节目。</p><div class="term-grid">{rows}</div><label class="term-attestation"><input type="checkbox" id="term-attestation"> 这些选择是我听过、核对后填写的</label><button class="copy" id="export-terms">导出我的确认</button></details>'
 
 
+# BEGIN podcast-config (byte-identical in every consumer; guarded by podcast-release-package/scripts/test_config_copies.py)
+def _podcast_cfg(_cache={}):
+    """Personal defaults from $PODCAST_CONFIG or ~/.config/podcast-skills/config.json. Read lazily, once; never grants approval/authorization."""
+    import json, os, re
+    from pathlib import Path
+    keys = {'workspace', 'whisper_cli', 'whisper_model', 'transistor_cli', 'transistor_cli_repo',
+            'language', 'approver', 'artwork_registry', 'planning_profiles_dir'}
+    plain = {'language', 'approver'}
+    explicit = os.environ.get('PODCAST_CONFIG')
+    if explicit is not None:
+        if not explicit.strip() or not Path(explicit).expanduser().is_absolute():
+            raise SystemExit('PODCAST_CONFIG must be a non-empty absolute path (unset it to use ~/.config/podcast-skills/config.json)')
+        path = Path(explicit).expanduser()
+    else:
+        path = Path.home() / '.config' / 'podcast-skills' / 'config.json'
+    if str(path) in _cache:
+        return _cache[str(path)]
+    if explicit is not None and not path.is_file():
+        raise SystemExit(f'PODCAST_CONFIG points to a missing file: {path}')
+    data = {}
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+        except ValueError as exc:
+            raise SystemExit(f'invalid JSON in {path}: {exc}')
+    if not isinstance(data, dict):
+        raise SystemExit(f'{path}: top level must be an object')
+    extra = sorted(set(data) - keys - {'shows'})
+    if extra:
+        raise SystemExit(f'{path}: unknown keys {extra}')
+    for key in keys & set(data):
+        value = data[key]
+        if not isinstance(value, str) or not value.strip():
+            raise SystemExit(f'{path}: {key} must be a non-empty string')
+        if key not in plain and not Path(value).expanduser().is_absolute():
+            raise SystemExit(f'{path}: {key} must be an absolute path')
+    shows = data.setdefault('shows', {})
+    if not isinstance(shows, dict):
+        raise SystemExit(f'{path}: shows must be an object keyed by show id')
+    for sid, entry in shows.items():
+        if not re.fullmatch(r'[0-9]+', str(sid)) or not isinstance(entry, dict) or set(entry) - {'author', 'brand_name', 'brand_tagline'}:
+            raise SystemExit(f'{path}: shows[{sid!r}] must be an object with only author/brand_name/brand_tagline')
+        for field in ('author', 'brand_name'):
+            if field in entry and (not isinstance(entry[field], str) or not entry[field].strip()):
+                raise SystemExit(f'{path}: shows[{sid!r}].{field} must be a non-empty string')
+        if 'brand_tagline' in entry and not isinstance(entry['brand_tagline'], str):
+            raise SystemExit(f'{path}: shows[{sid!r}].brand_tagline must be a string')
+    _cache[str(path)] = data
+    return data
+
+
+def _podcast_pick(cli, env_name, key):
+    """Provided CLI value > provided environment variable > config file > None. A provided-but-blank value is an error, never "unset"."""
+    import os
+    for source, value in (('command line', cli), (f'${env_name}', os.environ.get(env_name) if env_name else None)):
+        if value is not None:
+            if not str(value).strip():
+                raise SystemExit(f'{key}: empty value from the {source}; omit it to use the default')
+            return value
+    return _podcast_cfg().get(key)
+
+
+def _podcast_tool(cli, env_name, key, command):
+    """A provided tool path must be an absolute executable file and is used as-is (never re-resolved through PATH); `command` is only looked up when nothing was provided."""
+    import os, shutil
+    value = _podcast_pick(cli, env_name, key)
+    if value is not None:
+        value = os.path.expanduser(str(value))
+        if not os.path.isabs(value):
+            raise SystemExit(f'{key}: {value} must be an absolute path (relative values are never searched on PATH)')
+        if not (os.path.isfile(value) and os.access(value, os.X_OK)):
+            raise SystemExit(f'{key}: {value} is not an executable file (fix --{key.replace("_", "-")}, ${env_name or "PODCAST_CONFIG"} or the podcast-skills config)')
+        return value
+    found = shutil.which(command)
+    if not found:
+        raise SystemExit(f'{command} not found: pass --{key.replace("_", "-")}, set ${env_name or "PODCAST_CONFIG"} or add "{key}" to ~/.config/podcast-skills/config.json')
+    return os.path.abspath(found)
+
+
+def _podcast_model(cli):
+    """Whisper model: CLI > $WHISPER_MODEL > config whisper_model > <workspace>/models/ggml-large-v3-q5_0.bin."""
+    import os
+    value = _podcast_pick(cli, 'WHISPER_MODEL', 'whisper_model')
+    if value is None:
+        workspace = _podcast_pick(None, 'PODCAST_WORKSPACE', 'workspace')
+        if workspace is None:
+            raise SystemExit('no Whisper model: pass --model, set $WHISPER_MODEL, or add whisper_model/workspace to ~/.config/podcast-skills/config.json')
+        workspace = os.path.expanduser(str(workspace))
+        if not os.path.isabs(workspace):
+            raise SystemExit(f'workspace: {workspace} must be an absolute path')
+        value = os.path.join(workspace, 'models', 'ggml-large-v3-q5_0.bin')
+    value = os.path.expanduser(str(value))
+    if not os.path.isabs(value):
+        raise SystemExit(f'whisper_model: {value} must be an absolute path')
+    if not os.path.isfile(value):
+        raise SystemExit(f'Whisper model does not exist: {value}')
+    return value
+# END podcast-config
+
+
 def validate(data, root):
     if not isinstance(data, dict): fail('content must be an object')
     modern = 'public_content' in data
     for key in ('title', 'show_title', 'launch_copy', 'language') + (() if modern else ('summary','description','show_notes','ai_disclosure')):
         string(data.get(key), key)
+    if ('brand_name' in data) != ('brand_tagline' in data): fail('brand_name and brand_tagline must be provided together')
+    if 'brand_name' in data:
+        string(data['brand_name'], 'brand_name')
+        string(data['brand_tagline'], 'brand_tagline', empty=True)
     if modern: public_parts(data)
     validate_terminology(data)
     segments = data.get('segments')
@@ -225,6 +330,7 @@ def validate(data, root):
     metadata = data.get('metadata')
     if not isinstance(metadata, dict): fail('metadata required')
     string(metadata.get('reading_language'), 'reading_language')
+    if 'show_id' in metadata and not (isinstance(metadata['show_id'], str) and re.fullmatch(r'[0-9]+', metadata['show_id'])): fail('metadata show_id must be a numeric string')
     if metadata.get('reading_mode') not in ('edited', 'translation'): fail('reading_mode must be edited or translation')
     if metadata['reading_language'] != data['language'] and metadata['reading_mode'] != 'translation': fail('different reading language requires translation label')
     if not isinstance(metadata.get('corrections'), list): fail('corrections must be a list (empty if none)')
@@ -292,6 +398,9 @@ def render(data, root, output, report):
     core = ''.join(h for k,h,t in parts if k not in ('chapters','resources'))
     values = {
         'LANG': esc(data['language']), 'TITLE': esc(data['title']), 'SHOW': esc(data['show_title']),
+        'BRAND_NAME': esc(data.get('brand_name', '')), 'BRAND_TAGLINE': esc(data.get('brand_tagline', '')),
+        'BRAND_FOOTER': ' · ' + esc(data['brand_name']) if data.get('brand_name') else '',
+        'BRAND_IDENTITY': '<div><strong>' + esc(data['brand_name']) + '</strong><span>' + esc(data['brand_tagline']) + '</span></div>' if data.get('brand_name') else '',
         'SUMMARY': esc(public_summary(data) if modern else data['summary']), 'COVER': cover, 'AUDIO': audio,
         'STATUS': esc(status.get('label', '本地预览 · 待核验')), 'PUBLISHED': published,
         'DURATION': timestamp(report['duration']), 'DESCRIPTION': '' if modern else prose(data['description']),
@@ -306,7 +415,58 @@ def render(data, root, output, report):
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match.group(1)], template)
 
 
-def build(data, root, output, content_path):
+def content_relative(root, content_path):
+    """Path of the content file relative to the package root (its directory is canonicalised, the file itself must not be a link)."""
+    content_path = Path(content_path)
+    return os.path.relpath(Path(os.path.realpath(content_path.parent)) / content_path.name, root)
+
+
+def apply_show_brand(data, root, content_path, show_id):
+    """In memory only: fill a missing brand from the personal config for this show and record the show id in the content.
+
+    A complete brand already in the content is never overwritten. Returns True when `data` changed; build(rewrite_content=True)
+    then persists it after every other precondition has passed, so a failed build leaves the content file untouched.
+    """
+    show_id = str(show_id)
+    if not re.fullmatch(r'[0-9]+', show_id): fail('--show-id must be numeric')
+    metadata = data['metadata']
+    if 'show_id' in metadata and metadata['show_id'] != show_id: fail('content metadata show_id differs from --show-id')
+    if 'brand_name' in data: return False
+    entry = _podcast_cfg().get('shows', {}).get(show_id)
+    if not entry or 'brand_name' not in entry:
+        fail(f'no brand for show {show_id}: add shows[{show_id!r}].brand_name/brand_tagline to the podcast-skills config or put brand_name/brand_tagline in the content')
+    inside(root, content_relative(root, content_path))  # regular file inside the package root, no symlinks on the way
+    data['brand_name'] = entry['brand_name']; data['brand_tagline'] = entry.get('brand_tagline', '')
+    metadata['show_id'] = show_id
+    return True
+
+
+def write_atomic(path, text):
+    """Replace `path` through a new inode (exclusive temporary file in the same directory), so a hard link at the destination is never written through."""
+    path = Path(path)
+    handle, temporary = tempfile.mkstemp(prefix='.' + path.name + '.', suffix='.tmp', dir=path.parent)
+    try:
+        with os.fdopen(handle, 'w', encoding='utf-8') as out: out.write(text)
+        os.replace(temporary, path)
+    except BaseException:
+        if os.path.exists(temporary): os.unlink(temporary)
+        raise
+
+
+def precheck_targets(output_parent, targets):
+    """Every destination must be absent or a plain file, and its directory absent or a real directory, before anything is written."""
+    if os.path.lexists(output_parent) and (os.path.islink(output_parent) or not os.path.isdir(output_parent)): fail('output directory is not a plain directory')
+    for target in targets:
+        if os.path.lexists(target) and (os.path.islink(target) or not os.path.isfile(target)): fail(f'output target is not a plain file: {Path(target).name}')
+
+
+def write_content(data, root, content_path):
+    """Replace the content file atomically (same-directory exclusive temporary file + os.replace)."""
+    write_atomic(inside(root, content_relative(root, content_path)), json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+
+
+def build(data, root, output, content_path, rewrite_content=False):
+    if (root / 'seal.json').exists(): fail('sealed package cannot be built in place; create a new revision')
     report = validate(data, root)
     output = inside(root, os.path.relpath(output, root), existing=False)
     if output.suffix != '.html': fail('output must be .html')
@@ -315,8 +475,12 @@ def build(data, root, output, content_path):
     sources = {inside(root, data[k]) for k in ('audio_path','cover_path')} | {content_path.resolve()} | {inside(root, a['path']) for k in ('assets','audit_links') for a in data.get(k,[])}
     targets = [output] + [inside(root, os.path.relpath(output.parent / n, root), existing=False) for n in names]
     if len(set(targets)) != len(targets) or set(targets) & sources: fail('output collides with an input or another generated artifact')
+    manifest_path = output.parent / 'enrichment-manifest.json'
+    if manifest_path in sources: fail('output collides with an input or another generated artifact')
+    precheck_targets(output.parent, targets + [manifest_path])
     html_text = render(data, root, output, report)
     output.parent.mkdir(parents=True, exist_ok=True)
+    if rewrite_content: write_content(data, root, content_path)
     artifacts = {
         output.name: html_text,
         'aligned-transcript.json': json.dumps(data['segments'], ensure_ascii=False, indent=2),
@@ -328,9 +492,9 @@ def build(data, root, output, content_path):
         'content-metadata.json': json.dumps(data['metadata'], ensure_ascii=False, indent=2),
     }
     if modern: artifacts['description.html'] = public_html(data)
-    for name, content in artifacts.items(): (output.parent / name).write_text(content, encoding='utf-8')
+    for name, content in artifacts.items(): write_atomic(output.parent / name, content)
     manifest = {'schema_version': 1, 'content_sha256': digest(content_path), 'audio_sha256': digest(inside(root,data['audio_path'])), 'cover_sha256': digest(inside(root,data['cover_path'])), 'validation': report, 'source_assets': [{'path': p, 'sha256': digest(inside(root,p))} for p in [data['audio_path'],data['cover_path']] + [a['path'] for k in ('assets','audit_links') for a in data.get(k,[])]], 'coverage_map': {'title':'h1','summary':'.lede','description':'#about','audio':'#player','cover':'.cover','chapters':'#chapters','show_notes':'#notes','reading_transcript':'#reading-panel','aligned_transcript':'#aligned-panel','launch_copy':'#launch-text','resources':'.resources','ai_disclosure':'.disclosure','additional_assets':'.extra-asset'}, 'coverage': list(artifacts), 'artifacts': [{'path': str((output.parent/name).relative_to(root)), 'sha256': digest(output.parent/name)} for name in artifacts]}
-    (output.parent/'enrichment-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    write_atomic(manifest_path, json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     return manifest
 
 
@@ -340,6 +504,7 @@ def main():
     parser.add_argument('--content', type=Path, required=True)
     parser.add_argument('--package-root', type=Path, required=True)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--show-id', help='Fill brand from the personal config for this show (new unsealed candidates only)')
     args = parser.parse_args()
     try:
         if args.package_root.is_symlink(): fail('package root cannot be a symlink')
@@ -348,7 +513,9 @@ def main():
         data = json.loads(args.content.read_text(encoding='utf-8'))
         if args.command == 'build':
             if args.output is None: fail('--output required for build')
-            result = build(data, root, args.output.absolute(), args.content)
+            validate(data, root)
+            changed = apply_show_brand(data, root, args.content, args.show_id) if args.show_id is not None else False
+            result = build(data, root, args.output.absolute(), args.content, rewrite_content=changed)
         else: result = validate(data, root)
         print(json.dumps(result,ensure_ascii=False,indent=2))
     except (ValueError, OSError, KeyError, TypeError) as error:

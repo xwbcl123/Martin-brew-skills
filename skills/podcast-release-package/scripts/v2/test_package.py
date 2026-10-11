@@ -7,6 +7,7 @@ fixture reviews deliberately, so rejection must enforce the underlying contract.
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -93,7 +94,7 @@ class PackageBoundaryTests(unittest.TestCase):
             if artifact['path'] not in self.names.values():
                 self.names['preview_download_' + str(index)] = artifact['path']
         self.ep = {'contract_version': '2.0', 'episode_key': 'synthetic-fixture', 'package_revision': 1,
-                   'source_kind': 'imported_finished', 'review_mode': 'delegated_release', 'show_id': '82408',
+                   'source_kind': 'imported_finished', 'review_mode': 'delegated_release', 'show_id': '12345',
                    'profile_ref': 'podcast_mp3', 'sources': [{'kind': 'synthetic-test'}], 'artifacts': {},
                    'provider_metadata': {k: self.payload[k] for k in ['author', 'explicit', 'type', 'season', 'number', 'image_url']},
                    'reviews': [kind + '-review.json' for kind in ['content', 'experience', 'implementation']],
@@ -276,8 +277,9 @@ class PackageBoundaryTests(unittest.TestCase):
         renderer.build(self.content, self.root, self.root / 'preview/episode.html', self.root / 'content.json')
 
     def run_assembly(self):
-        return assembler.assemble(self.root, self.audio, 'imported_finished', '82408', 'fixture-assembled',
-                                  1, 'https://example.test/cover.png', 1)
+        return assembler.assemble(self.root, self.audio, 'imported_finished', '12345', 'fixture-assembled',
+                                  1, 'https://example.test/cover.png', 1, author='Example Host',
+                                  origin_tool='Fixture editor export supplied by user', declaration_source='fixture-declaration#input')
 
     def test_assemble_is_unapproved_and_unsealed(self):
         self.prepare_assembly(); result = self.run_assembly()
@@ -286,6 +288,49 @@ class PackageBoundaryTests(unittest.TestCase):
         episode = pkg.read(self.root / 'episode.json')
         self.assertTrue(all(not (self.root / ref).exists() for ref in episode['reviews']))
         self.assertFalse(pkg.validate(self.root, True)['valid'])
+
+    def test_assemble_records_caller_supplied_identity_source_and_series_fields(self):
+        self.prepare_assembly()
+        assembler.assemble(self.root, self.audio, 'imported_finished', '12345', 'fixture-assembled', 1, 'https://example.test/cover.png', 1,
+                           author='Series Author', origin_tool='Some DAW export', declaration_source='msg-42', season=2, episode_type='bonus')
+        episode = pkg.read(self.root / 'episode.json'); payload = pkg.read(self.root / 'payload.json')
+        self.assertEqual(episode['provider_metadata']['author'], 'Series Author'); self.assertEqual(payload['author'], 'Series Author')
+        self.assertEqual((episode['provider_metadata']['season'], episode['provider_metadata']['type']), (2, 'bonus'))
+        self.assertEqual((payload['season'], payload['type']), (2, 'bonus'))
+        self.assertEqual((episode['sources'][0]['origin_tool'], episode['sources'][0]['declaration_source']), ('Some DAW export', 'msg-42'))
+        blob = json.dumps(episode)
+        for stale in ('Filmora', 'tasks/sessions', 'original-user-authority', 'Martin'): self.assertNotIn(stale, blob.replace('filmora-supplied.srt', '').replace('filmora-input-report', ''))
+
+    def test_assemble_requires_explicit_author_origin_and_declaration(self):
+        self.prepare_assembly()
+        base = dict(author='A', origin_tool='T', declaration_source='D')
+        for missing in base:
+            kwargs = {k: v for k, v in base.items() if k != missing}
+            with self.subTest(missing=missing), self.assertRaises(TypeError):
+                assembler.assemble(self.root, self.audio, 'imported_finished', '12345', 'k', 1, 'https://example.test/c.png', 1, **kwargs)
+        for field in base:
+            with self.subTest(blank=field), self.assertRaises(ValueError):
+                assembler.assemble(self.root, self.audio, 'imported_finished', '12345', 'k', 1, 'https://example.test/c.png', 1, **{**base, field: '  '})
+        for bad in ({'season': -1}, {'season': True}, {'episode_type': 'series'}):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                assembler.assemble(self.root, self.audio, 'imported_finished', '12345', 'k', 1, 'https://example.test/c.png', 1, **base, **bad)
+
+    def test_assemble_rejects_content_for_another_show(self):
+        self.prepare_assembly(); self.content.setdefault('metadata', {})['show_id'] = '23456'; self.write('content.json', self.content)
+        with self.assertRaisesRegex(ValueError, 'differs'): self.run_assembly()
+
+    def test_author_resolution_uses_config_and_never_guesses(self):
+        cfg = self.root / 'cfg.json'; cfg.write_text(json.dumps({'shows': {'12345': {'author': 'Config Author'}}}))
+        old = os.environ.get('PODCAST_CONFIG'); os.environ['PODCAST_CONFIG'] = str(cfg)
+        try:
+            self.assertEqual(assembler.resolve_author('12345'), 'Config Author')
+            self.assertEqual(assembler.resolve_author('12345', 'Config Author'), 'Config Author')
+            with self.assertRaisesRegex(ValueError, 'conflicts'): assembler.resolve_author('12345', 'Somebody Else')
+            with self.assertRaisesRegex(ValueError, 'no author'): assembler.resolve_author('99999')
+            self.assertEqual(assembler.resolve_author('99999', 'Explicit'), 'Explicit')
+        finally:
+            if old is None: os.environ.pop('PODCAST_CONFIG', None)
+            else: os.environ['PODCAST_CONFIG'] = old
 
     def test_assemble_rejects_output_symlink_before_overwrite(self):
         self.prepare_assembly()

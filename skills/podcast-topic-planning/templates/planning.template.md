@@ -1,6 +1,6 @@
 ---
 title: "{{EPISODE_TITLE_FULL}}"
-jd_id: "53.11"
+jd_id: "{{JD_ID_OR_OMIT}}"
 type: "note"
 tags:
   - topic/podcast

@@ -10,10 +10,7 @@
 ## 1. 设计哲学：为什么采用 Profile-Driven 架构？
 
 传统播客策划 Agent 往往采用单提示词（One-Prompt-Fits-All）的方式，导致生成的选题大纲千篇一律、语调悬浮。
-Martin 旗下拥有多元播客生态：
-- 《极客家庭》(Geek Family Podcast) 是有血有肉的三人家庭生活对谈；
-- 《Cyber Martin's Podcast》是高密度的硬核架构师技术独白或 AI 探索对谈；
-- 未来还将孵化《AI Security Forum (ASF)》等专业前沿智库访谈。
+一个创作者可以同时运营多档播客，形态各异（多人生活对谈、单人技术独白、嘉宾圆桌等）。
 
 因此，`podcast-topic-planning` 采用 **Profile 解耦驱动架构**：
 - **核心逻辑通用**：事实挖掘、网络查证、证据分层、张力构建、四幕式编译、本地 HTML 交互生成、Guarded R2 部署。
@@ -29,27 +26,25 @@ Martin 旗下拥有多元播客生态：
 python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --list
 
 # 校验特定 Profile 是否合法 (防路径穿越，仅支持小写字母与连字符)
-python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --profile geek-family
+python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py --profile example-show
 
 # Agent 启动策划时指定 Profile
 # 例如：
-# "帮我策划一期极客家庭新单集，关于周末露营" -> Agent 自动选用 --profile geek-family
-# "针对刚刚读完的这篇文章，策划一期 Cyber Martin 播客" -> Agent 自动选用 --profile cyber-martin
-# "策划一期关于大模型越狱的安全圆桌" -> Agent 自动选用 --profile asf
+# "帮我策划一期新单集，关于周末露营" -> 话题与某个 Profile 唯一匹配时选用它，否则列出候选请用户确认
 ```
 
 ---
 
 ## 3. 如何新增一个播客品牌 Profile？
 
-只需在 `.agents/skills/podcast-topic-planning/profiles/` 下新建 `<brand-id>.yaml`：
+复制 `profiles/example-show.yaml` 到你的私有 profiles 目录（`--profiles-dir` 或个人配置 `planning_profiles_dir`），改名为 `<brand-id>.yaml` 后编辑：
 
 1. **指定基本信息**：`id`, `name`, `show_id`, `tagline`, `description`；
 2. **选择录制形态** (`format.type`)：
-   - `trio_dialogue`: 三人固定角色对谈（如 Geek Family）；
-   - `solo_monologue`: 单人沉思独白（如 Cyber Martin）；
+   - `trio_dialogue`: 三人固定角色对谈（如家庭/朋友三人对谈类节目）；
+   - `solo_monologue`: 单人沉思独白（如单人技术独白类节目）；
    - `ai_duo_discussion`: AI 辅助的双人辩论探索；
-   - `interview_panel`: 主持人 + 特邀嘉宾圆桌（如 ASF）。
+   - `interview_panel`: 主持人 + 特邀嘉宾圆桌（如嘉宾圆桌类节目）。
 3. **注入角色矩阵 (`personas`)**：每个角色的唯一 ID、心智模型、表达特征与口头禅；
 4. **配置冲突动力学 (`tension_matrix`)**：角色之间的典型冲突点与杀手提问（引用 ID 必须在 personas 中存在）；
 5. **设置存储路由 (`routing`)**：Vault 单集目录前缀与 R2 发布路径（禁止绝对路径或包含 `..` 的路径遍历）；

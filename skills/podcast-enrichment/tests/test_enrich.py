@@ -1,6 +1,7 @@
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -95,5 +96,112 @@ class EnrichmentTests(unittest.TestCase):
         self.data['assets']=[dict(title='Complete extra',path='extra.txt',kind='text')]
         self.build();page=(self.root/'preview/episode.html').read_text()
         self.assertEqual(page.count('Later material'),200)
+
+
+class BrandTests(EnrichmentTests):
+    """Brand text is content data: optional, paired, escaped, filled from the personal config only for new unsealed candidates."""
+    def setUp(self):
+        super().setUp()
+        import os
+        self.cfg = self.root / 'cfg.json'
+        self.cfg.write_text(json.dumps({'shows': {'12345': {'author': 'Example Host', 'brand_name': 'Example <Brand>', 'brand_tagline': 'Say "hi"'}, '23456': {'author': 'Other', 'brand_name': 'Quiet', 'brand_tagline': ''}}}))
+        self.old = os.environ.get('PODCAST_CONFIG'); os.environ['PODCAST_CONFIG'] = str(self.cfg)
+        def restore():
+            if self.old is None: os.environ.pop('PODCAST_CONFIG', None)
+            else: os.environ['PODCAST_CONFIG'] = self.old
+        self.addCleanup(restore)
+        self.content = self.root / 'content.json'
+    def write(self): self.content.write_text(json.dumps(self.data))
+    def test_default_render_is_neutral(self):
+        self.build(); page = (self.root / 'preview/episode.html').read_text()
+        self.assertNotIn('Martin', page); self.assertNotIn('COMPLEXITY', page); self.assertNotIn('complexity', page)
+    def test_brand_fields_must_be_paired_and_typed(self):
+        for patch in ({'brand_name': 'X'}, {'brand_tagline': 'x'}, {'brand_name': 5, 'brand_tagline': 'x'}, {'brand_name': 'X', 'brand_tagline': None}, {'brand_name': ' ', 'brand_tagline': 'x'}):
+            with self.subTest(patch=patch):
+                data = copy.deepcopy(self.data); data.update(patch)
+                with self.assertRaises(ValueError): m.validate(data, self.root)
+    def test_brand_is_escaped(self):
+        self.data.update(brand_name='<script>alert(1)</script>', brand_tagline='"><img src=x onerror=1>'); self.build()
+        page = (self.root / 'preview/episode.html').read_text()
+        self.assertNotIn('<script>alert(1)', page); self.assertNotIn('<img src=x onerror', page); self.assertIn('&lt;script&gt;alert(1)', page)
+    def backfill_build(self, show_id='12345'):
+        changed = m.apply_show_brand(self.data, self.root, self.content, show_id)
+        return changed, m.build(self.data, self.root, self.root / 'preview/episode.html', self.content, rewrite_content=changed)
+    def cli(self, *extra):
+        import subprocess, sys
+        return subprocess.run([sys.executable, '-B', str(Path(m.__file__)), 'build', '--content', str(self.content), '--package-root', str(self.root),
+                               '--output', str(self.root / 'preview/episode.html'), *extra], capture_output=True, text=True, env={**os.environ})
+    def tree_digest(self):
+        return {str(p.relative_to(self.root)): m.digest(p) for p in sorted(self.root.rglob('*')) if p.is_file() and not p.is_symlink()}
+    def test_backfill_from_config_writes_content_and_show_id(self):
+        self.write(); changed, manifest = self.backfill_build()
+        self.assertTrue(changed); saved = json.loads(self.content.read_text())
+        self.assertEqual((saved['brand_name'], saved['brand_tagline'], saved['metadata']['show_id']), ('Example <Brand>', 'Say "hi"', '12345'))
+        page = (self.root / 'preview/episode.html').read_text(); self.assertIn('Example &lt;Brand&gt;', page)
+        self.assertEqual(m.digest(self.content), manifest['content_sha256'])
+        self.assertEqual([p.name for p in self.root.glob('.content.*')], [])
+    def test_backfill_is_in_memory_until_build_has_passed_every_precondition(self):
+        self.write(); before = m.digest(self.content)
+        self.assertTrue(m.apply_show_brand(self.data, self.root, self.content, '12345')); self.assertEqual(before, m.digest(self.content))
+        with self.assertRaises(ValueError): m.build(self.data, self.root, self.root / 'preview/episode.txt', self.content, rewrite_content=True)  # invalid output
+        self.assertEqual(before, m.digest(self.content)); self.assertFalse((self.root / 'preview').exists() and any((self.root / 'preview').iterdir()))
+    def test_explicit_empty_tagline_is_kept_and_complete_brand_not_overwritten(self):
+        self.data.update(brand_name='Mine', brand_tagline=''); self.write()
+        self.assertFalse(m.apply_show_brand(self.data, self.root, self.content, '12345'))
+        self.assertEqual((self.data['brand_name'], self.data['brand_tagline']), ('Mine', '')); self.assertEqual(json.loads(self.content.read_text())['brand_name'], 'Mine')
+    def test_empty_tagline_from_config_stays_empty(self):
+        self.write(); m.apply_show_brand(self.data, self.root, self.content, '23456'); self.assertEqual(self.data['brand_tagline'], '')
+    def test_every_build_of_a_sealed_package_is_refused_and_changes_nothing(self):
+        self.write()
+        m.build(self.data, self.root, self.root / 'preview/episode.html', self.content)  # an unsealed build first
+        (self.root / 'seal.json').write_text('{}'); before = self.tree_digest()
+        for extra in ((), ('--show-id', '12345')):
+            with self.subTest(extra=extra):
+                result = self.cli(*extra); self.assertEqual(result.returncode, 2); self.assertIn('sealed', result.stderr); self.assertEqual(before, self.tree_digest())
+        self.data.update(brand_name='Full', brand_tagline='Brand'); self.write(); before = self.tree_digest()
+        result = self.cli('--show-id', '12345'); self.assertEqual(result.returncode, 2); self.assertEqual(before, self.tree_digest())
+        with self.assertRaisesRegex(ValueError, 'sealed'): m.build(self.data, self.root, self.root / 'preview/episode.html', self.content)
+        self.assertEqual(before, self.tree_digest())
+    def test_validate_still_works_on_a_sealed_package(self):
+        self.write(); (self.root / 'seal.json').write_text('{}'); self.assertIn('experience_ready', m.validate(self.data, self.root))
+    def test_unknown_show_or_conflicting_show_id_fails_without_writing(self):
+        self.write(); before = m.digest(self.content)
+        with self.assertRaisesRegex(ValueError, 'no brand'): m.apply_show_brand(self.data, self.root, self.content, '99999')
+        self.data['metadata']['show_id'] = '23456'
+        with self.assertRaisesRegex(ValueError, 'differs'): m.apply_show_brand(self.data, self.root, self.content, '12345')
+        self.assertEqual(before, m.digest(self.content))
+    def test_symlinked_content_is_refused(self):
+        real = self.root / 'real.json'; real.write_text(json.dumps(self.data)); self.content.symlink_to(real)
+        with self.assertRaises(ValueError): m.apply_show_brand(self.data, self.root, self.content, '12345')
+    def test_a_planted_temporary_symlink_cannot_redirect_the_write(self):
+        outside = Path(tempfile.mkdtemp()); self.addCleanup(lambda: __import__('shutil').rmtree(outside, ignore_errors=True)); sentinel = outside / 'sentinel'; sentinel.write_text('keep')
+        (self.root / 'content.json.tmp').symlink_to(sentinel); (self.root / '.content.tmp').symlink_to(sentinel)
+        self.write(); self.backfill_build()
+        self.assertEqual(sentinel.read_text(), 'keep'); self.assertEqual(json.loads(self.content.read_text())['brand_name'], 'Example <Brand>')
+    def test_hardlinked_outputs_never_write_through_to_inputs(self):
+        (self.root / 'preview').mkdir(); audio = self.root / 'audio.mp3'; before = m.digest(audio)
+        os.link(audio, self.root / 'preview' / 'transcript.txt');
+        self.write(); self.backfill_build()
+        self.assertEqual(before, m.digest(audio)); self.assertNotEqual(m.digest(self.root / 'preview' / 'transcript.txt'), before)
+        self.assertEqual(os.stat(audio).st_nlink, 1)
+    def test_directory_placeholder_fails_before_any_write(self):
+        self.write(); (self.root / 'preview' / 'aligned-transcript.json').mkdir(parents=True); before = m.digest(self.content)
+        m.apply_show_brand(self.data, self.root, self.content, '12345')
+        with self.assertRaises(ValueError): m.build(self.data, self.root, self.root / 'preview/episode.html', self.content, rewrite_content=True)
+        self.assertEqual(before, m.digest(self.content)); self.assertFalse((self.root / 'preview' / 'episode.html').exists())
+    def test_symlink_output_target_fails_before_any_write(self):
+        self.write(); (self.root / 'preview').mkdir(); outside = self.root / 'elsewhere.txt'; outside.write_text('keep'); (self.root / 'preview' / 'transcript.txt').symlink_to(outside)
+        before = m.digest(self.content); m.apply_show_brand(self.data, self.root, self.content, '12345')
+        with self.assertRaises(ValueError): m.build(self.data, self.root, self.root / 'preview/episode.html', self.content, rewrite_content=True)
+        self.assertEqual(before, m.digest(self.content)); self.assertEqual(outside.read_text(), 'keep')
+    def test_render_and_validate_do_not_read_host_config(self):
+        import os
+        self.data.update(brand_name='Frozen', brand_tagline='In content'); self.build(); first = (self.root / 'preview/episode.html').read_text()
+        os.environ['PODCAST_CONFIG'] = str(self.root / 'missing.json'); self.build()
+        self.assertEqual(first, (self.root / 'preview/episode.html').read_text())
+    def test_metadata_show_id_type(self):
+        self.data['metadata']['show_id'] = 12345
+        with self.assertRaises(ValueError): m.validate(self.data, self.root)
+
 
 if __name__=='__main__':unittest.main()

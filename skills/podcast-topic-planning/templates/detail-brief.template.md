@@ -1,6 +1,6 @@
 ---
 title: "{{EPISODE_TITLE}}：播客备稿 Detail Brief"
-jd_id: "53.11"
+jd_id: "{{JD_ID_OR_OMIT}}"
 type: "note"
 tags:
   - topic/podcast
@@ -27,12 +27,12 @@ updated: "{{DATE}}"
 
 ## 1. 认知亲近度锚点 (Proximity Anchors)
 
-### 1.1 切身亲历日记 (Journal 13.10)
+### 1.1 切身亲历日记 (Journal)
 - **日记索引**: `{{JOURNAL_LINK_OR_NOTE}}`
 - **真实生活切片 / 一手经历**: {{JOURNAL_EXPERIENCE_SUMMARY}}
 - **第一人称情感 / 后勤真实反应**: {{JOURNAL_EMOTIONAL_ANCHOR}}
 
-### 1.2 近期阅读与认知对标 (Reading 51.14)
+### 1.2 近期阅读与认知对标 (Reading)
 - **剪藏索引**: `{{READING_LINK_OR_NOTE}}`
 - **原文核心论点 / 行业雷达**: {{READING_INSIGHT_SUMMARY}}
 - **创作者一手批注 / 批判视角**: {{READING_CRITIQUE}}

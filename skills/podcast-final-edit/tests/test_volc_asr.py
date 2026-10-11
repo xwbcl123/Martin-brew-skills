@@ -61,7 +61,7 @@ class InitializationTests(unittest.TestCase):
     report=m.recognize(audio,output,0,None,'hourly','TEST_ASR_KEY',pace=0)
    self.assertEqual(report['status'],'failed');self.assertIn('source changed',report['error']);self.assertFalse((output/'final.json').exists());self.assertTrue((output/'responses.jsonl').exists())
  def test_rejected_initialization_sends_no_audio_and_redacts_key(self):
-  secret='TEST_ONLY_NOT_A_REAL_KEY';sent=[]
+  secret='FAKE-0001';sent=[]
   class RejectedSocket:
    def send_binary(self,b):sent.append(b)
    def recv(self):

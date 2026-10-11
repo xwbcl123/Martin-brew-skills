@@ -1,0 +1,92 @@
+# ==============================================================================
+# Example Brand Profile (fictional) — copy to your private profiles directory,
+# rename and edit. Every field below is required by scripts/validate_profile.py.
+# ==============================================================================
+
+schema_version: "1.0.0"
+
+profile:
+  id: "example-show"
+  name: "Example Show"
+  show_id: "12345"
+  tagline: "A fictional three-person conversation about everyday technology."
+  description: "Fictional profile that demonstrates the profile contract. It describes no real show, host or family."
+
+format:
+  type: "trio_dialogue"
+  target_duration_minutes: 30
+  unscripted_safe_harbor_ratio: 0.20
+  target_audience: "Curious listeners who like practical, story-driven technology talk."
+
+tone_and_style:
+  keywords:
+    - "curious"
+    - "practical"
+    - "warm"
+  humor_style: "Light, self-deprecating, never at a guest's expense."
+  discussion_prohibitions:
+    - "No unverified factual claims presented as certain"
+    - "No private details about people who are not on the show"
+
+personas:
+  - id: "host"
+    name: "Host (moderator)"
+    role: "host_moderator"
+    perspective: "Keeps the conversation on track and asks the follow-up questions listeners would ask."
+    voice_traits:
+      - "Clear, concise, asks one question at a time"
+    signature_phrases:
+      - "What would that look like in practice?"
+
+  - id: "builder"
+    name: "Builder (technical lead)"
+    role: "tech_lead"
+    perspective: "Explains how things work and where the sharp edges are."
+    voice_traits:
+      - "Precise, likes concrete examples"
+    signature_phrases:
+      - "Here is the simplest version that still works."
+
+  - id: "skeptic"
+    name: "Skeptic (reality anchor)"
+    role: "reality_anchor"
+    perspective: "Tests every idea against day-to-day constraints."
+    voice_traits:
+      - "Dry, practical, asks about cost and effort"
+    signature_phrases:
+      - "And who maintains it next month?"
+
+tension_matrix:
+  - between: ["host", "builder"]
+    dynamic: "Listener curiosity vs technical depth"
+    killer_question_template: "Builder, if a newcomer had ten minutes, what is the one thing to try first?"
+
+  - between: ["builder", "skeptic"]
+    dynamic: "Ideal design vs real-world friction"
+    killer_question_template: "Skeptic, where does this plan break first?"
+
+  - between: ["host", "skeptic"]
+    dynamic: "Enthusiasm vs caution"
+    killer_question_template: "Skeptic, what would convince you this is worth the effort?"
+
+narrative_structure:
+  acts:
+    - act: 1
+      name: "Setup"
+      purpose: "Introduce the topic and why it matters now."
+    - act: 2
+      name: "Exploration"
+      purpose: "Compare perspectives and surface disagreements."
+    - act: 3
+      name: "Stress test"
+      purpose: "Push the idea against real constraints."
+    - act: 4
+      name: "Takeaways"
+      purpose: "Distill what the listener can do next."
+
+routing:
+  vault_episodes_root: "notes/episodes"
+  vault_episodes_prefix: "example-show-"
+  notes_brand_path: "notes/brand/example-show"
+  r2_object_prefix: "episodes/example-show"
+  lavish_theme: "editorial-warm"

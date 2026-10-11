@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -47,22 +48,40 @@ class BenchmarkProtocolTests(unittest.TestCase):
             protocol_path = root / "protocol.json"; write(protocol_path, protocol)
             report = root / "report.json"
             base = [sys.executable, str(SCRIPT), "--protocol", str(protocol_path), "--report", str(report)]
-            pending = subprocess.run(base, capture_output=True, text=True)
+            env = {**os.environ, "PODCAST_CONFIG": str(root / "config.json")}
+            write(root / "config.json", {"approver": "Config Approver"})
+            pending = subprocess.run(base, capture_output=True, text=True, env=env)
             self.assertEqual(pending.returncode, 1)
             self.assertTrue(json.loads(report.read_text())["protocol_valid"])
             approval = root / "approval.json"
-            write(approval, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Martin",
+            write(approval, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Example Host",
                              "protocol_sha256": sha(protocol_path)})
-            accepted = subprocess.run([*base, "--approval", str(approval)], capture_output=True, text=True)
+            # config.approver alone must not accept a different approved_by, and a missing expected approver must not fall back to "any name"
+            wrong = subprocess.run([*base, "--approval", str(approval)], capture_output=True, text=True, env=env)
+            self.assertEqual(wrong.returncode, 1)
+            self.assertFalse(json.loads(report.read_text())["h1_approval_valid"])
+            write(root / "empty.json", {})
+            missing = subprocess.run([*base, "--approval", str(approval)], capture_output=True, text=True,
+                                     env={**env, "PODCAST_CONFIG": str(root / "empty.json")})
+            self.assertEqual(missing.returncode, 1); self.assertIn("--expected-approver", missing.stderr)
+            absent = subprocess.run([*base, "--expected-approver", "Example Host"], capture_output=True, text=True, env=env)
+            self.assertEqual(absent.returncode, 1)  # expected approver without an approval file authorizes nothing
+            accepted = subprocess.run([*base, "--approval", str(approval), "--expected-approver", "Example Host"], capture_output=True, text=True, env=env)
             self.assertEqual(accepted.returncode, 0)
+            bad_hash = root / "bad.json"; write(bad_hash, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Example Host", "protocol_sha256": "0" * 64})
+            self.assertEqual(subprocess.run([*base, "--approval", str(bad_hash), "--expected-approver", "Example Host"], capture_output=True, text=True, env=env).returncode, 1)
+            bad_gate = root / "gate.json"; write(bad_gate, {"gate": "other", "status": "approved", "approved_by": "Example Host", "protocol_sha256": sha(protocol_path)})
+            self.assertEqual(subprocess.run([*base, "--approval", str(bad_gate), "--expected-approver", "Example Host"], capture_output=True, text=True, env=env).returncode, 1)
+            from_config = root / "cfg_ok.json"; write(from_config, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Config Approver", "protocol_sha256": sha(protocol_path)})
+            self.assertEqual(subprocess.run([*base, "--approval", str(from_config)], capture_output=True, text=True, env=env).returncode, 0)
             self.assertTrue(json.loads(report.read_text())["external_judge_dispatch_authorized"])
 
             protocol["protocol_id"] = "odyssey-smart-edit-benchmark-v2"
             protocol["revision"] = 2
             write(protocol_path, protocol)
-            write(approval, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Martin",
+            write(approval, {"gate": "H1-benchmark-protocol", "status": "approved", "approved_by": "Example Host",
                              "protocol_sha256": sha(protocol_path)})
-            revised = subprocess.run([*base, "--approval", str(approval)], capture_output=True, text=True)
+            revised = subprocess.run([*base, "--approval", str(approval), "--expected-approver", "Example Host"], capture_output=True, text=True, env=env)
             self.assertEqual(revised.returncode, 0)
             self.assertTrue(json.loads(report.read_text())["external_judge_dispatch_authorized"])
 

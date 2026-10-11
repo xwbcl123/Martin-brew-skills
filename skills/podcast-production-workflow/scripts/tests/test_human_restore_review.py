@@ -56,7 +56,7 @@ class HumanRestoreReviewTests(unittest.TestCase):
                 "edl_sha256": sha(edl), "render_report_sha256": sha(render_report), "edited_audio_sha256": sha(edited),
                 "review_plan_sha256": canonical_hash(plan), "review_protocol_id": PROTOCOL_ID, "default_action": "accept_cut",
                 "decisions": decisions, "sampling_evaluation": evaluate(plan, decisions),
-                "reviewed_by": "Martin", "reviewed_at": "2026-08-29T00:00:00+02:00", "publish_authorized": False}))
+                "reviewed_by": "Example Host", "reviewed_at": "2026-08-29T00:00:00+02:00", "publish_authorized": False}))
             recovered = root / "recovered.json"
             subprocess.run([sys.executable, str(SCRIPTS / "apply_human_restore_review.py"), "--edl", str(edl),
                             "--render-report", str(render_report), "--edited-audio", str(edited),
@@ -82,7 +82,7 @@ class HumanRestoreReviewTests(unittest.TestCase):
                 "gate": "H2-human-restore-review", "status": "approved", "review_complete": True,
                 "edl_sha256": sha(edl), "render_report_sha256": sha(render_report), "edited_audio_sha256": sha(edited),
                 "review_plan_sha256": canonical_hash(plan), "review_protocol_id": PROTOCOL_ID, "default_action": "accept_cut",
-                "decisions": decisions, "sampling_evaluation": evaluate(plan, decisions), "reviewed_by": "Martin",
+                "decisions": decisions, "sampling_evaluation": evaluate(plan, decisions), "reviewed_by": "Example Host",
                 "reviewed_at": "2026-08-29T00:00:00+02:00", "publish_authorized": False}))
             result = subprocess.run([sys.executable, str(SCRIPTS / "apply_human_restore_review.py"), "--edl", str(edl),
                 "--render-report", str(render_report), "--edited-audio", str(edited), "--review", str(receipt),

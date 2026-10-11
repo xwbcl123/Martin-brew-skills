@@ -40,16 +40,16 @@ def create_fixture(root: Path) -> Path:
     artwork = root / "artwork/episode-artwork.jpg"
     run(["ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=0x10244f:s=1400x1400", "-frames:v", "1", "-q:v", "5", str(artwork)])
 
-    summary = "这一期由 Martin 主持，Sage 与 Felix 作为嘉宾，从家庭视角讨论英雄、战争、成长与归家，并呈现适合新听众理解的核心问题。"
+    summary = "这一期由 Example Host 主持，Sage 与 Felix 作为嘉宾，从家庭视角讨论英雄、战争、成长与归家，并呈现适合新听众理解的核心问题。"
     description = "<p>本期节目从家庭共同观看《奥德赛》的体验出发，讨论少年与成年人对英雄叙事、战争代价、责任选择和回归家园的不同理解，并通过具体对话帮助听众快速判断这一期是否值得完整收听。</p>" * 5
-    transcript = ("Martin：欢迎收听家庭时光胶囊播客。Sage：今天我们讨论英雄、战争与归家。Felix：我最关心少年如何理解选择与责任。\n" * 24).strip()
+    transcript = ("Example Host：欢迎收听家庭时光胶囊播客。Sage：今天我们讨论英雄、战争与归家。Felix：我最关心少年如何理解选择与责任。\n" * 24).strip()
     vtt = "WEBVTT\n\n00:00.000 --> 00:04.000\n欢迎收听家庭时光胶囊播客。\n\n00:04.000 --> 00:08.000\n今天讨论英雄、战争与归家。\n\n00:08.000 --> 00:11.500\n少年如何理解选择与责任。\n"
     chapters = {"chapters": [
         {"start_seconds": 0, "title": "开场"},
         {"start_seconds": 4, "title": "英雄与战争"},
         {"start_seconds": 8, "title": "成长与归家"}
     ]}
-    launch_copy = "家庭时光胶囊播客第一期已经准备就绪。本期由 Martin、Sage 和 Felix 讨论《奥德赛》中的英雄、战争、成长与归家。正式发布后，请通过平台无关链接收听并分享：{{share_url}}"
+    launch_copy = "家庭时光胶囊播客第一期已经准备就绪。本期由 Example Host、Sage 和 Felix 讨论《奥德赛》中的英雄、战争、成长与归家。正式发布后，请通过平台无关链接收听并分享：{{share_url}}"
 
     write(root / "metadata/summary.txt", summary)
     write(root / "metadata/description.html", description)
@@ -66,18 +66,18 @@ def create_fixture(root: Path) -> Path:
         "episode_key": "20260824_contract-fixture",
         "package_revision": 1,
         "production": {"run_key": "fixture-run-20260824", "source_sha256": "1" * 64, "source_basename": "fixture.mov", "timeline_basis": "release-audio"},
-        "provider": {"name": "transistor", "show_id": "82408", "episode_id": None},
+        "provider": {"name": "transistor", "show_id": "12345", "episode_id": None},
         "show": {"title": "家庭时光胶囊播客", "language": "zh-CN"},
         "episode": {
             "title": "《奥德赛》：少年如何理解英雄、战争与归家",
-            "author": "Martin",
+            "author": "Example Host",
             "summary_file": "metadata/summary.txt",
             "summary_sha256": sha256_file(root / "metadata/summary.txt"),
             "description_file": "metadata/description.html",
             "description_sha256": sha256_file(root / "metadata/description.html"),
             "type": "full", "season": 1, "number": 1, "explicit": False,
             "participants": [
-                {"name": "Martin", "role": "host"},
+                {"name": "Example Host", "role": "host"},
                 {"name": "Sage", "role": "guest"},
                 {"name": "Felix", "role": "guest"}
             ],
@@ -97,17 +97,17 @@ def create_fixture(root: Path) -> Path:
         "artwork": {"episode_file": "artwork/episode-artwork.jpg", "episode_sha256": artwork_sha, "public_image_url": None},
         "promo": {"launch_copy_file": "promo/launch-copy.md", "launch_copy_sha256": sha256_file(root / "promo/launch-copy.md"), "share_url_placeholder": "{{share_url}}", "clip_manifest_file": None},
         "rights": {
-            "content": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": APPROVED_AT},
-            "music": {"status": "not_applicable", "reviewed_by": "Martin", "reviewed_at": APPROVED_AT},
-            "artwork": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": APPROVED_AT},
-            "minor_consent": {"status": "cleared", "reviewed_by": "Martin", "reviewed_at": APPROVED_AT}
+            "content": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": APPROVED_AT},
+            "music": {"status": "not_applicable", "reviewed_by": "Example Host", "reviewed_at": APPROVED_AT},
+            "artwork": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": APPROVED_AT},
+            "minor_consent": {"status": "cleared", "reviewed_by": "Example Host", "reviewed_at": APPROVED_AT}
         },
         "approvals": {
-            "editorial": {"status": "approved", "approved_by": "Martin", "approved_at": APPROVED_AT, "artifact_sha256": audio_sha},
-            "transcript": {"status": "approved", "approved_by": "Martin", "approved_at": APPROVED_AT, "artifact_sha256": transcript_sha},
-            "mastering": {"status": "approved", "approved_by": "Martin", "approved_at": APPROVED_AT, "artifact_sha256": audio_sha},
-            "artwork": {"status": "approved", "approved_by": "Martin", "approved_at": APPROVED_AT, "artifact_sha256": artwork_sha},
-            "release_candidate": {"status": "approved", "approved_by": "Martin", "approved_at": APPROVED_AT, "payload_sha256": ZERO, "release_audio_sha256": audio_sha}
+            "editorial": {"status": "approved", "approved_by": "Example Host", "approved_at": APPROVED_AT, "artifact_sha256": audio_sha},
+            "transcript": {"status": "approved", "approved_by": "Example Host", "approved_at": APPROVED_AT, "artifact_sha256": transcript_sha},
+            "mastering": {"status": "approved", "approved_by": "Example Host", "approved_at": APPROVED_AT, "artifact_sha256": audio_sha},
+            "artwork": {"status": "approved", "approved_by": "Example Host", "approved_at": APPROVED_AT, "artifact_sha256": artwork_sha},
+            "release_candidate": {"status": "approved", "approved_by": "Example Host", "approved_at": APPROVED_AT, "payload_sha256": ZERO, "release_audio_sha256": audio_sha}
         },
         "preview": {"output_file": "preview/episode-release-preview.html"}
     }

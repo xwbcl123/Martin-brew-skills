@@ -17,7 +17,111 @@ import time
 from urllib.parse import urlsplit
 from urllib.request import urlopen
 
-CLI = os.environ.get('TRANSISTOR_CLI', 'transistor')
+CLI = None  # resolved at run time: --transistor-cli > $TRANSISTOR_CLI > config transistor_cli > PATH
+# BEGIN podcast-config (byte-identical in every consumer; guarded by podcast-release-package/scripts/test_config_copies.py)
+def _podcast_cfg(_cache={}):
+    """Personal defaults from $PODCAST_CONFIG or ~/.config/podcast-skills/config.json. Read lazily, once; never grants approval/authorization."""
+    import json, os, re
+    from pathlib import Path
+    keys = {'workspace', 'whisper_cli', 'whisper_model', 'transistor_cli', 'transistor_cli_repo',
+            'language', 'approver', 'artwork_registry', 'planning_profiles_dir'}
+    plain = {'language', 'approver'}
+    explicit = os.environ.get('PODCAST_CONFIG')
+    if explicit is not None:
+        if not explicit.strip() or not Path(explicit).expanduser().is_absolute():
+            raise SystemExit('PODCAST_CONFIG must be a non-empty absolute path (unset it to use ~/.config/podcast-skills/config.json)')
+        path = Path(explicit).expanduser()
+    else:
+        path = Path.home() / '.config' / 'podcast-skills' / 'config.json'
+    if str(path) in _cache:
+        return _cache[str(path)]
+    if explicit is not None and not path.is_file():
+        raise SystemExit(f'PODCAST_CONFIG points to a missing file: {path}')
+    data = {}
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+        except ValueError as exc:
+            raise SystemExit(f'invalid JSON in {path}: {exc}')
+    if not isinstance(data, dict):
+        raise SystemExit(f'{path}: top level must be an object')
+    extra = sorted(set(data) - keys - {'shows'})
+    if extra:
+        raise SystemExit(f'{path}: unknown keys {extra}')
+    for key in keys & set(data):
+        value = data[key]
+        if not isinstance(value, str) or not value.strip():
+            raise SystemExit(f'{path}: {key} must be a non-empty string')
+        if key not in plain and not Path(value).expanduser().is_absolute():
+            raise SystemExit(f'{path}: {key} must be an absolute path')
+    shows = data.setdefault('shows', {})
+    if not isinstance(shows, dict):
+        raise SystemExit(f'{path}: shows must be an object keyed by show id')
+    for sid, entry in shows.items():
+        if not re.fullmatch(r'[0-9]+', str(sid)) or not isinstance(entry, dict) or set(entry) - {'author', 'brand_name', 'brand_tagline'}:
+            raise SystemExit(f'{path}: shows[{sid!r}] must be an object with only author/brand_name/brand_tagline')
+        for field in ('author', 'brand_name'):
+            if field in entry and (not isinstance(entry[field], str) or not entry[field].strip()):
+                raise SystemExit(f'{path}: shows[{sid!r}].{field} must be a non-empty string')
+        if 'brand_tagline' in entry and not isinstance(entry['brand_tagline'], str):
+            raise SystemExit(f'{path}: shows[{sid!r}].brand_tagline must be a string')
+    _cache[str(path)] = data
+    return data
+
+
+def _podcast_pick(cli, env_name, key):
+    """Provided CLI value > provided environment variable > config file > None. A provided-but-blank value is an error, never "unset"."""
+    import os
+    for source, value in (('command line', cli), (f'${env_name}', os.environ.get(env_name) if env_name else None)):
+        if value is not None:
+            if not str(value).strip():
+                raise SystemExit(f'{key}: empty value from the {source}; omit it to use the default')
+            return value
+    return _podcast_cfg().get(key)
+
+
+def _podcast_tool(cli, env_name, key, command):
+    """A provided tool path must be an absolute executable file and is used as-is (never re-resolved through PATH); `command` is only looked up when nothing was provided."""
+    import os, shutil
+    value = _podcast_pick(cli, env_name, key)
+    if value is not None:
+        value = os.path.expanduser(str(value))
+        if not os.path.isabs(value):
+            raise SystemExit(f'{key}: {value} must be an absolute path (relative values are never searched on PATH)')
+        if not (os.path.isfile(value) and os.access(value, os.X_OK)):
+            raise SystemExit(f'{key}: {value} is not an executable file (fix --{key.replace("_", "-")}, ${env_name or "PODCAST_CONFIG"} or the podcast-skills config)')
+        return value
+    found = shutil.which(command)
+    if not found:
+        raise SystemExit(f'{command} not found: pass --{key.replace("_", "-")}, set ${env_name or "PODCAST_CONFIG"} or add "{key}" to ~/.config/podcast-skills/config.json')
+    return os.path.abspath(found)
+
+
+def _podcast_model(cli):
+    """Whisper model: CLI > $WHISPER_MODEL > config whisper_model > <workspace>/models/ggml-large-v3-q5_0.bin."""
+    import os
+    value = _podcast_pick(cli, 'WHISPER_MODEL', 'whisper_model')
+    if value is None:
+        workspace = _podcast_pick(None, 'PODCAST_WORKSPACE', 'workspace')
+        if workspace is None:
+            raise SystemExit('no Whisper model: pass --model, set $WHISPER_MODEL, or add whisper_model/workspace to ~/.config/podcast-skills/config.json')
+        workspace = os.path.expanduser(str(workspace))
+        if not os.path.isabs(workspace):
+            raise SystemExit(f'workspace: {workspace} must be an absolute path')
+        value = os.path.join(workspace, 'models', 'ggml-large-v3-q5_0.bin')
+    value = os.path.expanduser(str(value))
+    if not os.path.isabs(value):
+        raise SystemExit(f'whisper_model: {value} must be an absolute path')
+    if not os.path.isfile(value):
+        raise SystemExit(f'Whisper model does not exist: {value}')
+    return value
+# END podcast-config
+
+
+def cli_path():
+    return CLI or _podcast_tool(None, 'TRANSISTOR_CLI', 'transistor_cli', 'transistor')
+
+
 VALIDATOR = Path(__file__).resolve().parents[2] / 'podcast-release-package/scripts/v2/package.py'
 FIELDS = {'title', 'summary', 'description', 'author', 'explicit', 'type', 'number', 'season', 'image_url', 'transcript_text'}
 OPS = {'upload', 'create_draft', 'readback', 'publish'}
@@ -261,7 +365,7 @@ class CLIProvider:
 
     def call(self, args):
         try:
-            result = subprocess.run([CLI, '--output', 'json', '--max-retries', '0', '--timeout', str(self.http_timeout), *args],
+            result = subprocess.run([cli_path(), '--output', 'json', '--max-retries', '0', '--timeout', str(self.http_timeout), *args],
                                     capture_output=True, timeout=max(600, 2 * self.http_timeout + 60))
             if result.returncode:
                 raise ProviderFailure('CLI call failed; sanitized diagnostics available', cli_diagnostics(result))
@@ -612,7 +716,10 @@ def main():
     p.add_argument('--mode', choices=('plan', 'publish'), required=True)
     p.add_argument('--artwork-verification', type=Path)
     p.add_argument('--http-timeout', type=int, default=300)
+    p.add_argument('--transistor-cli', help='transistor executable (default: $TRANSISTOR_CLI, config transistor_cli, else PATH)')
     args = p.parse_args()
+    global CLI
+    CLI = _podcast_tool(args.transistor_cli, 'TRANSISTOR_CLI', 'transistor_cli', 'transistor')
     controller = None
     try:
         controller = Controller(args.package, args.authorization, args.state_dir, artwork_verification=args.artwork_verification, http_timeout=args.http_timeout)

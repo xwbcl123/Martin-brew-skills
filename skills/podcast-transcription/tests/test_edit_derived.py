@@ -39,7 +39,7 @@ class DerivedTests(unittest.TestCase):
   content={'audio_path':'media/delivery.mp3','cover_path':'cover.png','title':'Fixture','summary':'Fixture','description':'Fixture','show_notes':'Fixture','ai_disclosure':'Fixture only','chapters':[],'resources':[]};m.write(self.dest/'content.json',content);(self.dest/'cover.png').write_text('fixture placeholder not release artwork');(self.dest/'preview').mkdir();(self.dest/'preview/episode.html').write_text('fixture only');m.write(self.dest/'preview/enrichment-manifest.json',{'artifacts':[],'source_assets':[]})
   content['reading_transcript']=[{'text':s['text'],'source_segment_ids':[s['id']]} for s in m.read(self.out/'aligned.json')['segments']];m.write(self.dest/'content.json',content)
   (self.dest/'preview/reading-transcript.txt').write_text('\n\n'.join(p['text'] for p in content['reading_transcript']))
-  asm.assemble(self.dest.resolve(),self.wav,'imported_finished','123','fixture',1,'https://example.test/fixture.png',1)
+  asm.assemble(self.dest.resolve(),self.wav,'imported_finished','123','fixture',1,'https://example.test/fixture.png',1,author='Example Host',origin_tool='Fixture editor export',declaration_source='fixture-declaration')
   artifacts=m.read(self.dest/'episode.json')['artifacts'];self.assertEqual(artifacts['raw_asr_json']['audio_sha256'],m.sha(self.old_delivery));self.assertEqual(artifacts['aligned_transcript']['audio_sha256'],m.sha(self.delivery));self.assertIn('edit_lineage',artifacts);self.assertIn('derived_source_wave',artifacts);self.assertNotIn('asr_report',artifacts)
  def test_source_binding_tamper_rejected(self):
   d=m.read(self.out/'edit-lineage.json');d['source_audio_sha256']='0'*64

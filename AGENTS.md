@@ -114,7 +114,9 @@ If content is useful structurally but not safe to publish:
 
 ### podcast production family
 
-- `podcast-enrichment`, `podcast-final-edit`, `podcast-mastering`, `podcast-production-workflow`, `podcast-release-package`, `podcast-transcription`, `podcast-transistor-publish` are sanitized exports; keep workstation paths behind `PODCAST_WORKSPACE` / `TRANSISTOR_CLI`
+- the eight `podcast-*` skills (`podcast-enrichment`, `podcast-final-edit`, `podcast-mastering`, `podcast-production-workflow`, `podcast-release-package`, `podcast-topic-planning`, `podcast-transcription`, `podcast-transistor-publish`) form one family: install them side by side (the release, publishing, transcription, mastering, enrichment and final-edit skills import each other); `podcast-topic-planning` stands alone
+- personal values (tool paths, workspace, author, brand text, approver name, real profiles) live in `~/.config/podcast-skills/config.json` (`$PODCAST_CONFIG`), never in a skill; the example is `podcast-release-package/references/config.example.json`. The config can never supply approvals, authorizations, rights or source declarations
+- `podcast-transistor-publish` needs the external Transistor CLI (https://github.com/xwbcl123/transistor-cli); real show ids, family profiles and workstation paths stay out of the repository (`profiles.private/`, `references-private/` and `*.private.*` are never exported)
 - keep episode media, transcripts, session notes, receipts, real hashes tied to a published episode, and personal names of private individuals out of the repository
 - preserve the release contract gates: independent receipts, seal, hash-bound publication authorization; user acceptance of editorial uncertainty never replaces them
 

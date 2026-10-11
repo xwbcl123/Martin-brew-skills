@@ -1,9 +1,12 @@
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 import test_publish as fixture
@@ -25,7 +28,7 @@ class UpdateTests(unittest.TestCase):
  def setUp(self):
   fixture.PublishTests.setUp(self)
   old=self.root/'old';shutil.copytree(self.package,old)
-  self.before={'data':{'id':'123','relationships':{'show':{'data':{'id':'82408'}}},'attributes':{**self.payload,'status':'published','published_at':'2026-09-01T00:00:00Z','audio_processing':False,'media_url':'https://example.test/audio.mp3'}}}
+  self.before={'data':{'id':'123','relationships':{'show':{'data':{'id':'12345'}}},'attributes':{**self.payload,'status':'published','published_at':'2026-09-01T00:00:00Z','audio_processing':False,'media_url':'https://example.test/audio.mp3'}}}
   pub.persist(self.root/'before.json',self.before)
   self.payload['description']='New listener paragraph'
   pub.persist(self.package/'payload.json',self.payload)
@@ -248,3 +251,62 @@ class ReadingUpdateTests(unittest.TestCase):
   for _ in range(2):
    with self.assertRaises(pub.Blocked):self.controller().run()
   self.assertEqual([a[1] for a in self.mutations()],['update'])
+
+
+class CliIdentityLayoutTests(unittest.TestCase):
+ """cli_identity locates the CLI source checkout explicitly; the executable must live inside it."""
+ def make_repo(self, root, dirty=False):
+  repo=root/'cli'; (repo/'src').mkdir(parents=True); (repo/'.venv/bin').mkdir(parents=True)
+  (repo/'src/a.py').write_text('x=1\n'); (repo/'pyproject.toml').write_text('[project]\nname="t"\n'); (repo/'.venv/bin/transistor').write_text('#!/bin/sh\n')
+  git=lambda *a: subprocess.run(['git','-C',str(repo),*a],check=True,capture_output=True)
+  git('init','-q'); git('add','-A'); git('-c','user.name=t','-c','user.email=t@example.test','commit','-qm','init')
+  if dirty: (repo/'src/a.py').write_text('x=2\n')
+  return repo
+ def identity(self, repo, cli):
+  empty=Path(tempfile.mkdtemp())/'c.json'; empty.write_text('{}')
+  with patch.object(up,'CLI_REPO',repo), patch.object(pub,'CLI',str(cli)), patch.dict(os.environ,{'PODCAST_CONFIG':str(empty)}):
+   return up.cli_identity()
+ def test_supported_layout_yields_commit_and_runtime_hash(self):
+  with tempfile.TemporaryDirectory() as t:
+   repo=self.make_repo(Path(t)); ident=self.identity(repo,repo/'.venv/bin/transistor')
+   self.assertEqual(len(ident['commit']),40); self.assertEqual(len(ident['runtime_sha256']),64)
+ def test_repo_from_config_when_flag_absent(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t); repo=self.make_repo(root); cfg=root/'c.json'; cfg.write_text(json.dumps({'transistor_cli_repo':str(repo)}))
+   with patch.object(up,'CLI_REPO',None), patch.object(pub,'CLI',str(repo/'.venv/bin/transistor')), patch.dict(os.environ,{'PODCAST_CONFIG':str(cfg)}):
+    self.assertEqual(len(up.cli_identity()['commit']),40)
+ def test_missing_repo_is_blocked_not_guessed(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t); repo=self.make_repo(root); empty=root/'e.json'; empty.write_text('{}')
+   with patch.object(up,'CLI_REPO',None), patch.object(pub,'CLI',str(repo/'.venv/bin/transistor')), patch.dict(os.environ,{'PODCAST_CONFIG':str(empty)}):
+    with self.assertRaises(pub.Blocked): up.cli_identity()
+ def test_executable_outside_repo_is_unsupported(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t); repo=self.make_repo(root); other=root/'bin'; other.mkdir(); (other/'transistor').write_text('#!/bin/sh\n')
+   with self.assertRaises(pub.Blocked): self.identity(repo,other/'transistor')
+ def test_repo_without_src_is_unsupported(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t); bare=root/'bare'; (bare/'.git').mkdir(parents=True); (bare/'bin').mkdir()
+   with self.assertRaises(pub.Blocked): self.identity(bare,bare/'bin/transistor')
+ def test_dirty_worktree_is_blocked(self):
+  with tempfile.TemporaryDirectory() as t:
+   repo=self.make_repo(Path(t),dirty=True)
+   with self.assertRaises(pub.Blocked): self.identity(repo,repo/'.venv/bin/transistor')
+ def test_symlinked_executable_pointing_outside_the_checkout_is_unsupported(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t); repo=self.make_repo(root); outside=root/'elsewhere'; outside.mkdir(); (outside/'real').write_text('#!/bin/sh\n'); (outside/'real').chmod(0o755)
+   link=repo/'.venv/bin/linked'; link.symlink_to(outside/'real')
+   with self.assertRaises(pub.Blocked): self.identity(repo,link)
+ def test_relative_cli_value_is_rejected_before_any_identity_check(self):
+  with tempfile.TemporaryDirectory() as t:
+   empty=Path(t)/'c.json'; empty.write_text('{}')
+   with patch.dict(os.environ,{'PODCAST_CONFIG':str(empty),'TRANSISTOR_CLI':'transistor'}):
+    with patch.object(pub,'CLI',None):
+     with self.assertRaises(SystemExit): pub.cli_path()
+ def test_relative_checkout_value_is_blocked_not_resolved_against_cwd(self):
+  with tempfile.TemporaryDirectory() as t:
+   repo=self.make_repo(Path(t)); old=os.getcwd()
+   try:
+    os.chdir(repo.parent)
+    with self.assertRaises(pub.Blocked): self.identity(Path('cli'),repo/'.venv/bin/transistor')
+   finally: os.chdir(old)
