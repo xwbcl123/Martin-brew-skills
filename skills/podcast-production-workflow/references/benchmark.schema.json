@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Smart Edit Benchmark Declaration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "source", "audio_roles", "gold_references", "reference_policy", "judges", "human_gates"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_id": {"type": "string", "pattern": "^[0-9]{8}_[a-z0-9-]+$"},
+    "source": {"$ref": "#/$defs/artifact"},
+    "audio_roles": {
+      "type": "object", "additionalProperties": false, "required": ["render_audio", "analysis_audio"],
+      "properties": {"render_audio": {"$ref": "#/$defs/artifactOrPending"}, "analysis_audio": {"$ref": "#/$defs/artifact"}}
+    },
+    "gold_references": {
+      "type": "object", "additionalProperties": false,
+      "required": ["filmora_audio", "verbatim", "subs_text", "subs_timed"],
+      "properties": {
+        "filmora_audio": {"$ref": "#/$defs/artifact"}, "verbatim": {"$ref": "#/$defs/artifact"},
+        "subs_text": {"$ref": "#/$defs/artifact"}, "subs_timed": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "reference_policy": {
+      "type": "object", "additionalProperties": false, "required": ["role", "judge_leakage_prohibited", "duration_target_prohibited"],
+      "properties": {"role": {"const": "blinded-evaluation-only"}, "judge_leakage_prohibited": {"const": true}, "duration_target_prohibited": {"const": true}}
+    },
+    "judges": {
+      "type": "object", "additionalProperties": false, "required": ["text", "audio"],
+      "properties": {"text": {"$ref": "#/$defs/judge"}, "audio": {"$ref": "#/$defs/judge"}}
+    },
+    "human_gates": {
+      "type": "object", "additionalProperties": false, "required": ["data_scope_authorization", "minor_consent", "benchmark_protocol"],
+      "properties": {
+        "data_scope_authorization": {"enum": ["pending", "approved"]},
+        "minor_consent": {"enum": ["pending", "cleared", "not_applicable"]},
+        "benchmark_protocol": {"enum": ["pending", "approved"]}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}, "duration_seconds": {"type": "number", "exclusiveMinimum": 0}}
+    },
+    "artifactOrPending": {"anyOf": [{"$ref": "#/$defs/artifact"}, {"type": "object", "additionalProperties": false, "required": ["path", "status"], "properties": {"path": {"type": "string", "minLength": 1}, "status": {"const": "pending"}}}]},
+    "judge": {
+      "type": "object", "additionalProperties": false, "required": ["harness", "model_id", "input_scope", "dispatch_status"],
+      "properties": {"harness": {"const": "antigravity"}, "model_id": {"type": "string", "minLength": 3}, "input_scope": {"type": "string", "minLength": 3}, "dispatch_status": {"enum": ["blocked", "authorized", "complete"]}}
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "H4 post-cut text approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate", "status", "episode_id", "delivery_profile", "subtitle_profile_sha256", "release_audio_sha256", "raw_transcript_json_sha256", "verbatim_sha256", "timed_subs_sha256", "correction_ledger_sha256", "terminology_review", "speaker_review", "semantic_review", "timing_review", "approved_by", "approved_at", "publish_authorized"],
+  "properties": {
+    "gate": {"const": "H4-postcut-text"}, "status": {"const": "approved"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "delivery_profile": {"enum": ["audio", "video"]},
+    "subtitle_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "release_audio_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "final_video_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "raw_transcript_json_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "verbatim_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timed_subs_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "correction_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "terminology_review": {"const": "approved"}, "speaker_review": {"const": "approved"},
+    "semantic_review": {"const": "approved"}, "timing_review": {"const": "approved"},
+    "subtitle_visual_review": {"const": "approved"},
+    "approved_by": {"type": "string", "minLength": 1}, "approved_at": {"type": "string", "format": "date-time"},
+    "publish_authorized": {"const": false}
+  },
+  "allOf": [
+    {"if": {"properties": {"delivery_profile": {"const": "video"}}},
+     "then": {"required": ["final_video_sha256", "subtitle_visual_review"]}}
+  ]
+}

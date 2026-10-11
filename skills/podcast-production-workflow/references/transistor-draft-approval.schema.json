@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Episode-specific Transistor draft upload approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate", "status", "episode_key", "show_id", "acceptance_report_sha256", "manifest_sha256", "release_candidate_payload_sha256", "release_audio_sha256", "approved_by", "approved_at", "publish_authorized"],
+  "properties": {
+    "gate": {"const": "H6-transistor-draft-upload"},
+    "status": {"const": "approved"},
+    "episode_key": {"type": "string", "minLength": 1},
+    "show_id": {"type": "string", "pattern": "^[0-9]+$"},
+    "acceptance_report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "release_candidate_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "release_audio_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_at": {"type": "string", "format": "date-time"},
+    "publish_authorized": {"const": false}
+  }
+}

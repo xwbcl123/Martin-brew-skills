@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://life-os.local/schemas/podcast-episode-release-package-1.0.json",
+  "title": "Podcast Episode Release Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_key", "package_revision", "production", "provider", "show", "episode", "media", "transcript", "chapters", "artwork", "promo", "rights", "approvals", "preview"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_key": {"type": "string", "pattern": "^[0-9]{8}_[a-z0-9][a-z0-9-]*$"},
+    "package_revision": {"type": "integer", "minimum": 1},
+    "production": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_key", "source_sha256", "source_basename", "timeline_basis"],
+      "properties": {
+        "run_key": {"type": "string", "minLength": 8},
+        "source_sha256": {"$ref": "#/$defs/sha256"},
+        "source_basename": {"type": "string", "minLength": 1},
+        "timeline_basis": {"const": "release-audio"}
+      }
+    },
+    "provider": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "show_id"],
+      "properties": {
+        "name": {"const": "transistor"},
+        "show_id": {"type": "string", "minLength": 1},
+        "episode_id": {"type": ["string", "null"]}
+      }
+    },
+    "show": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "language"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1, "maxLength": 200},
+        "language": {"$ref": "#/$defs/language"}
+      }
+    },
+    "episode": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "author", "summary_file", "summary_sha256", "description_file", "description_sha256", "type", "season", "number", "explicit", "participants"],
+      "properties": {
+        "title": {"type": "string", "minLength": 5, "maxLength": 160},
+        "author": {"type": "string", "minLength": 1, "maxLength": 120},
+        "summary_file": {"$ref": "#/$defs/relativePath"},
+        "summary_sha256": {"$ref": "#/$defs/sha256"},
+        "description_file": {"$ref": "#/$defs/relativePath"},
+        "description_sha256": {"$ref": "#/$defs/sha256"},
+        "type": {"enum": ["full", "trailer", "bonus"]},
+        "season": {"type": "integer", "minimum": 1},
+        "number": {"type": "integer", "minimum": 1},
+        "explicit": {"type": "boolean"},
+        "participants": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["name", "role"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "role": {"enum": ["host", "guest"]}
+            }
+          }
+        },
+        "alternate_url": {"type": ["string", "null"]},
+        "video_url": {"type": ["string", "null"]},
+        "keywords": {"type": ["string", "null"]}
+      }
+    },
+    "media": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_audio", "release_audio_sha256", "archive_master", "archive_master_sha256", "target_lufs_i", "max_true_peak_dbtp"],
+      "properties": {
+        "release_audio": {"$ref": "#/$defs/relativePath"},
+        "release_audio_sha256": {"$ref": "#/$defs/sha256"},
+        "archive_master": {"$ref": "#/$defs/relativePath"},
+        "archive_master_sha256": {"$ref": "#/$defs/sha256"},
+        "target_lufs_i": {"const": -16.0},
+        "max_true_peak_dbtp": {"const": -1.0}
+      }
+    },
+    "transcript": {
+      "type": "object", "additionalProperties": false,
+      "required": ["text_file", "text_sha256", "timed_file", "timed_sha256", "language", "audio_sha256"],
+      "properties": {
+        "text_file": {"$ref": "#/$defs/relativePath"},
+        "text_sha256": {"$ref": "#/$defs/sha256"},
+        "timed_file": {"$ref": "#/$defs/relativePath"},
+        "timed_sha256": {"$ref": "#/$defs/sha256"},
+        "language": {"$ref": "#/$defs/language"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "chapters": {
+      "type": "object", "additionalProperties": false,
+      "required": ["file", "sha256", "audio_sha256"],
+      "properties": {
+        "file": {"$ref": "#/$defs/relativePath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artwork": {
+      "type": "object", "additionalProperties": false,
+      "required": ["episode_file", "episode_sha256"],
+      "properties": {
+        "episode_file": {"$ref": "#/$defs/relativePath"},
+        "episode_sha256": {"$ref": "#/$defs/sha256"},
+        "public_image_url": {"type": ["string", "null"]}
+      }
+    },
+    "promo": {
+      "type": "object", "additionalProperties": false,
+      "required": ["launch_copy_file", "launch_copy_sha256", "share_url_placeholder"],
+      "properties": {
+        "launch_copy_file": {"$ref": "#/$defs/relativePath"},
+        "launch_copy_sha256": {"$ref": "#/$defs/sha256"},
+        "share_url_placeholder": {"const": "{{share_url}}"},
+        "clip_manifest_file": {"type": ["string", "null"]}
+      }
+    },
+    "rights": {
+      "type": "object", "additionalProperties": false,
+      "required": ["content", "music", "artwork", "minor_consent"],
+      "properties": {
+        "content": {"$ref": "#/$defs/rightStatus"},
+        "music": {"$ref": "#/$defs/rightStatus"},
+        "artwork": {"$ref": "#/$defs/rightStatus"},
+        "minor_consent": {"$ref": "#/$defs/rightStatus"}
+      }
+    },
+    "approvals": {
+      "type": "object", "additionalProperties": false,
+      "required": ["editorial", "transcript", "mastering", "artwork", "release_candidate"],
+      "properties": {
+        "editorial": {"$ref": "#/$defs/approval"},
+        "transcript": {"$ref": "#/$defs/approval"},
+        "mastering": {"$ref": "#/$defs/approval"},
+        "artwork": {"$ref": "#/$defs/approval"},
+        "release_candidate": {"$ref": "#/$defs/releaseApproval"}
+      }
+    },
+    "preview": {
+      "type": "object", "additionalProperties": false,
+      "required": ["output_file"],
+      "properties": {"output_file": {"$ref": "#/$defs/relativePath"}}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "language": {"type": "string", "pattern": "^[a-z]{2}(-[A-Z]{2})?$"},
+    "relativePath": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "approval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "approved_by", "approved_at", "artifact_sha256"],
+      "properties": {
+        "status": {"const": "approved"},
+        "approved_by": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "minLength": 20},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "releaseApproval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "approved_by", "approved_at", "payload_sha256", "release_audio_sha256"],
+      "properties": {
+        "status": {"const": "approved"},
+        "approved_by": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "minLength": 20},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "release_audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "rightStatus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reviewed_by", "reviewed_at"],
+      "properties": {
+        "status": {"enum": ["cleared", "not_applicable"]},
+        "reviewed_by": {"type": "string", "minLength": 1},
+        "reviewed_at": {"type": "string", "minLength": 20}
+      }
+    }
+  }
+}

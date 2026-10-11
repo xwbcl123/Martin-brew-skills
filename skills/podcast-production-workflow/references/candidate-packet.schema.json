@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Smart Edit Candidate Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "episode_id", "source_sha256", "analysis_audio_sha256", "timebase", "category", "core_interval", "context", "detector_evidence", "policy_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "candidate_id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{4,80}$"},
+    "episode_id": {"type": "string", "pattern": "^[0-9]{8}_[a-z0-9-]+$"},
+    "source_sha256": {"$ref": "#/$defs/sha256"},
+    "analysis_audio_sha256": {"$ref": "#/$defs/sha256"},
+    "audio_window": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["path", "sha256", "start_sample", "end_sample"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "start_sample": {"type": "integer", "minimum": 0},
+        "end_sample": {"type": "integer", "minimum": 1}
+      }
+    },
+    "timebase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["basis", "sample_rate_hz"],
+      "properties": {"basis": {"const": "source-audio"}, "sample_rate_hz": {"const": 48000}}
+    },
+    "category": {"enum": ["filler", "false_start", "repetition", "recording_control", "technical_failure", "silence"]},
+    "core_interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_sample", "end_sample"],
+      "properties": {"start_sample": {"type": "integer", "minimum": 0}, "end_sample": {"type": "integer", "minimum": 1}}
+    },
+    "context": {
+      "type": "object", "additionalProperties": false,
+      "required": ["text_before", "candidate_text", "text_after", "protected_tokens"],
+      "properties": {
+        "text_before": {"type": "string"}, "candidate_text": {"type": "string"}, "text_after": {"type": "string"},
+        "protected_tokens": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "detector_evidence": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "policy_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

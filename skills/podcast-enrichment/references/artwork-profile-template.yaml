@@ -1,0 +1,33 @@
+schema_version: "1.0"
+profile_id: replace-with-show-artwork
+revision: v1
+show_id: REPLACE_WITH_EXACT_PROVIDER_SHOW_ID
+brand: REPLACE_WITH_APPROVED_SHOW_NAME
+brand_en: ""
+shared:
+  canvas:
+    aspect_ratio: "1:1"
+    text_safe_margin_percent: 8
+    draft: native generator output
+    delivery: verify the target provider's current requirements
+  palette:
+    paper: "#fff8ef"
+    ink: "#252525"
+  lockup:
+    language: replace-with-approved-language
+    small_size_qa_px: [80, 160]
+  prohibitions: [unapproved slogans, invented claims]
+styles:
+  editorial:
+    id: editorial
+    name: Editorial illustration
+    medium: matte editorial illustration
+    composition_rule: one main subject, one focal object, generous negative space
+    # Add primary_reference only when the actual image and hash manifest exist.
+asset_rules:
+  show:
+    hierarchy: large show name, enduring series scene
+    forbidden_copy: [episode number, episode title, date]
+  episode:
+    hierarchy: small show name, large content-grounded title
+    source_policy: current final transcript or published content

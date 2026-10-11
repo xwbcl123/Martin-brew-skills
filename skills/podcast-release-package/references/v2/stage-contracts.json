@@ -1,0 +1,32 @@
+{
+  "version": "2.0",
+  "stages": {
+    "intake": [],
+    "final_edit": [
+      "intake"
+    ],
+    "mastering": [
+      "final_edit"
+    ],
+    "inspect_finished": [],
+    "delivery": [
+      "inspect_finished"
+    ],
+    "transcription": [
+      "delivery"
+    ],
+    "enrichment": [
+      "transcription"
+    ],
+    "preview": [
+      "enrichment"
+    ],
+    "package": [
+      "preview"
+    ],
+    "publish": [
+      "package"
+    ]
+  },
+  "raw_delivery_parent": "mastering"
+}

@@ -38,6 +38,13 @@ Current in-scope skills:
 - `martin-agent-roster`
 - `martin-outcome-package`
 - `martin-pptx-skill`
+- `podcast-enrichment`
+- `podcast-final-edit`
+- `podcast-mastering`
+- `podcast-production-workflow`
+- `podcast-release-package`
+- `podcast-transcription`
+- `podcast-transistor-publish`
 - `publish-assets`
 - `slide-renamer`
 - `skill-comprehension`
@@ -104,6 +111,12 @@ If content is useful structurally but not safe to publish:
 - keep Bucket names, account IDs, public URLs, credentials, and machine-specific Hermes paths out of the public package
 - preserve explicit publish authorization, immutable version keys, public readback, append-only lifecycle records, and exact plan-ID cleanup confirmation
 - keep configuration examples placeholder-only and require credentials to remain external in a mode-`600` environment file
+
+### podcast production family
+
+- `podcast-enrichment`, `podcast-final-edit`, `podcast-mastering`, `podcast-production-workflow`, `podcast-release-package`, `podcast-transcription`, `podcast-transistor-publish` are sanitized exports; keep workstation paths behind `PODCAST_WORKSPACE` / `TRANSISTOR_CLI`
+- keep episode media, transcripts, session notes, receipts, real hashes tied to a published episode, and personal names of private individuals out of the repository
+- preserve the release contract gates: independent receipts, seal, hash-bound publication authorization; user acceptance of editorial uncertainty never replaces them
 
 ### audio-transcriber
 

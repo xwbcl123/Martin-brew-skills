@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Judge Stability Gate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "challenge_set_sha256", "text", "audio", "policy_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["passed", "failed", "pending"]},
+    "challenge_set_sha256": {"$ref": "#/$defs/sha256"},
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "text": {"$ref": "#/$defs/role"},
+    "audio": {"$ref": "#/$defs/role"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "prompt_sha256", "runs_per_candidate", "exact_label_agreement", "passed"],
+      "properties": {
+        "model_id": {"type": "string", "minLength": 3},
+        "prompt_sha256": {"$ref": "#/$defs/sha256"},
+        "runs_per_candidate": {"type": "integer", "minimum": 3},
+        "exact_label_agreement": {"type": "number", "minimum": 0, "maximum": 1},
+        "passed": {"type": "boolean"}
+      }
+    }
+  }
+}

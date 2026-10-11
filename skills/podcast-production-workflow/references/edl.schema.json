@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Buffered Source-Time EDL",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "stage", "status", "run_key", "timebase", "source_audio", "adjudication_sha256", "policy_sha256", "crossfade_samples", "cuts", "summary", "approved", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_id": {"type": "string"},
+    "stage": {"const": "S07-buffered-edl"},
+    "status": {"const": "review_required"},
+    "run_key": {"$ref": "#/$defs/sha256"},
+    "timebase": {"type": "object"},
+    "source_audio": {"type": "object"},
+    "adjudication_sha256": {"$ref": "#/$defs/sha256"},
+    "policy_sha256": {"$ref": "#/$defs/sha256"},
+    "crossfade_samples": {"type": "integer", "minimum": 0},
+    "cuts": {"type": "array", "items": {"$ref": "#/$defs/cut"}},
+    "summary": {"type": "object"},
+    "approved": {"const": false},
+    "publish_authorized": {"const": false}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_sample", "end_sample"],
+      "properties": {"start_sample": {"type": "integer", "minimum": 0}, "end_sample": {"type": "integer", "minimum": 1}}
+    },
+    "cut": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cut_id", "candidate_ids", "categories", "core_intervals", "proposed_interval", "applied_interval", "buffer_rule", "decision_status"],
+      "properties": {
+        "cut_id": {"type": "string"},
+        "candidate_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "categories": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "core_intervals": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/interval"}},
+        "proposed_interval": {"$ref": "#/$defs/interval"},
+        "applied_interval": {"$ref": "#/$defs/interval"},
+        "buffer_rule": {"type": "string"},
+        "decision_status": {"const": "requires_h2_human_approval"}
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "User-supplied final-cut SRT alignment lineage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "episode_key",
+    "source_srt_path",
+    "source_srt_sha256",
+    "source_srt_bytes",
+    "source_wav_sha256",
+    "filmora_input_report_path",
+    "filmora_input_report_sha256",
+    "acoustic_boundaries_path",
+    "acoustic_boundaries_sha256",
+    "asr_discrepancy_path",
+    "asr_discrepancy_sha256",
+    "delivery_audio_sha256",
+    "raw_asr_sha256",
+    "sample_rate",
+    "offset_samples",
+    "cue_count"
+  ],
+  "properties": {
+    "kind": { "const": "user_supplied_final_cut_srt" },
+    "episode_key": { "type": "string", "minLength": 1 },
+    "source_srt_path": { "type": "string", "minLength": 1 },
+    "source_srt_sha256": { "$ref": "#/$defs/sha256" },
+    "source_srt_bytes": { "type": "integer", "minimum": 1 },
+    "source_wav_sha256": { "$ref": "#/$defs/sha256" },
+    "filmora_input_report_path": { "type": "string", "minLength": 1 },
+    "filmora_input_report_sha256": { "$ref": "#/$defs/sha256" },
+    "acoustic_boundaries_path": { "type": "string", "minLength": 1 },
+    "acoustic_boundaries_sha256": { "$ref": "#/$defs/sha256" },
+    "asr_discrepancy_path": { "type": "string", "minLength": 1 },
+    "asr_discrepancy_sha256": { "$ref": "#/$defs/sha256" },
+    "delivery_audio_sha256": { "$ref": "#/$defs/sha256" },
+    "raw_asr_sha256": { "$ref": "#/$defs/sha256" },
+    "sample_rate": { "type": "integer", "minimum": 1 },
+    "offset_samples": { "type": "integer", "minimum": 0 },
+    "cue_count": { "type": "integer", "minimum": 1 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Local Two-Pass Mastering QC Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "stage", "status", "run_key", "selected_edit", "editorial_approval", "target", "measurement_pass", "archive_master", "release_audio", "technical_qc_passed", "human_mastering_approval_required", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_id": {"type": "string"},
+    "stage": {"const": "S10-local-two-pass-mastering"},
+    "status": {"enum": ["technical_qc_passed_h3b_required", "technical_qc_failed"]},
+    "run_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "selected_edit": {"type": "object"},
+    "editorial_approval": {"type": "object"},
+    "target": {"type": "object"},
+    "measurement_pass": {"type": "object"},
+    "archive_master": {"type": "object"},
+    "release_audio": {"type": "object"},
+    "technical_qc_passed": {"type": "boolean"},
+    "human_mastering_approval_required": {"const": true},
+    "publish_authorized": {"const": false}
+  }
+}

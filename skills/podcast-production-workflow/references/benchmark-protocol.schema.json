@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Blinded Benchmark Protocol",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "protocol_id", "revision", "status", "episode_id", "frozen_artifacts", "labels", "primary_thresholds", "timeline_thresholds", "judge_stability", "anti_leakage", "generalization_claim", "change_control", "external_judge_dispatch_authorized", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "protocol_id": {"type": "string", "pattern": "^odyssey-smart-edit-benchmark-v[1-9][0-9]*$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "status": {"const": "frozen_pending_h1"},
+    "episode_id": {"const": "20260822_odyssey"},
+    "frozen_artifacts": {"type": "object", "minProperties": 10, "additionalProperties": {"$ref": "#/$defs/artifact"}},
+    "labels": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed", "template_artifact", "opening_condition", "filmora_action_is_not_human_label"],
+      "properties": {
+        "allowed": {"const": ["must_cut", "acceptable_cut", "must_keep"]},
+        "template_artifact": {"$ref": "#/$defs/artifact"},
+        "opening_condition": {"const": "H1 approval bound to this protocol SHA-256"},
+        "filmora_action_is_not_human_label": {"const": true}
+      }
+    },
+    "primary_thresholds": {"type": "object"},
+    "timeline_thresholds": {"type": "object"},
+    "judge_stability": {"type": "object"},
+    "anti_leakage": {"type": "object"},
+    "generalization_claim": {"type": "object"},
+    "change_control": {"type": "object"},
+    "external_judge_dispatch_authorized": {"const": false},
+    "publish_authorized": {"const": false}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+    }
+  }
+}

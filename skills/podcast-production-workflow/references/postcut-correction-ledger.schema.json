@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Post-cut transcript correction ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "release_audio_sha256", "raw_transcript_json_sha256", "terminology_sources", "corrections", "speaker_decisions"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "release_audio_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "raw_transcript_json_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "terminology_sources": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "corrections": {"type": "array", "items": {"$ref": "#/$defs/correction"}},
+    "speaker_decisions": {"type": "array", "items": {"$ref": "#/$defs/speaker"}}
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+    },
+    "correction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "start_ms", "end_ms", "raw_text", "corrected_text", "evidence", "confidence", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "start_ms": {"type": "integer", "minimum": 0},
+        "end_ms": {"type": "integer", "minimum": 1}, "raw_text": {"type": "string", "minLength": 1},
+        "corrected_text": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1},
+        "confidence": {"enum": ["high", "medium", "low"]}, "status": {"enum": ["applied", "review_required", "rejected"]}
+      }
+    },
+    "speaker": {
+      "type": "object", "additionalProperties": false,
+      "required": ["range_start_ms", "range_end_ms", "speaker", "evidence", "status"],
+      "properties": {
+        "range_start_ms": {"type": "integer", "minimum": 0}, "range_end_ms": {"type": "integer", "minimum": 1},
+        "speaker": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1},
+        "status": {"enum": ["assigned", "review_required"]}
+      }
+    }
+  }
+}

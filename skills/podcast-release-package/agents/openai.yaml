@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Release Package"
+  short_description: "Validate podcast release packages and render previews"
+  default_prompt: "Use $podcast-release-package to validate this episode package and render its standalone human preview."

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Podcast Sample-Accurate Review Render Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "stage", "status", "run_key", "source_audio", "edl", "output_audio", "duration_accounting", "mapping", "technical_join_qc", "human_join_audit_required", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "episode_id": {"type": "string"},
+    "stage": {"const": "S07-lossless-review-render"},
+    "status": {"const": "review_required"},
+    "run_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_audio": {"type": "object"},
+    "edl": {"type": "object"},
+    "output_audio": {"type": "object"},
+    "duration_accounting": {"type": "object"},
+    "mapping": {"type": "object"},
+    "technical_join_qc": {"type": "object"},
+    "human_join_audit_required": {"const": true},
+    "publish_authorized": {"const": false}
+  }
+}

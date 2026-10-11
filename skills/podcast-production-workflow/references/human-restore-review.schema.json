@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Risk-sampled human restore-review receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "gate", "status", "review_complete", "edl_sha256", "render_report_sha256", "edited_audio_sha256", "review_plan_sha256", "review_protocol_id", "default_action", "decisions", "sampling_evaluation", "reviewed_by", "reviewed_at", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.1"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "gate": {"const": "H2-human-restore-review"},
+    "status": {"enum": ["approved", "failed"]},
+    "review_complete": {"const": true},
+    "edl_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "render_report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "edited_audio_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "review_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "review_protocol_id": {"const": "human-restore-risk-sampling-v1"},
+    "default_action": {"const": "accept_cut"},
+    "decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["cut_id", "action", "listened"],
+        "properties": {
+          "cut_id": {"type": "string", "minLength": 1},
+          "action": {"enum": ["accept_cut", "restore_source"]},
+          "listened": {"const": true},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "sampling_evaluation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["strata", "failed_strata", "sampling_passed"],
+      "properties": {
+        "strata": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false,
+          "required": ["stratum_id", "sample_count", "restore_count", "restored_cut_ids", "passed"],
+          "properties": {
+            "stratum_id": {"enum": ["high", "medium", "low"]},
+            "sample_count": {"type": "integer", "minimum": 0},
+            "restore_count": {"type": "integer", "minimum": 0},
+            "restored_cut_ids": {"type": "array", "items": {"type": "string"}},
+            "passed": {"type": "boolean"}
+          }
+        }},
+        "failed_strata": {"type": "array", "items": {"enum": ["high", "medium", "low"]}},
+        "sampling_passed": {"type": "boolean"}
+      }
+    },
+    "reviewed_by": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "publish_authorized": {"const": false}
+  }
+}

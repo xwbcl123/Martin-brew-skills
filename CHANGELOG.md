@@ -4,6 +4,18 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-10-11
+
+### Added
+
+- Added the sanitized podcast production skill family: `podcast-enrichment`, `podcast-final-edit`, `podcast-mastering`, `podcast-production-workflow`, `podcast-release-package`, `podcast-transcription` and `podcast-transistor-publish`.
+- Added a user-directed rough-cut recovery protocol (NLE project/export binding, versioned measurement policy, explicit user acceptance, time budget) and `wfp_extract_edl.py`, a read-only, fail-closed extractor of the nominal cut list from a Filmora project with 31 offline tests.
+
+### Changed
+
+- Sanitized workstation paths (use `PODCAST_WORKSPACE` / `TRANSISTOR_CLI`), private vault references and personal names in examples and tests; the private canonical trees live elsewhere.
+- Updated the root README and agent guidance to include the podcast skill family.
+
 ## 2026-10-07
 
 ### Added

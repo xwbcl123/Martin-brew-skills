@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "S11 post-cut text validation report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "episode_id", "stage", "status", "run_key", "delivery_profile", "release_audio", "final_video", "raw_transcript", "verbatim", "timed_subs", "correction_ledger", "subtitle_profile", "timeline_qc", "human_review", "contract_text_ready", "video_ready", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.1"}, "episode_id": {"type": "string"},
+    "stage": {"const": "S11-postcut-text-validation"},
+    "status": {"enum": ["review_required", "accepted"]}, "run_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "delivery_profile": {"enum": ["audio", "video"]},
+    "release_audio": {"type": "object"}, "final_video": {"type": ["object", "null"]},
+    "raw_transcript": {"type": "object"}, "verbatim": {"type": "object"},
+    "timed_subs": {"type": "object"}, "correction_ledger": {"type": "object"}, "timeline_qc": {"type": "object"},
+    "subtitle_profile": {"type": "object"},
+    "human_review": {"type": ["object", "null"]}, "contract_text_ready": {"type": "boolean"},
+    "video_ready": {"type": "boolean"},
+    "publish_authorized": {"const": false}
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reference-edl.schema.json",
+  "type": "object",
+  "required": ["schema_version", "stage", "status", "run_key", "episode_id", "timebase", "provenance", "cuts", "summary", "boundary", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "stage": {"const": "S08b-reference-edl-reconstruction"},
+    "status": {"enum": ["succeeded", "review_required"]},
+    "run_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "timebase": {
+      "type": "object",
+      "required": ["sample_rate_hz", "interval_convention"],
+      "properties": {"sample_rate_hz": {"const": 48000}, "interval_convention": {"const": "half-open"}},
+      "additionalProperties": false
+    },
+    "provenance": {"type": "object", "required": ["alignment", "source_render", "filmora_reference"]},
+    "cuts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reference_cut_id", "alignment_transition_id", "interval", "duration_seconds", "boundary_uncertainty_seconds", "confidence", "evaluation_eligible", "production_edl_eligible"],
+        "properties": {
+          "reference_cut_id": {"type": "string"},
+          "alignment_transition_id": {"type": "string"},
+          "interval": {
+            "type": "object",
+            "required": ["start_sample", "end_sample"],
+            "properties": {"start_sample": {"type": "integer", "minimum": 0}, "end_sample": {"type": "integer", "minimum": 1}},
+            "additionalProperties": false
+          },
+          "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+          "boundary_uncertainty_seconds": {"type": "number", "minimum": 0},
+          "confidence": {"enum": ["high", "medium", "low"]},
+          "evaluation_eligible": {"type": "boolean"},
+          "production_edl_eligible": {"const": false}
+        }
+      }
+    },
+    "summary": {"type": "object"},
+    "boundary": {"type": "object"},
+    "publish_authorized": {"const": false}
+  }
+}

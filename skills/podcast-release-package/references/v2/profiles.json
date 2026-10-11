@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "profiles": {
+    "podcast_mp3": {
+      "target_lufs": -16,
+      "tolerance_lu": 1,
+      "max_true_peak_dbtp": -1,
+      "sample_rates": [
+        44100,
+        48000
+      ],
+      "min_bitrate_kbps": 96,
+      "artwork_min_px": 1400,
+      "artwork_max_px": 3000,
+      "artwork_max_bytes": 512000
+    }
+  }
+}

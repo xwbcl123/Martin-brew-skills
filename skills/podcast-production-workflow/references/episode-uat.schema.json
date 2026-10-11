@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "episode-uat.schema.json",
+  "type": "object",
+  "required": ["schema_version", "gate", "episode_id", "uat_payload_sha256", "artifacts", "checks", "decision", "reviewer", "reviewed_at", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "gate": {"const": "GATE_1_UNIFIED_UAT"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "uat_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifacts": {
+      "type": "object",
+      "required": ["selected_edit", "release_audio", "transcript", "subtitles", "chapters", "metadata", "artwork", "rights"],
+      "additionalProperties": {"type": "object", "required": ["path", "sha256"]}
+    },
+    "checks": {
+      "type": "object",
+      "required": ["edit_continuity", "release_audio_listen", "text_assets", "metadata_artwork", "rights"],
+      "additionalProperties": {"enum": ["approved", "rejected"]}
+    },
+    "decision": {"enum": ["approved", "rejected"]},
+    "reviewer": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "publish_authorized": {"const": false}
+  }
+}

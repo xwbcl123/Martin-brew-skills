@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "zh-podcast-subtitles-v1",
+  "language": "zh",
+  "max_characters_per_line": 18,
+  "max_lines_per_cue": 2,
+  "max_characters_per_second": 15.0,
+  "minimum_cue_duration_seconds": 0.5,
+  "maximum_cue_duration_seconds": 7.0,
+  "maximum_av_duration_delta_ms": 250,
+  "overlap_allowed": false
+}

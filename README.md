@@ -63,7 +63,14 @@ It does not keep:
 - `notebooklm-export-formatter`
 - `pptx-polish`
 - `martin-pptx-skill`
+- `podcast-enrichment`
+- `podcast-final-edit`
+- `podcast-mastering`
+- `podcast-production-workflow`
+- `podcast-release-package`
 - `podcast-topic-planning`
+- `podcast-transcription`
+- `podcast-transistor-publish`
 - `publish-assets`
 - `slide-renamer`
 - `skill-comprehension`
@@ -95,7 +102,14 @@ Martin-brew-skills/
 │   ├── martin-outcome-package/
 │   ├── martin-pptx-skill/
 │   ├── notebooklm-deck-factory/
+│   ├── podcast-enrichment/
+│   ├── podcast-final-edit/
+│   ├── podcast-mastering/
+│   ├── podcast-production-workflow/
+│   ├── podcast-release-package/
 │   ├── podcast-topic-planning/
+│   ├── podcast-transcription/
+│   ├── podcast-transistor-publish/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "edl-delta-report.schema.json",
+  "type": "object",
+  "required": ["schema_version", "stage", "status", "run_key", "episode_id", "provenance", "metrics", "delta_items", "boundary", "publish_authorized"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "stage": {"const": "S08c-edl-delta-analysis"},
+    "status": {"enum": ["succeeded", "review_required"]},
+    "run_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "episode_id": {"type": "string"},
+    "provenance": {"type": "object", "required": ["auto_edl", "reference_edl", "alignment"]},
+    "metrics": {
+      "type": "object",
+      "required": ["precision", "recall", "matched_count", "auto_only_count", "reference_only_count", "eligible_reference_count", "excluded_low_confidence_reference_count", "boundary_error_ms"]
+    },
+    "delta_items": {"type": "array"},
+    "boundary": {"type": "object"},
+    "publish_authorized": {"const": false}
+  }
+}

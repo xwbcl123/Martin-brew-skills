@@ -1,0 +1,4 @@
+interface:
+  display_name: "Podcast Production Workflow"
+  short_description: "Build and evaluate local-first podcast episode packages"
+  default_prompt: "Use $podcast-production-workflow to inspect or advance a local podcast production run without uploading or publishing."

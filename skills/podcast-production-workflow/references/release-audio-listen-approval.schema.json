@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "H3b mastered release audio approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate", "status", "release_audio_sha256", "listen_through", "technical_qc", "approved_by", "approved_at", "publish_authorized"],
+  "properties": {
+    "gate": {"const": "H3b-mastered-release-audio"},
+    "status": {"const": "approved"},
+    "release_audio_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "listen_through": {"const": "complete"},
+    "technical_qc": {"const": "approved"},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_at": {"type": "string", "format": "date-time"},
+    "publish_authorized": {"const": false}
+  }
+}
