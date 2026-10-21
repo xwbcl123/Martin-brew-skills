@@ -34,6 +34,7 @@ Current in-scope skills:
 - `duolingo-math-solver`
 - `grill-me`
 - `life-os-reflect-cover-orchestrator`
+- `life-os-blog-e2e`
 - `life-os-deep-research`
 - `martin-agent-roster`
 - `martin-outcome-package`
@@ -258,3 +259,10 @@ python skills/<skill-name>/scripts/<tool>.py
 - no private glossary or raw transcript remains
 - docs point to repo-relative paths
 - copied skills are still understandable and portable
+
+### life-os-blog-e2e
+
+- keep site/workshop roots, Telegram identities, gateway commands, Cloudflare profile and credentials in external configuration
+- preserve exact source/assets digest, trusted gateway approval, production-equivalent preview checks, append-only corrective journals and online content/image/deployment readback
+- tests use synthetic temporary sites and local bare remotes; optional native Hexo tests reuse explicit installed dependencies without installing or mutating a live site
+- exclude article materials, operational logs, private configuration, caches and real run receipts from exports

@@ -42,6 +42,8 @@ It does not keep:
 
 ## Included Skills
 
+- `life-os-blog-e2e` — Telegram writing/revision, exact-version release approval, Hexo production-parity preview, safe corrective release and online acceptance (external configuration required).
+
 - `audio-transcriber`
 - `brand-guidelines`
 - `cloudflare-r2-publisher`
