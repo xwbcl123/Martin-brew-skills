@@ -24,11 +24,51 @@ class PublicContentTests(unittest.TestCase):
         self.assertEqual(out,m.public_html(self.data))
         self.assertIn('<strong>A &amp; B</strong>',out)
         self.assertIn('<em>选择与判断</em>',out)
-        self.assertEqual(out.count('本集章节'),1)
+        self.assertEqual(out.count('Episode chapters'),1)
         self.assertNotIn('Voice provenance unknown',page)
         self.assertNotIn('One<br>',page)
         self.assertEqual((self.root/'preview/summary.txt').read_text(),'一起听，A & B')
         for item in manifest['artifacts']:self.assertEqual(item['sha256'],m.digest(self.root/item['path']))
+    def test_english_v1_headings_exports_copy_and_author_text(self):
+        author = '本集章节／延伸阅读 <script>alert("author")</script>'
+        self.data['public_content']['nodes'][0]['children'] = [{'type':'text', 'text':author}]
+        self.data['chapters'][0]['title'] = author
+        self.data['resources'] = [dict(title=author, url='https://example.org/source')]
+        for language in ('en', 'en-US', 'fr'):
+            with self.subTest(language=language):
+                self.data['language'] = language
+                self.data['metadata']['reading_language'] = language
+                self.build()
+                description = (self.root/'preview/description.html').read_text()
+                notes = (self.root/'preview/show-notes.txt').read_text()
+                page = (self.root/'preview/episode.html').read_text()
+                copy_text = re.search(r'<textarea id="notes-copy" hidden>(.*?)</textarea>', page, re.S).group(1)
+                self.assertIn('<h2>Episode chapters</h2>', description)
+                self.assertIn('<h2>Further reading</h2>', description)
+                self.assertNotIn('<h2>本集章节</h2>', description)
+                self.assertNotIn('<h2>延伸阅读</h2>', description)
+                for text in (notes, (self.root/'preview/description.txt').read_text()):
+                    self.assertIn('Episode chapters\n', text)
+                    self.assertIn('Further reading\n', text)
+                    self.assertIn(author, text)
+                self.assertEqual(copy_text, m.esc(notes))
+                self.assertIn(m.esc(author), description)
+                self.assertNotIn('<script>alert(', description)
+                self.assertEqual(self.data['public_content']['nodes'][0]['children'][0]['text'], author)
+
+    def test_chinese_v1_fixed_headings_compatible(self):
+        for language in ('zh', 'zh-CN', 'ZH_hant'):
+            with self.subTest(language=language):
+                self.data['language'] = language
+                self.data['metadata']['reading_language'] = language
+                self.build()
+                description = (self.root/'preview/description.html').read_text()
+                notes = (self.root/'preview/show-notes.txt').read_text()
+                for heading in ('本集章节', '延伸阅读'):
+                    self.assertEqual(description.count('<h2>'+heading+'</h2>'), 1)
+                    self.assertIn(heading+'\n', notes)
+                self.assertIn('这一集聊什么', description)
+
     def test_public_reject_unknown_and_injection(self):
         source=copy.deepcopy(self.data)
         bad=[{'type':'script','text':'alert(1)'},{'type':'paragraph','onclick':'x','children':[{'type':'text','text':'x'}]}, {'type':'paragraph','children':[{'type':'link','url':'javascript:alert(1)','children':[{'type':'text','text':'x'}]}]}, {'type':'heading','level':1,'children':[{'type':'text','text':'x'}]}]

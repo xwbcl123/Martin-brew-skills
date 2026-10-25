@@ -76,4 +76,13 @@ pathlib.Path(p+'.json').write_text(json.dumps({'result':{'language':'en'},'trans
    aligned=json.loads((d/'out/aligned.json').read_text()); self.assertEqual(aligned['segments'][0]['speaker'],'unknown')
    model.write_text('new model')
    with self.assertRaises(ValueError): m.transcribe(audio,d/'out',model,cli,1)
+class LanguageCapabilityTests(unittest.TestCase):
+ def test_english_only_cli_overrides_invalid_auto_detection(self):
+  log='main: WARNING: model is not multilingual, ignoring language and translation options\nwhisper_full_with_state: auto-detected language: fa (p = 0.010001)\n'
+  self.assertEqual(m.language_from_detection(log),('en','english_only_model_reported_by_cli'))
+ def test_multilingual_still_uses_actual_detection(self):
+  self.assertEqual(m.language_from_detection('auto-detected language: de (p = 0.98)'),('de','automatic_detection'))
+ def test_filename_or_arbitrary_text_does_not_force_english(self):
+  with self.assertRaises(ValueError): m.language_from_detection('ggml-tiny.en.bin; model is not multilingual')
+
 if __name__=='__main__': unittest.main()

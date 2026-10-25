@@ -89,7 +89,8 @@ class MetadataPackageTests(unittest.TestCase):
         self.assertEqual(self.ep['artifacts']['raw_asr_json']['audio_sha256'], self.base_ah)
         self.assertEqual(self.ep['artifacts']['aligned_transcript']['audio_sha256'], self.ah)
         self.assertIn('<strong>A useful point</strong>', self.payload['description'])
-        self.assertEqual(self.payload['description'].count('本集章节'), 1)
+        self.assertEqual(self.payload['description'].count('Episode chapters'), 1)
+        self.assertNotIn('本集章节', self.payload['description'])
         self.assertNotIn('Fixture notes', self.payload['description'])
 
     def test_lineage_report_stale_even_with_refreshed_artifacts_and_reviews(self):

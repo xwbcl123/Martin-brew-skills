@@ -18,6 +18,8 @@ Identity in metadata avoids repeating show/episode IDs in chat. If missing, add 
 
 ## Agent startup checklist
 
+Use `scripts/startup.py setup` once when configuration is absent, then `scripts/startup.py check --episode-dir ... --mode local --config ...` for local intake; see the first-run guide for complete commands. These are offline internal checks, not user approval forms.
+
 - Read the metadata and current user instruction before asking. Resolve source and WFP identity, exact episode/show, declared role/channel map, edit intent and output mode. Batch only critical gaps.
 - Resume the existing task/goal, validate prior outputs, reconcile existing remote IDs. Do not repeat an ambiguous mutation or create a second episode to bypass recovery.
 - Probe actual streams, channels, rate and duration; validate WFP source references and deletion structure. Use FFmpeg; no NLE operation or export-equivalence requirement on the standard branch.

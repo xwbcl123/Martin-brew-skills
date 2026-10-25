@@ -9,7 +9,7 @@ Use this Skill as the single entry for a podcast episode. The recommended handof
 
 ## Recommended Entry: Human Rough Cut, Agent Completion
 
-Read [references/minimal-start.md](references/minimal-start.md). For a first-time user, also read [references/first-run-and-handoff.md](references/first-run-and-handoff.md); guide setup once and reuse verified configuration on later episodes.
+Read [references/minimal-start.md](references/minimal-start.md). For a first-time user, also read [references/first-run-and-handoff.md](references/first-run-and-handoff.md); guide setup once and reuse verified configuration on later episodes. The packaged `scripts/startup.py setup/check` provides offline configuration and batched intake diagnostics; `requirements-local.txt` declares local Python dependencies.
 
 Minimal repeat-use prompt, when episode metadata resolves show identity and input paths:
 

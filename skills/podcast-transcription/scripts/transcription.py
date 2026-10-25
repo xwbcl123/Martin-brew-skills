@@ -198,6 +198,16 @@ def transcription_cache(output,identity):
         if evidence['evidence_kind']=='execution_checkpoint' and evidence['checkpoint_sha256']!=media.sha256(output/'execution-checkpoint.json'):raise ValueError('transcription cache recovery checkpoint mismatch')
     return report
 
+def language_from_detection(log):
+    """Use the installed CLI's model capability report, never a filename guess."""
+    english_only = re.search(r'^main: WARNING: model is not multilingual, ignoring language and translation options\s*$', log, re.M)
+    if english_only:
+        return 'en', 'english_only_model_reported_by_cli'
+    match = re.search(r'auto-detected language:\s*([a-z]{2,3})(?:\s|\()', log, re.I)
+    if not match:
+        raise ValueError('local language detection failed; do not assume a language')
+    return match.group(1).lower(), 'automatic_detection'
+
 def transcribe(delivery,output,model,whisper=None,threads=8,resume_partial=None,resume_evidence=None,timing_corrections=None,max_context_tokens=None):
     delivery=P(delivery).resolve(); output=P(output).resolve(); model=P(model).resolve(); whisper=P(whisper or _podcast_tool(None,'WHISPER_CLI','whisper_cli','whisper-cli')).resolve()
     if threads<1: raise ValueError('threads must be positive')
@@ -246,9 +256,8 @@ def transcribe(delivery,output,model,whisper=None,threads=8,resume_partial=None,
     if resume_partial: log=(tmp/'language-detection.log').read_text()
     else:
         detected=media.run(detect); log=detected.stdout+detected.stderr; (tmp/'language-detection.log').write_text(log)
-    match=re.search(r'auto-detected language:\s*([a-z]{2,3})(?:\s|\()',log,re.I)
-    if not match: raise ValueError('local language detection failed; do not assume Chinese; see '+str(tmp))
-    language=match.group(1).lower(); identity={**base_identity,'language':language}
+    language, language_strategy = language_from_detection(log)
+    identity={**base_identity,'language':language}
     argv=[str(whisper),'-m',str(model),'-f',str(tmp/'analysis.wav'),'-of',str(tmp/'raw'),'-otxt','-osrt','-ovtt','-ojf','-l',language,'-t',str(threads)]
     if max_context_tokens is not None: argv.extend(['--max-context',str(max_context_tokens)])
     if resume_partial:
@@ -267,7 +276,7 @@ def transcribe(delivery,output,model,whisper=None,threads=8,resume_partial=None,
     media.write_json(tmp/'aligned.json',{'schema_version':'2.0','audio_sha256':identity['delivery_sha256'],'language':language,'duration':duration,'segments':segments})
     media.write_json(tmp/'corrections.json',{'schema_version':'2.0','audio_sha256':identity['delivery_sha256'],'raw_json_sha256':media.sha256(tmp/'raw.json'),'corrections':corrections,'policy':'append corrections to a new revision; preserve raw artifacts'})
     if media.sha256(delivery)!=identity['delivery_sha256'] or media.sha256(model)!=identity['model_sha256'] or media.sha256(whisper)!=identity['tool_sha256']: raise ValueError('ASR input identity changed during execution')
-    report={'schema_version':'2.0','stage':'transcription','identity':identity,'run_key':media.digest(identity),'language':language,'duration':duration,'recovery':recovery,'correction_count':len(corrections),'timing_correction_count':sum(c['field'] in ('start','end') for c in corrections),'zero_span_duplicate_count':sum(c['field']=='text' and c['after']=='' for c in corrections),'segment_count':len(segments),'qc_status':'pass','qc_scope':'structural timestamps and nonempty outputs; no semantic listening review','argv':argv,'detection_argv':detect,'limitations':['Speakers are unknown; no diarization performed.','ASR text requires semantic review.'],'outputs':{p.name:media.artifact(p) for p in tmp.iterdir()}}
+    report={'schema_version':'2.0','stage':'transcription','identity':identity,'run_key':media.digest(identity),'language':language,'language_strategy':language_strategy,'duration':duration,'recovery':recovery,'correction_count':len(corrections),'timing_correction_count':sum(c['field'] in ('start','end') for c in corrections),'zero_span_duplicate_count':sum(c['field']=='text' and c['after']=='' for c in corrections),'segment_count':len(segments),'qc_status':'pass','qc_scope':'structural timestamps and nonempty outputs; no semantic listening review','argv':argv,'detection_argv':detect,'limitations':['Speakers are unknown; no diarization performed.','ASR text requires semantic review.'],'outputs':{p.name:media.artifact(p) for p in tmp.iterdir()}}
     media.write_json(tmp/'report.json',report); (tmp/'report.sha256').write_text(media.sha256(tmp/'report.json')+'\n'); os.mkdir(output)
     try:
         for p in tmp.iterdir(): os.rename(p,output/p.name)

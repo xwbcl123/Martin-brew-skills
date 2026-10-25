@@ -13,6 +13,58 @@ import sys
 from urllib.parse import quote, urlsplit
 
 
+
+# Translate only trusted UI scaffolding, before inserting any author content.
+UI_EN = {
+    '本集章节': 'Episode chapters', '延伸阅读': 'Further reading',
+    '收听本集': 'Listen to this episode', '播放速度': 'Playback speed', '下载音频': 'Download audio',
+    '单集封面 · 点击查看原图': 'Episode cover · View original', '单集封面': 'Episode cover',
+    '本集导航': 'Episode navigation', '关于本集': 'About this episode', '章节': 'Chapters',
+    '节目笔记': 'Show notes', '完整文字': 'Transcripts', '封面与分享': 'Cover and sharing',
+    '延伸阅读 / SOURCES': 'Further reading / SOURCES', '沿着话题，慢慢听': 'Explore the conversation',
+    '点击章节跳转试听': 'Select a chapter to listen', '复制完整笔记': 'Copy full notes',
+    '下载节目笔记': 'Download show notes', '下载章节': 'Download chapters',
+    '技术更正与局限（展开查看）': 'Corrections and limitations (expand)',
+    '查看来源与文字校对记录': 'View sources and text corrections', '把对话留下来': 'Read the conversation',
+    '全文阅读 · @@SEGMENT_COUNT@@ 个音频片段': 'Full transcript · @@SEGMENT_COUNT@@ audio segments',
+    '文字版本': 'Transcript versions', '音频逐段稿': 'Aligned transcript', '全文搜索': 'Search transcripts',
+    '输入词语，搜索两份全文': 'Search both full transcripts',
+    '完整内容已载入，可搜索到末尾。': 'Full content loaded. Search includes the entire transcript.',
+    '语言 @@READING_LANGUAGE@@ · 按全部来源片段整理': 'Language @@READING_LANGUAGE@@ · Covers all source segments',
+    '原文语言 @@LANG@@ · 共 @@SEGMENT_COUNT@@ 段 · 点击时间定位': 'Original language @@LANG@@ · @@SEGMENT_COUNT@@ segments · Select a timestamp to seek',
+    '下载完整阅读稿': 'Download reading transcript', '下载完整逐段稿': 'Download aligned transcript',
+    '复制完整发布文案': 'Copy full launch copy', '封面缩略图': 'Cover thumbnail',
+    '下载本集封面 ↗': 'Download episode cover ↗', '技术与审计详情': 'Technical and audit details',
+    '内容与文件校验记录': 'Content and file verification records',
+    '已定位，请点击播放器开始收听': 'Position set. Press play to listen.', '已定位至 ': 'Jumped to ',
+    '音频未能载入，请检查本地文件或服务': 'Audio could not load. Check the local file or server.',
+    '阅读稿 ${reading} 段匹配 · 音频逐段稿 ${aligned} 段匹配。清空搜索恢复全文。': 'Reading transcript: ${reading} matches · Aligned transcript: ${aligned} matches. Clear search to restore all text.',
+    '已复制并校验完整文案': 'Full text copied and verified',
+    '无法确认剪贴板内容；全文已选中，请使用系统复制快捷键复制': 'Clipboard could not be verified. Full text selected; use your system copy shortcut.',
+    '请先确认这些是你核对后的选择': 'Confirm that you reviewed these choices first.',
+    '请填写要采用的用词': 'Enter your chosen wording.', '先选择至少一个要确认的词': 'Select at least one term to confirm.',
+    '已导出，交回文件后可更新下一版': 'Exported. Return the file to update the next revision.',
+    '本地预览 · 待核验': 'Local preview · Pending verification', '跳转到': 'Jump to',
+    '本集未附外部链接。': 'No external links provided.', '下载完整素材': 'Download full asset',
+    '未提供单独纠错记录。': 'No separate correction records provided.',
+    '打开已提供的发布链接 ↗': 'Open provided publication link ↗',
+    '中文译写阅读稿': 'Chinese translated reading transcript', '译写阅读稿': 'Translated reading transcript',
+    '整理阅读稿': 'Edited reading transcript', '其他听法：': 'Alternative readings: ', '暂无': 'None provided',
+    '我的选择': 'My choice', '稍后再看': 'Review later', '确认当前用词': 'Confirm current wording',
+    '改为下方用词': 'Use wording below', '用词': 'Wording', '一起核对几个词': 'Review a few terms together',
+    '听一小段，再留下你的选择。导出的文件交回后会用于下一版；页面操作不会直接更新节目。': 'Listen to the clip, then record your choice. Return the exported file for the next revision; this page does not update the episode.',
+    '这些选择是我听过、核对后填写的': 'I listened and reviewed these choices', '导出我的确认': 'Export my decisions',
+}
+
+
+def ui(data, text):
+    if re.split('[-_]', data['language'].lower())[0] == 'zh':
+        return text
+    # Longest first in a single pass: no partial phrase or cascading replacement.
+    pattern = '|'.join(re.escape(k) for k in sorted(UI_EN, key=lambda k: (-len(k), k)))
+    return re.sub(pattern, lambda match: UI_EN[match.group()], text)
+
+
 def fail(message):
     raise ValueError(message)
 
@@ -106,10 +158,12 @@ def public_parts(data):
             exact_keys(node, ('type','url','label') if kind == 'transcript' else ('type',))
             if kind == 'chapters':
                 rows = [(timestamp(number(c['start'],'chapter start'))+' '+string(c['title'],'chapter title')) for c in data['chapters']]
-                parts.append((kind, '<h2>本集章节</h2><ul>'+''.join('<li>'+esc(t)+'</li>' for t in rows)+'</ul>', '本集章节\n'+'\n'.join(rows)))
+                heading = ui(data, '本集章节')
+                parts.append((kind, '<h2>'+heading+'</h2><ul>'+''.join('<li>'+esc(t)+'</li>' for t in rows)+'</ul>', heading+'\n'+'\n'.join(rows)))
             elif kind == 'resources':
                 rows = [(string(r['title'],'resource title'),url(r['url'])) for r in data['resources']]
-                parts.append((kind, '<h2>延伸阅读</h2><ul>'+''.join('<li><a href="'+esc(u)+'">'+esc(t)+'</a></li>' for t,u in rows)+'</ul>', '延伸阅读\n'+'\n'.join(t+' ('+u+')' for t,u in rows)))
+                heading = ui(data, '延伸阅读')
+                parts.append((kind, '<h2>'+heading+'</h2><ul>'+''.join('<li><a href="'+esc(u)+'">'+esc(t)+'</a></li>' for t,u in rows)+'</ul>', heading+'\n'+'\n'.join(t+' ('+u+')' for t,u in rows)))
             else:
                 u, t = url(node['url']), string(node['label'],'transcript label')
                 parts.append((kind, '<p><a href="'+esc(u)+'">'+esc(t)+'</a></p>', t+' ('+u+')'))
@@ -170,13 +224,14 @@ def import_terminology_decisions(data, exported):
 
 
 def terminology_html(data):
+    t = lambda text: ui(data, text)
     review=validate_terminology(data)
     if not review or not review['terms']: return ''
     rows=''
     for term in review['terms']:
-        rows += f'<article class="term-card" data-term-id="{esc(term["id"])}" data-current="{esc(term["current"])}"><button class="copy" data-seek="{term["start"]}">{timestamp(term["start"])}–{timestamp(term["end"])}</button><h3>{esc(term["current"])}</h3><p>其他听法：{esc(" / ".join(term["alternatives"]) or "暂无")}</p><p>{esc(term["reason"])}</p><label>我的选择 <select class="term-action"><option value="skip">稍后再看</option><option value="confirm">确认当前用词</option><option value="edit">改为下方用词</option></select></label><label>用词 <input class="term-text" value="{esc(term["current"])}" maxlength="200"></label></article>'
+        rows += f'<article class="term-card" data-term-id="{esc(term["id"])}" data-current="{esc(term["current"])}"><button class="copy" data-seek="{term["start"]}">{timestamp(term["start"])}–{timestamp(term["end"])}</button><h3>{esc(term["current"])}</h3><p>{t("其他听法：")}{esc(" / ".join(term["alternatives"]) or t("暂无"))}</p><p>{esc(term["reason"])}</p><label>{t("我的选择")} <select class="term-action"><option value="skip">{t("稍后再看")}</option><option value="confirm">{t("确认当前用词")}</option><option value="edit">{t("改为下方用词")}</option></select></label><label>{t("用词")} <input class="term-text" value="{esc(term["current"])}" maxlength="200"></label></article>'
     bindings=esc(json.dumps(review['bindings'],ensure_ascii=False,sort_keys=True))
-    return f'<details class="editor terminology" id="terminology-review" data-bindings="{bindings}"><summary>一起核对几个词 · {len(review["terms"])} 处</summary><p>听一小段，再留下你的选择。导出的文件交回后会用于下一版；页面操作不会直接更新节目。</p><div class="term-grid">{rows}</div><label class="term-attestation"><input type="checkbox" id="term-attestation"> 这些选择是我听过、核对后填写的</label><button class="copy" id="export-terms">导出我的确认</button></details>'
+    return f'<details class="editor terminology" id="terminology-review" data-bindings="{bindings}"><summary>{t("一起核对几个词")} · {len(review["terms"])} {"处" if data["language"].lower().split("-")[0].split("_")[0] == "zh" else "terms"}</summary><p>{t("听一小段，再留下你的选择。导出的文件交回后会用于下一版；页面操作不会直接更新节目。")}</p><div class="term-grid">{rows}</div><label class="term-attestation"><input type="checkbox" id="term-attestation"> {t("这些选择是我听过、核对后填写的")}</label><button class="copy" id="export-terms">{t("导出我的确认")}</button></details>'
 
 
 # BEGIN podcast-config (byte-identical in every consumer; guarded by podcast-release-package/scripts/test_config_copies.py)
@@ -379,20 +434,21 @@ def prose(text):
 
 def render(data, root, output, report):
     def link(path): return esc(quote(os.path.relpath(inside(root, path), output.parent), safe='/'))
+    t = lambda text: ui(data, text)
     cover, audio = link(data['cover_path']), link(data['audio_path'])
     chapters = ''.join(f'<button class="chapter" data-seek="{c["start"]}"><span class="chapter-time">{timestamp(c["start"])}</span><span><strong>{esc(c["title"])}</strong><span class="chapter-summary">{esc(c["summary"])}</span></span><span aria-hidden="true">↗</span></button>' for c in data['chapters'])
-    segments = ''.join(f'<article class="segment searchable" data-start="{s["start"]}" data-end="{s["end"]}" data-source-id="{esc(s["id"])}"><button data-seek="{s["start"]}" aria-label="跳转到 {timestamp(s["start"])}">{timestamp(s["start"])}</button><div>{"<strong class=speaker>"+esc(s["speaker"])+"</strong>" if s.get("speaker") not in (None, "", "unknown") else ""}<p>{esc(s["text"])}</p></div></article>' for s in data['segments'])
+    segments = ''.join(f'<article class="segment searchable" data-start="{s["start"]}" data-end="{s["end"]}" data-source-id="{esc(s["id"])}"><button data-seek="{s["start"]}" aria-label="{t("跳转到")} {timestamp(s["start"])}">{timestamp(s["start"])}</button><div>{"<strong class=speaker>"+esc(s["speaker"])+"</strong>" if s.get("speaker") not in (None, "", "unknown") else ""}<p>{esc(s["text"])}</p></div></article>' for s in data['segments'])
     reading = ''.join(f'<p class="searchable" data-source-ids="{esc(json.dumps(p["source_segment_ids"], ensure_ascii=False))}">{esc(p["text"]).replace(chr(10), "<br>")}</p>' for p in data['reading_transcript'])
-    resources = ''.join(f'<li><a href="{esc(r["url"])}" target="_blank" rel="noopener noreferrer">{esc(r["title"])} <span aria-hidden="true">↗</span></a></li>' for r in data['resources']) or '<li>本集未附外部链接。</li>'
+    resources = ''.join(f'<li><a href="{esc(r["url"])}" target="_blank" rel="noopener noreferrer">{esc(r["title"])} <span aria-hidden="true">↗</span></a></li>' for r in data['resources']) or t('<li>本集未附外部链接。</li>')
     audit = ''.join(f'<li><a href="{link(a["path"])}">{esc(a["title"])}</a></li>' for a in data.get('audit_links', []))
     assets = ''
     for asset in data.get('assets', []):
         href = link(asset['path']); kind = asset['kind']
         body = f'<img class="extra-image" src="{href}" alt="{esc(asset["title"])}">' if kind == 'image' else f'<audio controls preload="metadata" src="{href}"></audio>' if kind == 'audio' else prose(inside(root, asset['path']).read_text()) if kind == 'text' else ''
-        assets += f'<article class="extra-asset"><h3>{esc(asset["title"])}</h3>{body}<a href="{href}" download>下载完整素材</a></article>'
-    corrections = ''.join(f'<li><strong>{esc(c["original"])} → {esc(c["corrected"])}</strong><br>{esc(c["reason"])}</li>' for c in data['metadata']['corrections']) or '<li>未提供单独纠错记录。</li>'
+        assets += f'<article class="extra-asset"><h3>{esc(asset["title"])}</h3>{body}<a href="{href}" download>{t("下载完整素材")}</a></article>'
+    corrections = ''.join(f'<li><strong>{esc(c["original"])} → {esc(c["corrected"])}</strong><br>{esc(c["reason"])}</li>' for c in data['metadata']['corrections']) or t('<li>未提供单独纠错记录。</li>')
     status = data.get('status', {})
-    published = f'<a class="publication" href="{esc(status["publication_url"])}" target="_blank" rel="noopener noreferrer">打开已提供的发布链接 ↗</a>' if status.get('publication_url') else ''
+    published = f'<a class="publication" href="{esc(status["publication_url"])}" target="_blank" rel="noopener noreferrer">{t("打开已提供的发布链接 ↗")}</a>' if status.get('publication_url') else ''
     modern = 'public_content' in data
     parts = public_parts(data) if modern else []
     core = ''.join(h for k,h,t in parts if k not in ('chapters','resources'))
@@ -402,17 +458,17 @@ def render(data, root, output, report):
         'BRAND_FOOTER': ' · ' + esc(data['brand_name']) if data.get('brand_name') else '',
         'BRAND_IDENTITY': '<div><strong>' + esc(data['brand_name']) + '</strong><span>' + esc(data['brand_tagline']) + '</span></div>' if data.get('brand_name') else '',
         'SUMMARY': esc(public_summary(data) if modern else data['summary']), 'COVER': cover, 'AUDIO': audio,
-        'STATUS': esc(status.get('label', '本地预览 · 待核验')), 'PUBLISHED': published,
+        'STATUS': esc(status.get('label', t('本地预览 · 待核验'))), 'PUBLISHED': published,
         'DURATION': timestamp(report['duration']), 'DESCRIPTION': '' if modern else prose(data['description']),
         'DISCLOSURE': '' if modern else esc(data['ai_disclosure']), 'CHAPTERS': chapters, 'NOTES': core if modern else prose(data['show_notes']),
         'READING': reading, 'SEGMENTS': segments, 'SEGMENT_COUNT': str(len(data['segments'])),
-        'READING_LABEL': '中文译写阅读稿' if data['metadata']['reading_mode'] == 'translation' and data['metadata']['reading_language'].startswith('zh') else '译写阅读稿' if data['metadata']['reading_mode'] == 'translation' else '整理阅读稿',
+        'READING_LABEL': t('中文译写阅读稿' if data['metadata']['reading_mode'] == 'translation' and data['metadata']['reading_language'].startswith('zh') else '译写阅读稿' if data['metadata']['reading_mode'] == 'translation' else '整理阅读稿'),
         'READING_LANGUAGE': esc(data['metadata']['reading_language']), 'LAUNCH': prose(data['launch_copy']),
         'NOTES_RAW': esc(public_text(data) if modern else data['show_notes']), 'LAUNCH_RAW': esc(data['launch_copy']),
         'TERMINOLOGY': terminology_html(data), 'MODERN': ' modern' if modern else '', 'RESOURCES': resources, 'ASSETS': assets, 'CORRECTIONS': corrections, 'AUDIT': audit,
     }
     template = (Path(__file__).parent.parent / 'templates' / 'episode.html').read_text()
-    return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match.group(1)], template)
+    return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match.group(1)], ui(data, template))
 
 
 def content_relative(root, content_path):

@@ -16,7 +16,9 @@ Routing assumption (verified on EP04 only): standard DAW semantics -- if any aud
 audible, otherwise non-muted tracks are; unknown or conflicting flags fail closed. Video tracks are ignored.
 An explicitly selected leaf (--timeline-member and/or --timeline-id, optionally with --track-index; --track-index alone is rejected) is a *diagnostic* extraction: export association stays unverified.
 Nominal source positions are only coordinate resolution, NOT acoustic accuracy (EP04: -27..+26 ms vs the user-accepted
-refined candidate). Refine every boundary against the raw stems before using this as a sample-exact EDL. Effects are NOT
+refined candidate). This output is nominal geometry, never proof of acoustic equivalence. The direct-FFmpeg handoff
+validates retained source samples and actual acoustic joins; export-equivalence reconstruction additionally refines
+boundaries against its declared reference. Effects are NOT
 interpreted (`effects_status: unknown_not_verified`). The Filmora streamId is not an FFmpeg stream index.
 Usage: wfp_extract_edl.py PROJECT.wfp --output out.json [--sample-rate 48000] [--source-total-samples N]
        wfp_extract_edl.py PROJECT.wfp --inventory   (prints candidates, writes nothing)

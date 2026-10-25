@@ -1,0 +1,5 @@
+# Local production, rendering and package validation (no cloud SDK or account required).
+jsonschema>=4.18,<5
+numpy>=1.26,<3
+Pillow>=10,<13
+PyYAML>=6,<7

@@ -27,6 +27,73 @@ class EnrichmentTests(unittest.TestCase):
         self.assertIn('Unique final paragraph',(self.root/'preview/reading-transcript.txt').read_text())
         self.assertFalse(manifest['validation']['experience_ready'])
         for item in manifest['artifacts']: self.assertEqual(item['sha256'],m.digest(self.root/item['path']))
+    def test_english_controls_and_fallback(self):
+        for language in ('en', 'EN-us', 'fr'):
+            with self.subTest(language=language):
+                self.data['language'] = language
+                self.data['metadata']['reading_language'] = language
+                self.build(); page = (self.root/'preview/episode.html').read_text()
+                for label in ('Episode navigation', 'About this episode', 'Playback speed',
+                              'Select a chapter to listen', 'Copy full notes', 'Copy full launch copy',
+                              'Transcript versions', 'Edited reading transcript', 'Aligned transcript',
+                              'Search transcripts', 'Search both full transcripts', 'Download reading transcript',
+                              'Download aligned transcript', 'Download audio', 'Download chapters',
+                              'Full text copied and verified', 'Clipboard could not be verified',
+                              'Reading transcript: ${reading} matches', 'Jumped to ',
+                              'Local preview · Pending verification', 'No external links provided.',
+                              'Confirm that you reviewed these choices first.'):
+                    self.assertIn(label, page)
+                # No author Chinese in this fixture: all remaining Chinese would be UI leakage.
+                self.assertFalse(__import__('re').search(r'[\u3400-\u9fff]', page))
+
+    def test_chinese_ui_compatibility(self):
+        for language in ('zh', 'zh-CN', 'ZH_hant'):
+            self.data['language'] = language
+            self.data['metadata']['reading_language'] = language
+            self.build(); page = (self.root/'preview/episode.html').read_text()
+            for label in ('本集导航', '播放速度', '复制完整笔记', '全文搜索', '整理阅读稿',
+                          '本地预览 · 待核验', '已复制并校验完整文案', '音频逐段稿'):
+                self.assertIn(label, page)
+
+    def test_english_ui_preserves_chinese_author_content_and_escapes(self):
+        text = '节目笔记 播放速度 整理阅读稿 已复制并校验完整文案 </textarea><script>alert(1)</script> @@TITLE@@'
+        self.data.update(title=text, summary=text, description=text, show_notes=text,
+                         launch_copy=text, status={'label': '本地预览 · 待核验'})
+        self.data['reading_transcript'][0]['text'] = text
+        self.data['segments'][0]['text'] = text
+        self.data['chapters'][0].update(title=text, summary=text)
+        self.build(); page = (self.root/'preview/episode.html').read_text()
+        self.assertIn('Playback speed', page)
+        self.assertIn(m.esc(text), page)
+        self.assertNotIn('<script>alert(1)</script>', page)
+        self.assertIn('本地预览 · 待核验', page)  # Explicit author status is not translated.
+        for name in ('show-notes.txt', 'launch-copy.txt', 'reading-transcript.txt'):
+            self.assertEqual((self.root/'preview'/name).read_text(), text)
+        self.assertEqual(self.data['title'], text)
+
+    def test_terminology_controls_localized_without_changing_terms(self):
+        text = '确认当前用词 <script>alert(1)</script>'
+        self.data['terminology_review'] = dict(
+            bindings=dict(episode_key='test', audio_sha256=m.digest(self.root/'audio.mp3'),
+                          timeline_sha256='a'*64, glossary_sha256='b'*64,
+                          content_sha256=m.terminology_content_hash(self.data)),
+            terms=[dict(id='t1', current=text, alternatives=['稍后再看'], start=1, end=2,
+                        reason='我的选择')])
+        self.build(); page = (self.root/'preview/episode.html').read_text()
+        for label in ('Review a few terms together', 'My choice', 'Review later',
+                      'Confirm current wording', 'Use wording below', 'Export my decisions'):
+            self.assertIn(label, page)
+        self.assertIn(m.esc(text), page)
+        self.assertIn('稍后再看', page)
+        self.assertIn('<p>我的选择</p>', page)
+        self.assertNotIn('<script>alert(1)</script>', page)
+
+    def test_translated_reading_label_in_english_ui(self):
+        self.data['metadata'].update(reading_language='zh', reading_mode='translation')
+        self.build(); page = (self.root/'preview/episode.html').read_text()
+        self.assertIn('Chinese translated reading transcript', page)
+        self.assertNotIn('中文译写阅读稿', page)
+
     def test_xss_in_all_text_surfaces(self):
         attack='</textarea><script>alert("injected")</script><img src=x onerror=alert(1)>'
         self.data['title']=attack;self.data['segments'][1]['text']=attack
@@ -80,7 +147,7 @@ class EnrichmentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'collides'):m.build(self.data,self.root,self.root/'source.html',source)
     def test_no_fabricated_verified_status(self):
         self.build();page=(self.root/'preview/episode.html').read_text()
-        self.assertIn('本地预览 · 待核验',page)
+        self.assertIn('Local preview · Pending verification',page)
         self.assertNotIn('代理已核验',page)
         self.assertNotIn('@@',page)
     def test_canonical_integer_ids(self):
