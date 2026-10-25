@@ -1,20 +1,46 @@
 ---
 name: podcast-production-workflow
-description: "Build, resume, human-review, subtitle-QC, incrementally invalidate, package, and optionally create one separately approved Transistor draft from immutable podcast source media; public publish is never available."
+description: "Start or resume podcast production from a human Filmora rough cut (WFP), original media and speaker-role metadata, or finished audio. Guide first-time setup; coordinate editing, mastering, audio review, transcription, enrichment, preview, independent acceptance and explicitly authorized v2 publication without repeated human checkpoints."
 ---
 
 # Podcast Production Workflow
 
-Use this Skill when producing or resuming a Family Podcast episode, reviewing an aggressive rough cut, validating accurate audio/video subtitles, planning narrow dependency invalidation, or preparing a contract package.
+Use this Skill as the single entry for a podcast episode. The recommended handoff is **human rough cut → saved WFP + original media + `_meta.md` role declarations → agent completion through publication**. Existing finished audio may enter downstream. Personal identities, show IDs, models and machine paths are configured inputs, not prerequisites tied to one owner.
+
+## Recommended Entry: Human Rough Cut, Agent Completion
+
+Read [references/minimal-start.md](references/minimal-start.md). For a first-time user, also read [references/first-run-and-handoff.md](references/first-run-and-handoff.md); guide setup once and reuse verified configuration on later episodes.
+
+Minimal repeat-use prompt, when episode metadata resolves show identity and input paths:
+
+> $podcast-production-workflow /goal 发布这一集：<单集目录绝对路径>。人工粗剪已完成；按 WFP 和 _meta.md 接手，独立验收通过后正式发布。
+
+- The user supplies access to original media, their saved rough-cut WFP and `_meta.md` containing the declared speaker/track/channel map. Files may be referenced by path rather than copied into one directory. Read existing metadata before asking; confirm only missing or conflicting critical facts in one batch. SRT/export is optional for the direct-FFmpeg structure route.
+- An explicit episode-specific instruction to publish authorizes the v2 delegated-release route through its downstream controller. Capture that real instruction; bind the actual show/revision/hashes after freezing. Do not ask again at mastering, text approval, preview, seal, draft creation or publish solely because a legacy step names a human gate. Keep `user_reviewed=false`; never fabricate human listening or approval.
+- Start or resume one owning task/goal through public readback and closeout. Use the host's goal facility only when available and requested; otherwise keep persistent task state without claiming a goal tool was invoked. Reuse valid artifacts and reconcile remote state before any new mutation.
+- Use direct FFmpeg to apply the frozen user's deletion structure to synchronized original stems; independently validate source identity, sample clock, integrity and acoustic joins. Do not add new editorial deletions or claim Filmora DSP equivalence. Read the direct-FFmpeg branch in [rough-cut collaboration](references/rough-cut-to-three-stem-collaboration.md). Export-equivalence reconstruction and legacy human review are separate opt-in routes.
+- Route planning/advice, bounded production, copywriting and independent review by current capabilities. Native subagents are sufficient where available; external terminal workspaces are optional when an external harness supplies needed capability. Do not make the user choose an agent fleet or install an external terminal multiplexer to begin. A role may be combined when independence requirements permit; reviewers cannot approve their own production.
+- Audio review must receive actual audio through an audio-capable route. A text-only native review does not replace fine listening. Prefer a currently verified Gemini audio route when suitable; model labels and the user's preferred Flash copywriter are preferences, not proof of capability. Record clips, coverage, results and limitations; expand or repair failed seams before continuing. This evidence enters v2 review, never an R&D Judge authorization.
+- Finish implementation/content changes, then obtain current independent content/experience/implementation receipts, validate and seal. The sole publisher performs authorized mutation and API/media/share/RSS/full-transcript readback. No user checkpoint is required on this passing path. Deliver a concise acceptance summary, local files, public links and retained limitations.
+- Interrupt only for critical source/identity/role/intent ambiguity, a technical integrity failure that cannot be repaired within scope, unresolved required review failures or concrete rights/privacy risk, missing required capability with no authorized route, or ambiguous external mutation needing reconciliation. Attempt bounded evidence-backed recovery and continue independent work first. A passing startup checklist alone never authorizes publication.
+
+## Current Rough-Cut Limitation
+
+The recommended route still relies on the human's editorial rough cut. Transcript-led automatic cutting can miss tone, overlap, breaths, laughter and acoustic continuity; neither transcript agreement nor a model name proves listening precision. Do not sell automatic rough cutting as the mature default. Audio-capable seam review strengthens the handed-off cut, but is not evidence that fully automatic editing matches the user's judgment. Promote future automation only after measured audio-based quality, speed and correction-rate evidence on representative held-out episodes.
+
+## Route Scope: v2 Main Path and Legacy v1
+
+The recommended explicitly authorized end-to-end path uses the **Version 2 finished-audio / delegated release** section below. The following S00–S15, H2/H3/H4/H6 and draft-only commands are retained **legacy v1 references**, not extra user checkpoints for v2. An explicit request for local/human review or `agent_draft` selects its own existing lane; absence of publication intent does not authorize publication. Preserve the downstream v2 evidence, seal, authorization and idempotency contracts.
+
 
 ## Authority And Sources
 
-1. Read the episode task `goal.md`, session status, and Workshop episode declaration before acting.
+1. Read the existing episode task/goal, session status and episode declaration before acting; initialize the owning task when absent. Do not require a private owner-specific folder or goal.md on a new installation.
 2. Treat source media and raw Whisper outputs as immutable evidence.
 3. Treat `podcast-release-package` as the downstream delivery contract; this Skill produces its inputs but cannot weaken its gates.
 4. Treat Filmora/Verbatim/Subs references as evaluation evidence in calibration lanes. The separately authorized user-directed rough-cut recovery route (see Lessons from EP04) consumes frozen user project/export inputs under its own contract.
 
-## Modes
+## Legacy v1 Modes
 
 - **Review routing**: default `review_mode=human` keeps every existing production
   gate below. An explicitly user-authorized episode may select `agent_draft` for
@@ -33,6 +59,8 @@ Use this Skill when producing or resuming a Family Podcast episode, reviewing an
 - **Gate 2 distribution adapter**: only after a fresh 12/12 accepted and growth-ready package plus an episode/action-specific exact-hash approval, run the approved external action. The bundled adapter supports draft creation only and has no publish/schedule command.
 
 ## Hard Invariants
+
+Sample clocks, immutable evidence and dependency invalidation apply to all routes. Human-receipt and S00–S15 restrictions in this section belong to legacy v1; v2 uses its actual delegated receipts and sole downstream publisher.
 
 - Canonical edit intervals are integer samples and half-open `[start_sample, end_sample)` on the 48 kHz render/source-audio timebase.
 - A 16 kHz mono analysis proxy cannot become the release master.
@@ -61,7 +89,7 @@ Use this Skill when producing or resuming a Family Podcast episode, reviewing an
 - A stage is complete only when its output hashes, timebase, tool/model/prompt identity, logs and gate evidence read back successfully.
 - A package is complete only when the canonical validator passes 12/12. This still does not authorize publication.
 
-## Stable Local Entry
+## Legacy v1 Local Entries
 
 ### Authorized agent draft entry (existing artifacts only)
 
@@ -285,7 +313,7 @@ Default platform transcript selection is the reviewed reading edition: Transisto
 Rationale, timings and evidence live in the owner's private EP04 session notes (not included in this repository).
 
 - **User rough cut → recovered EDL → three-stem mastering.** When the user asks to reconstruct their NLE rough cut onto the original speaker tracks, follow [references/rough-cut-to-three-stem-collaboration.md](references/rough-cut-to-three-stem-collaboration.md) (entry conditions, `.wfp`-first inputs via `scripts/wfp_extract_edl.py`, export/project binding, tiered seam policy, rebuilt-vs-export check, explicit user acceptance, time budget) and give the user a short companion guide (owner-maintained, not included here). A finished delivery supplied for transcription/enrichment skips this route unless reconstruction is requested. The route never replaces v1 human gates, v2 independent reviews, seals or hash-bound publication authority; user acceptance is never recorded as an independent ACCEPT.
-- **Intake (ask once, record in decision_log):** who is on each track and whether tracks are duplicated to L/R (ask; correlation only verifies); filler policy per token with source counts; whether the user rough-cuts themselves; single mix vs per-speaker mastering; cover limits; copy-button acceptance.
+- **Intake (resolve once, record in decision_log):** read the supplied `_meta.md` role/channel declarations and rough-cut decision first; correlation verifies geometry, not speaker names. Ask only for gaps or conflicts. Use declared series/default policies for processing, cover and copy; the standard handed-off route preserves the user cut without requiring a fresh filler-policy interview.
 - **Cadence:** classify new requirements (replacement/addition/note) when they arrive; write handoff/status after every gate; run reviews in parallel; batch low-risk content changes before one freeze (each freeze invalidates all three receipts); script-written timestamps; distinguish `cut-rN` from `revision-NNN`; write a handoff before launching long reviews.
 
 ## Personal defaults

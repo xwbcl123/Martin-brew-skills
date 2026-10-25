@@ -1,8 +1,27 @@
 # Rough cut → recovered EDL → three-stem mastering: human/agent collaboration protocol
 
-Status: v2 (EP04 lessons, 2026-10-11; revised after three independent review rounds recorded in the owner's private session notes).
+Status: v3 (2026-10-25): recommended delegated direct-FFmpeg branch; the reviewed EP04 export-equivalence v2 protocol is retained below.
 A user-facing companion guide exists in the owner's private knowledge base (not included here).
 History, timings and rationale live in the owner's private EP04 session notes, not here.
+
+## Recommended direct-FFmpeg handoff (v3, 2026-10-25)
+
+Use this branch when the user supplies a human-edited WFP, original media and a speaker-role `_meta.md`, and instructs the agent to finish the episode. Explicit publication intent selects the downstream v2 delegated-release contract. The export-equivalence protocol below remains available only when that reconstruction is actually requested; its S5/S6 human acceptance is not inherited by this branch.
+
+1. Read the metadata and owning task; freeze exact original/project identities. Resolve the declared absolute stream index, audio-relative index, channel and speaker; probe geometry. Never infer speaker names from correlation. Ask once only for unresolved critical facts.
+2. Inventory/extract the WFP using the existing extractor and select one unambiguous timeline. Verify source binding, monotonic deletion-only intervals, unit speed, source containment and common sample timebase. A WFP is not a self-contained media file; resolve original references. Unsupported speed/reordering/gaps or conflicting sources require a separately scoped route; do not silently flatten them.
+3. Apply the frozen deletion structure to the original stems with a common 48 kHz integer-sample EDL. Do not demand an NLE export or operate Filmora just to reproduce unknown effects. Unknown NLE fade/gain/denoise remains unreplicated and disclosed; no export-equivalence claim is made. Any bounded seam treatment is separately recorded and cannot silently shorten the shared clock or add editorial cuts.
+4. Verify every stem's retained sample identity, frame count, mapping and processing lineage; inventory every join. Use acoustic measurements and actual audio-capable listening of risky/flagged joins and timeline-spread sentinels. Log actual clip coverage and uncertainty. Expand listening or repair flags; a failed required acoustic/content review cannot be passed by relabeling it nominal or by transcript agreement.
+5. Agent-led technical and independent v2 acceptance replaces redundant S5/S6 user clickthrough on this branch. Cosmetic or disclosed editorial uncertainty does not automatically create a user gate; required review failures, source/timebase/integrity ambiguity and concrete risks remain blocking until resolved. Record agent evidence honestly, never user acceptance that did not happen.
+6. Continue per-stem processing, series bookends when configured and permitted, mastering, final-audio ASR/calibration, enrichment, preview checks, three independent reviews, seal and the authorized sole publisher. The original publication instruction is captured once and bound to actual final hashes; it is not requested again at every stage.
+
+Human responsibilities end at the declared handoff on the normal passing path. Fine audio review is still required agent work. If no audio-capable review route is available, report that missing capability; a native text-only subagent cannot claim to have listened.
+
+The 45/90-minute checkpoints below bound export-equivalence refinement, not the whole production goal. For this branch, time-box repeated acoustic repair and report progress; do not create a new user approval at a fixed elapsed time when the selected route is progressing with valid evidence.
+
+## Legacy / opt-in export-equivalence reconstruction
+
+The remainder describes the older reconstruction protocol. Read its S0–S7 human checkpoints only when this opt-in route is selected; do not use them to interrupt the recommended delegated path.
 
 ## Entry conditions and authority
 
