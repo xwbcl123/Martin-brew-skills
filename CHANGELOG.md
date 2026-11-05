@@ -12,6 +12,8 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 
 ### Added
 
+- `martin-cos-coordinator`: portable thin CoS discovery, host-contract bootstrap, worker/domain selection and evidence-based acceptance; no private continuity or runtime state.
+
 - `martin-pptx-skill`: `scripts/scan_external_traces.py` (internal traces in slide text, notes, image descriptions, file properties and PDF text) and `references/visual-qc-rubric.md`.
 
 ## 2026-10-12

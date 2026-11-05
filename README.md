@@ -60,6 +60,7 @@ It does not keep:
 - `life-os-deep-research`
 - `life-os-smart-clipper`
 - `martin-agent-roster`
+- `martin-cos-coordinator` — thin CoS discovery and coordination entry; uses host-owned authority, continuity and delegation contracts.
 - `martin-outcome-package`
 - `notebooklm-deck-factory`
 - `notebooklm-export-formatter`
@@ -101,6 +102,7 @@ Martin-brew-skills/
 │   ├── notebooklm-export-formatter/
 │   ├── llm-wiki-builder/
 │   ├── martin-agent-roster/
+│   ├── martin-cos-coordinator/
 │   ├── martin-outcome-package/
 │   ├── martin-pptx-skill/
 │   ├── notebooklm-deck-factory/
@@ -273,6 +275,13 @@ If you reuse these skills in your own workspace, replace the templates with your
 - separates `agent_harness`, model slot, desired layout, and observed runtime state
 - includes guarded dry-run tooling, command catalogs, and a macOS cmux profile tested on Life and Work workspaces
 - ships with a WezTerm testing handoff; WezTerm support is not yet validated
+
+### `martin-cos-coordinator`
+
+- discovers coordination intent while keeping bounded workers and ordinary direct tasks in their roles
+- links the host's continuity, delegation, Session and selected adapter contracts; install it alongside the host's own rules
+- preserves current-task authority, canonical worker reuse, rule/classifier decisions, fresh binding and artifact acceptance
+- contains no private handoff/Memory content, workstation paths, runtime identities or credentials; the host must expose its actual authority links through `AGENTS.md`
 
 ### `martin-outcome-package`
 
