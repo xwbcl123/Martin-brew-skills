@@ -22,3 +22,17 @@ Before assembly: verify Martin approval of the current Outline revision/section 
 ## Executable gates
 
 Follow [verification](verification.md): `plan` before asset production, `assets` before dependent assembly, `final` after actual export and render review. Keep receipts with the run, not in the reusable Skill. Stale hashes/plans, missing reviews, early recorded build start and final native/image mismatches block the dependent stage. These checks supplement host finalization, template compliance, actual text/meaning review and promised representative edit/rerender; they do not replace them.
+
+## Visual QC and production discipline
+
+- Compliance/finalizer PASS is necessary, not sufficient. Before delivery, score the rendered deck with the [visual QC rubric](visual-qc-rubric.md): 8 items, 16 points, per-slide side by side with a reference deck, weakest 3 slides listed. Below 13/16 or any item at 0 blocks delivery.
+- The Outline gate is the default. A waiver must be recorded in the session decision log (who, when, why) and followed by a 3-slide sample check (render, rubric, reference comparison) before the remaining slides are built.
+- A first draft of 10 or more slides finished in under 10 minutes triggers stop-and-review: render, score and compare before continuing.
+- Production stays with an agent that can render and view slides; do not outsource building to an executor that cannot.
+
+## External traces and delivery channel
+
+- Before anything leaves the team, run `python3 scripts/scan_external_traces.py <deck.pptx> <deck.pdf>` with the project's deny terms (`--deny`, `--deny-file`; add `--zh-style` for Chinese decks). It reads slide text, speaker notes, chart text, image descriptions, docProps and the PDF text layer. Any finding blocks the send. Template docProps often carry a foreign author/application; reset them before export.
+- Review rounds: send each intermediate version to the reviewer with a one-line change list. Before every send, re-read the newest instructions; a send is irreversible and later "pause" or scope messages may already be waiting.
+- Final: after acceptance, publish the final through the host's closeout/publication channel rather than e-mailing it again. Record the published path and checksums in the session report.
+- Verify a sent message from the mail client's Sent folder (recipients, attachment names); never batch-operate on other agents' outgoing messages.

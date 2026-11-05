@@ -4,6 +4,16 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-11-05
+
+### Changed
+
+- `martin-pptx-skill`: Outline review no longer blocks a deadline; one-hour topic meetings default to 10 to 15 slides with decision requests merged on one page; facts are checked for self-consistency and source version before the Outline is shared; review rounds go by e-mail and the accepted final goes through the host's publication channel.
+
+### Added
+
+- `martin-pptx-skill`: `scripts/scan_external_traces.py` (internal traces in slide text, notes, image descriptions, file properties and PDF text) and `references/visual-qc-rubric.md`.
+
 ## 2026-10-12
 
 ### Changed

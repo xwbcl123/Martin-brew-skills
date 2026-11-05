@@ -32,6 +32,19 @@ If the user requests editable data charts, select native. A text-editable chart 
 - Image generation authorization covers requested deck assets, not publication, global account changes or a comparative paid benchmark. Use approval already given; a source or capability blocker blocks only its dependent step.
 - Return the verified deck and material limitations. Keep build notes, quality records and optional planning documents out of product slides.
 
+## Production discipline
+
+- Do not outsource production to an executor that cannot render and view slides.
+- Before building, write a per-slide plan table: action title | pattern | visual | sources. Content slide titles are conclusion-style action titles.
+- The Outline gate is the default, but it never blocks a deadline: when the reviewer is only reachable asynchronously, send the Outline or draft for review (e.g. by email) and keep building; record the waiver in the session decision log and run the 3-slide sample check before building the rest.
+- Length follows the talk, not the agenda count: a one-hour topic meeting is 10 to 15 slides. Combine decision requests into one decision summary page (per block at most); do not add a page per decision point. Depth comes from density per page, not from more pages.
+- Check facts for self-consistency before building (numbers vs units/tiers/totals; which version of each source is authoritative). See [Deck Outline](references/deck-outline.md).
+- A first draft of 10 or more slides finished in under 10 minutes triggers stop-and-review.
+- Every slide has speaker notes and source ids. No emoji cards.
+- Delivery needs template compliance PASS plus the [visual QC rubric](references/visual-qc-rubric.md) at 13/16 or above against a reference deck; PASS alone is not sufficient.
+- Material leaving the team passes `scripts/scan_external_traces.py` on both PPTX and PDF (notes and file properties included).
+- Intermediate versions go out for review (e.g. email); once accepted, the final is published through the host project's own closeout/publication channel instead of another email. See [gates](references/gates.md).
+
 ## Executable tools
 
 [scripts/README.md](scripts/README.md) documents the two-layer composer, package validator and route decision helper. The composer produces a draft and previews; it does not perform OCR, image editing or semantic visual acceptance. Agent vision and image editing complete those steps.
