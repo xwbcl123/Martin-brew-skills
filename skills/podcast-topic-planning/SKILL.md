@@ -135,6 +135,10 @@ python3 .agents/skills/podcast-topic-planning/scripts/validate_profile.py [--pro
    - 更新对应品牌知识库的 `README.md` 与单集目录索引；
    - 提示用户进行评审与录制准备。
 
+### Notion 协作投影（非阻塞）
+
+策划交付后，若当前宿主具备 Notion MCP，且任务或播客知识看板提供了明确私有目标绑定，按 [标准同步契约](../podcast-production-workflow/references/notion-mcp-sync.md) 执行 Hook 1，保存属性/正文各自的回读状态。此路由依赖同级安装的 `podcast-production-workflow`；契约或绑定缺失时记录 skipped，保留本地交付。同步失败不改变本地制作权限或验收结果；完整幂等、分层、恢复规则只维护在该契约。
+
 ---
 
 ## 4. 与生产工作流的交接契约 (Handoff to Production)
