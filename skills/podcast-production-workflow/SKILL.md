@@ -316,6 +316,14 @@ Rationale, timings and evidence live in the owner's private EP04 session notes (
 - **Intake (resolve once, record in decision_log):** read the supplied `_meta.md` role/channel declarations and rough-cut decision first; correlation verifies geometry, not speaker names. Ask only for gaps or conflicts. Use declared series/default policies for processing, cover and copy; the standard handed-off route preserves the user cut without requiring a fresh filler-policy interview.
 - **Cadence:** classify new requirements (replacement/addition/note) when they arrive; write handoff/status after every gate; run reviews in parallel; batch low-risk content changes before one freeze (each freeze invalidates all three receipts); script-written timestamps; distinguish `cut-rN` from `revision-NNN`; write a handoff before launching long reviews.
 
+## Storage Governance and Gate 4 SOP (EP08)
+
+Following publication verification (H4a), execute storage governance (H4b) to maintain workshop hygiene:
+1. **Probe and scratch backup**: Back up diagnostic/audio-probe slices (e.g., initial 10s audio slices, test stems) to `12_workflow_backups/<date_slug>/` with an inventory of files and hashes before removal.
+2. **Raw directory hygiene**: In `01_raw_obs/<date_slug>/`, preserve strictly authoritative raw recording (`_raw.mp4`), rough-cut WFP project (`.wfp`), initial cut subtitles (`_raw_初剪.srt`), and role declarations (`_meta.md`). Remove temporary test subdirectories.
+3. **Runtime scratch cleanup**: Remove temporary session files in `/tmp/` (e.g. `epNN_*`, `geek-family-*`).
+4. **Gate 4 closure**: Once storage cleanup and backup are verified, mark `Gate 4: Storage Cleaned` as `__YES__` and transition Notion Master DB status to `🧹 08_Archived & Cleaned`.
+
 ## Notion collaboration projection (non-blocking)
 
 When this entry owns the episode, read [the single MCP sync contract](references/notion-mcp-sync.md) and resolve an explicit private target binding from the task or host podcast Knowledge dashboard. After rough-cut Intake passes, run H2; after enrichment and current package acceptance, H3; after actual publication readback, H4a; after independently authorized and verified storage cleanup, H4b. Run only hooks supported by actual evidence, including when this orchestrator calls downstream skills; preserve all publication/cleanup gates. Save per-hook property/body readback receipts outside sealed packages and report skipped/partial/pending honestly without blocking authorized local work. Direct downstream-skill or Python invocation does not inherit these routes: explicitly reconcile completed events through this entry without rerunning production. Missing MCP/binding/reference affects only this projection.

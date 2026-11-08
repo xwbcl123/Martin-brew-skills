@@ -4,6 +4,13 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-11-09
+
+### Changed
+
+- `podcast-enrichment`: added integrated typography & cover layout contract (EP08), mandating 25%~28% top layout reserve, four-tier hierarchy (brand wordmark, episode capsule, primary title, subtitle), negative prompt rules against textless illustrations, and canonical style reference anchoring.
+- `podcast-production-workflow`: added storage governance and Gate 4 SOP (EP08) covering probe/scratch backup to `12_workflow_backups/`, raw directory hygiene, `/tmp/` cleanup, and Notion `08_Archived & Cleaned` stage transition; added Notion MCP lightweight health pre-check (`notion-get-self`) to intercept OAuth `invalid_grant` early.
+
 ## 2026-11-05
 
 ### Changed

@@ -39,3 +39,19 @@ Bind actual values and a trusted decision record; these fields are provenance, n
 Inspect actual output: square dimensions, exact readable Simplified Chinese, series and episode markers, content-specific correctness, style-reference fidelity, one clear visual hierarchy and 80/160px legibility. Dimensions do not establish visual quality. Fix malformed lettering or unrequested slogans before final release.
 
 Palette, medium, brand lockup or reference changes require a series-style revision. Ordinary episodes vary composition and copy within the profile. External hosting/provider mutation stays with the publishing workflow and current user authorization; selecting a family or building a preview does not authorize upload.
+
+## Integrated typography & cover layout contract (EP08)
+
+When generating episode cover artwork via ImageGen models directly (e.g., Luna, multimodal image models) or delegating to external agent workspaces:
+
+- **Integrated Typography over Programmatic Overlay**: Prioritize integrated model generation where typography (series brand mark, episode capsule, primary title) is rendered as physical elements of the scene (paper relief, casting natural micro-shadows and ambient light bounce) rather than flat programmatic PIL/ImageMagick overlays.
+- **Top Layout Reserve (顶部留白契约)**: The top 25%~28% of the canvas MUST be reserved as clean, low-clutter, warm-neutral or light-toned background space dedicated to brand and title typography. Main visual scene elements and character actions must be anchored in the lower 72%~75%.
+- **Four-Tier Typography Hierarchy (四级文字层级)**:
+  1. *Series Brand Wordmark (品牌字标)*: Centered, elegant, bilingual e.g. `极客家庭 / GEEK FAMILY`.
+  2. *Episode Marker Capsule (单集胶囊)*: Top corner rounded rectangle pill tag (e.g., `EP08`).
+  3. *Primary Title (主标题)*: High-contrast, bold, clear Simplified Chinese, strictly limited to 1-2 lines.
+  4. *Subtitle (副标题, optional)*: Font size ~60% of primary title, separated by subtle divider or spacing.
+- **Negative Prompts & Anti-Patterns (负向约束与禁令)**:
+  - Explicitly prohibit: `no pure illustration, no textless artwork, no centered characters or tall objects blocking top margin, no deformed font, no watermarks, no cluttered background behind text`.
+- **Profile Reference Anchoring (视觉参考锚定)**:
+  - Always bind canonical style reference images (`c-ep01`, `c-ep02`, etc.) and `style.yaml` to ensure consistent visual medium (e.g., 3D paper cut shadowbox, physical layering, ambient lighting) across all episodes and prevent style drift.

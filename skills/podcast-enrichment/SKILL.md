@@ -34,8 +34,9 @@ For repeatable local QA, use `python3 scripts/serve_preview.py --directory PACKA
 
 The Transistor standalone transcript page uses the complete `reading_transcript` edition, preserving paragraph breaks. It is not the subtitle/segment display and must not be replaced by a summary. Keep every canonical source segment covered once in order; emit one nonempty line per reading paragraph in reading-transcript.txt, separated by blank lines. The preview retains both reading and audio-aligned editions for their different uses.
 
-## Reading-edition editing rules (EP04/EP07)
+## Reading-edition editing rules (EP04/EP07/EP08)
 
+- **Integrated Typography & Cover Artwork Contract (EP08)**: When generating episode cover artwork via ImageGen or external creative agents (e.g. Luna), mandate integrated typography over raw program overlays. The top 25%~28% of canvas is reserved as clean warm-neutral margin for typography (Series Brand Wordmark `极客家庭 / GEEK FAMILY`, Episode Capsule `EPxx`, primary 1-2 line title, optional subtitle). Enforce negative prompts against textless illustration or tall subjects blocking top margin. Bind canonical style references (`c-ep01`/`c-ep02`, `style.yaml`) to prevent style drift across episodes.
 - **Two-Layer Architecture (EP07)**: Maintain a strict separation between the two editions:
   1. *Canonical Subtitle Layer (`aligned['segments']` / `subtitles_srt` / `subtitles_vtt`)*: Strictly verbatim speech-to-text tokens preserving timestamps for exact audio sync. Add natural Chinese punctuation (`，。？！`) at segment bounds, but never drop spoken words or alter tokens without ledger entries.
   2. *Editorial Reading Edition (`reading_transcript` / `reading-transcript.txt`)*: Publication-grade prose designed for immersive reading in web and PKM. Actively eliminate oral filler words ("口水词"：如反复出现的“然后呢/就是说/那个什么/其实它有”等无意义口头禅)，fix obvious ASR homophone errors, structure dialogue turns with clear speaker labels (e.g. `【Host】` / `【Guest A】` / `【Guest B】`), and form coherent, beautifully paced narrative paragraphs.
