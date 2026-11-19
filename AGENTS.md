@@ -48,6 +48,7 @@ Current in-scope skills:
 - `podcast-transcription`
 - `podcast-transistor-publish`
 - `publish-assets`
+- `reflect`
 - `slide-renamer`
 - `skill-comprehension`
 - `prompt-crafter`

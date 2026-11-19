@@ -4,6 +4,12 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-11-19
+
+### Added
+
+- `reflect`: sanitized daily journal pipeline with a final email-delivery phase (HTML rendering, embedded or attached cover, read-back verification, Mail.app fallback recipe); host paths and recipients are placeholders.
+
 ## 2026-11-09
 
 ### Changed

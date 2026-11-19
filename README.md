@@ -75,6 +75,7 @@ It does not keep:
 - `podcast-transcription`
 - `podcast-transistor-publish`
 - `publish-assets`
+- `reflect`
 - `slide-renamer`
 - `skill-comprehension`
 - `prompt-crafter`
@@ -117,6 +118,7 @@ Martin-brew-skills/
 │   ├── pptx-polish/
 │   ├── prompt-crafter/
 │   ├── publish-assets/
+│   ├── reflect/
 │   ├── skill-comprehension/
 │   ├── slide-renamer/
 │   └── visual-mail/
@@ -407,6 +409,12 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 - methodology-driven prompt design skill
 - includes reusable reference notes
+
+### `reflect`
+
+- daily journal pipeline: inbox processing, journal writing, cover generation and publishing, then HTML email delivery
+- delivery spec is method-agnostic (Gmail MCP or Mail.app fallback): rendered HTML instead of Markdown source, cover embedded or attached, read-back verification
+- host paths, recipients and image hosts are placeholders resolved from the host `AGENTS.md`
 
 ### `visual-mail`
 
