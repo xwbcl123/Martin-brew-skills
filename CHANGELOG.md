@@ -9,7 +9,7 @@ The format is intentionally lightweight and practical for a personal-but-shareab
 ### Added
 
 - `video-release-contract`: portable offline video package assembler, validator, seal, and zero-network `file://` HTML preview generator with locked dependency manifest.
-- `video-youtube-publish`: operator-authorized, hash-bound private YouTube smoke publishing controller with append-only INTENT/ACK journaling, `--supersedes` chain renewal, independent owner readback (including `api_omitted_false_default` handling for omitted `containsSyntheticMedia` when sealed expectation is `false`), and `already_published_noop` idempotency.
+- `video-youtube-publish`: operator-authorized, hash-bound YouTube publishing controller supporting both locked `smoke-test` channels and registered production profiles, `--mode update` in-place metadata/thumbnail/caption/privacy/playlist updates, ordered `package_revision` lineage republishing (`--supersedes-revision`, retaining prior videos), operator-bound legacy terminal closure, append-only INTENT/ACK journaling, `--supersedes` chain renewal, combined `QRCodeDetectorAruco` + `QRCodeDetector` thumbnail verification, independent owner readback (`api_omitted_false_default` for `containsSyntheticMedia: false`), and idempotent `noop` reruns.
 
 ## 2026-11-19
 

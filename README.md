@@ -81,7 +81,7 @@ It does not keep:
 - `prompt-crafter`
 - `llm-wiki-builder`
 - `video-release-contract` — deterministic offline video release package assembler, validator, seal, and Chrome `file://` previewer
-- `video-youtube-publish` — operator-approved, hash-bound private YouTube smoke publishing controller with journaled recovery and independent readback
+- `video-youtube-publish` — operator-approved, hash-bound YouTube upload, `--mode update`, and revision republish controller with journaled recovery and independent readback
 - `visual-mail`
 
 ## Repository Structure
@@ -343,14 +343,14 @@ If you reuse these skills in your own workspace, replace the templates with your
 
 ### `video-youtube-publish`
 
-- drives operator-approved private YouTube smoke publishing through an external `ytpub-cli` checkout (`YTPUB_CLI_ROOT` or `~/Code/ytpub-cli`)
-- enforces pre-write seal/preview/runtime binding checks, interactive OAuth channel registration, hash-bound operator authorizations (`--supersedes` for expiry renewal), append-only INTENT/ACK journaling, and independent owner readback verification
+- drives operator-approved YouTube uploads, `--mode update` in-place updates, and `package_revision` republishes on registered smoke or production profiles through an external `ytpub-cli` checkout (`YTPUB_CLI_ROOT` or `~/Code/ytpub-cli`)
+- enforces pre-write seal/preview/runtime binding checks, interactive OAuth channel registration, hash-bound operator authorizations (`--supersedes` for expiry renewal, `--supersedes-revision` for re-edited MP4 revisions without auto-deleting prior videos), append-only INTENT/ACK journaling, and independent owner readback verification
 
 ## Changelog
 
 ### 2026-11-22
 
-- add `video-release-contract` and `video-youtube-publish` portable skills for deterministic offline video package sealing and hash-bound private YouTube smoke publishing with independent owner readback
+- add `video-release-contract` and `video-youtube-publish` portable skills for deterministic offline video package sealing, registered production profiles, `--mode update` in-place metadata/asset updates, `package_revision` lineage republishes, and independent owner readback
 
 ### 2026-10-07
 

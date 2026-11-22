@@ -18,20 +18,24 @@ import cv2
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from identity import cli_identity, contract_identity
-from auth_store import OPS, OperatorStore, Stop, lock_file, require, safe_private, safe_read, utc
+from auth_store import KEY, OPS, OperatorStore, Stop, lock_file, require, safe_private, safe_read, utc
+from lineage import Lineage
 from journal import Journal
 from package import (MANIFEST, PAYLOAD, SEAL, Invalid, artifact_open, atomic_write,
-                     canonical, check, cues, digest, json_data, local_bytes, records,
+                     canonical, check, close_artifacts, cues, digest, json_data, local_bytes, records,
                      render, sha_file, sync_directory)
 
 CLI_ROOT=Path(os.environ.get("YTPUB_CLI_ROOT",str(Path.home()/"Code/ytpub-cli"))).expanduser()
 VIDEO_ID=re.compile(r"[A-Za-z0-9_-]{11}")
 CAPTION_ID=re.compile(r"[A-Za-z0-9_.:-]{1,160}")
+SESSION_HANDLE=re.compile(r"[a-f0-9]{32}")
 MARKER=re.compile(r"ytpub-smoke-v2/[a-f0-9]{32}")
 ALLOWED_FAILURES={"transport_failure","dispatch_deadline","mutation_response_unknown",
                   "mutation_readback_incomplete","upload_readback_incomplete","privacy_mismatch",
                   "quota_or_rate_limit","provider_rejected","upload_session_unknown",
-                  "partial_upload","unknown","scope_mismatch","channel_mismatch"}
+                  "partial_upload","unknown","scope_mismatch","channel_mismatch","baseline_conflict",
+                  "interrupted","unexpected_error","resume_notification_conflict","schedule_mismatch",
+                  "legacy_smoke_notification_unknown","invalid_ack_identity","invalid_readback"}
 
 
 def secure_cli_env():
@@ -87,17 +91,28 @@ class Client:
                 if fd is not None:
                     os.close(fd)
         if proc.returncode:
+            effect = upload_init = None
             try:
                 failure=json_data(stderr)
                 reason=failure.get("error_code")
+                effect = failure.get("effect")
+                reconciliation = failure.get("reconciliation_required")
+                if effect not in {"none", "unknown", "partial"} or type(reconciliation) is not bool or (
+                        effect in {"unknown", "partial"} and not reconciliation):
+                    effect = None
+                upload_init = failure.get("upload_init_dispatch")
+                if upload_init not in {"not_sent", "sent", "unproven"}:
+                    upload_init = None
                 patterns={"video_id":VIDEO_ID,"caption_id":CAPTION_ID,"item_id":CAPTION_ID,
                           "session_handle":re.compile(r"[a-f0-9]{32}")}
                 ids={k:v for k,v in failure.get("safe_ids",{}).items() if
                      k in patterns and isinstance(v,str) and patterns[k].fullmatch(v)}
             except (ValueError,TypeError,AttributeError):
                 reason,ids="unknown",{}
+                effect = upload_init = None
             code=proc.returncode if proc.returncode in (2,3,4,5,7,10,11) else 11
-            raise Stop(reason if reason in ALLOWED_FAILURES else "ytpub_failed",code=code,detail=ids)
+            raise Stop(reason if reason in ALLOWED_FAILURES else "ytpub_failed", code=code, detail=ids,
+                       effect=effect, upload_init_dispatch=upload_init)
         try:
             result=json_data(stdout)
             require(result.get("schema_version")=="1" and result.get("profile")==self.profile and
@@ -107,16 +122,17 @@ class Client:
             raise Stop("invalid_ytpub_response",code=11) from exc
 
 
-def local_authority_binding(root, manifest, report, cli_hash, identity):
+def local_authority_binding(root, manifest, report, cli_hash, identity, *, production=False):
     require(isinstance(identity.get("oauth_binding_sha256"),str) and
             re.fullmatch(r"[a-f0-9]{64}",identity["oauth_binding_sha256"]) and
             identity.get("identity_verified") is True and
             identity.get("channel_id")==manifest["target_channel_id"], "channel_identity_mismatch",code=3)
-    require(manifest["channel_profile"]=="smoke-test" and
-            manifest["status"]["privacyStatus"]=="private" and
-            "publishAt" not in manifest["status"] and manifest["notifySubscribers"] is False,
-            "private_smoke_policy")
-    return {"contract_version":"1.0","mode":"private_smoke",
+    if not production:
+        require(manifest["channel_profile"]=="smoke-test" and
+                manifest["status"]["privacyStatus"]=="private" and
+                "publishAt" not in manifest["status"] and manifest["notifySubscribers"] is False,
+                "private_smoke_policy")
+    return {"contract_version":"1.0","mode": "initial_publish" if production else "private_smoke",
             "episode_key":manifest["episode_key"],"package_revision":manifest["package_revision"],
             "channel_profile":manifest["channel_profile"],"target_channel_id":manifest["target_channel_id"],
             "manifest_sha256":report["binding"]["manifest_sha256"],
@@ -127,8 +143,8 @@ def local_authority_binding(root, manifest, report, cli_hash, identity):
             "captions_sha256":{x["language"]:x["file"]["sha256"] for x in manifest["captions"]},
             "seal_sha256":digest(local_bytes(root,SEAL)),"cli_identity_sha256":cli_hash,
             "oauth_binding_sha256":identity["oauth_binding_sha256"],
-            "playlist_ids":manifest["playlist_ids"],"target_privacy_status":"private",
-            "publish_at":None,"notify_subscribers":False}
+            "playlist_ids":manifest["playlist_ids"],"target_privacy_status":manifest["status"]["privacyStatus"],
+            "publish_at":manifest["status"].get("publishAt"),"notify_subscribers":manifest["notifySubscribers"]}
 
 
 def freeze_package(source,dest,manifest):
@@ -151,10 +167,19 @@ def freeze_package(source,dest,manifest):
 def qr_evidence(path):
     frame=cv2.imread(str(path))
     require(frame is not None,"thumbnail_decode_failed",code=4)
-    found, decoded, *_=cv2.QRCodeDetector().detectAndDecodeMulti(frame)
-    require(found and len(decoded)==1 and MARKER.fullmatch(decoded[0]),
-            "thumbnail_marker_not_proven",code=4)
-    return digest(decoded[0].encode()),[int(frame.shape[1]),int(frame.shape[0])]
+    values=set()
+    for detector in (cv2.QRCodeDetectorAruco(),cv2.QRCodeDetector()):
+        found, decoded, points, _=detector.detectAndDecodeMulti(frame)
+        require(points is None or len(points)<=1,"thumbnail_marker_not_proven",code=4)
+        if found:
+            non_empty=[item for item in decoded if item]
+            require(len(decoded)<=1 and len(non_empty)<=1,"thumbnail_marker_not_proven",code=4)
+            if non_empty:
+                values.add(non_empty[0])
+    require(len(values)==1,"thumbnail_marker_not_proven",code=4)
+    token=next(iter(values))
+    require(MARKER.fullmatch(token),"thumbnail_marker_not_proven",code=4)
+    return digest(token.encode()),[int(frame.shape[1]),int(frame.shape[0])]
 
 
 def privacy_result(requested, observed, *, historical_evidence=None):
@@ -174,7 +199,7 @@ def privacy_result(requested, observed, *, historical_evidence=None):
             "reason":None if matched else "unverified_project_private_lock" if historical_lock else "unknown"}
 
 
-def matching_video(actual, manifest, expected_seconds):
+def matching_video(actual, manifest, expected_seconds, *, production=False, wire_disclosure=None):
     expected=manifest["snippet"]
     snippet,status=actual.get("snippet",{}),actual.get("status",{})
     pairs={key:{"expected":expected[key],"observed":snippet.get(key)} for key in
@@ -184,11 +209,22 @@ def matching_video(actual, manifest, expected_seconds):
     pairs["channelId"]={"expected":manifest["target_channel_id"],"observed":snippet.get("channelId")}
     pairs.update({key:{"expected":manifest["status"][key],"observed":status.get(key)}
                   for key in ("privacyStatus","selfDeclaredMadeForKids")})
-    pairs["publishAt"]={"expected":None,"observed":status.get("publishAt")}
+    expected_schedule = manifest["status"].get("publishAt")
+    observed_schedule = status.get("publishAt")
+    if production:
+        require(("publishAt" in status) == ("publishAt" in manifest["status"]) and
+                (expected_schedule is None or isinstance(observed_schedule, str) and
+                 utc(expected_schedule) == utc(observed_schedule)), "video_schedule_mismatch", code=4)
+        if expected_schedule is not None:
+            observed_schedule = expected_schedule
+    pairs["publishAt"]={"expected":expected_schedule,"observed":observed_schedule}
     pairs["hasPaidProductPlacement"]={"expected":manifest["paidProductPlacementDetails"]["hasPaidProductPlacement"],
                                      "observed":actual.get("paidProductPlacementDetails",{}).get("hasPaidProductPlacement")}
     if manifest.get("localizations"):
-        pairs["localizations"]={"expected":manifest["localizations"],"observed":actual.get("localizations")}
+        observed = actual.get("localizations")
+        if production and isinstance(observed, dict):
+            observed = {key: observed.get(key) for key in manifest["localizations"]}
+        pairs["localizations"]={"expected":manifest["localizations"],"observed":observed}
     mismatch=[key for key,value in pairs.items() if value["expected"]!=value["observed"] or
               type(value["expected"]) is not type(value["observed"])]
     require(not mismatch,"video_field_readback_mismatch",code=4)
@@ -205,7 +241,7 @@ def matching_video(actual, manifest, expected_seconds):
     pairs[disclosure_key] = {
         "expected": expected_disclosure,
         "observed": observed_disclosure,
-        "wire_request_sent": expected_disclosure,
+        "wire_request_sent": wire_disclosure if production else expected_disclosure,
         "key_present": disclosure_present,
         "status": disclosure_status,
     }
@@ -237,21 +273,29 @@ class Controller:
         self.evidence={}
         self.scratch=None
         self.frozen=None
+        self.lineage = Lineage(registry, store, self.clock)
+        self.lineage_row = None
 
     def local(self):
         report=render(self.root,self.profile,self.preview,config=self.config,write=False)
         require(report.get("human_preview_ready") is True,"release_contract_or_preview_rejected")
         m=json_data(local_bytes(self.root,MANIFEST))
-        require(self.profile=="smoke-test" and m["channel_profile"]==self.profile and
-                m["status"]["privacyStatus"]=="private" and "publishAt" not in m["status"] and
-                m["notifySubscribers"] is False,"private_smoke_policy")
+        require(m["channel_profile"] == self.profile, "package_profile_mismatch")
+        if self.profile == "smoke-test":
+            require(m["status"]["privacyStatus"] == "private" and "publishAt" not in m["status"] and
+                    m["notifySubscribers"] is False, "private_smoke_policy")
         return report,m
 
     def execute(self,mode,*,resolution=None):
+        require(self.profile == "smoke-test" and mode in {"plan", "publish", "reconcile"},
+                "private_smoke_policy")
         self.mode=mode
         safe_private(self.root)
         require(not self.preview.is_symlink() and self.preview.parent==self.root.parent,
                 "preview_must_be_local_sibling")
+        historical = self.historical_smoke()
+        if historical is not None:
+            return historical
         # Validate the package before the first CLI invocation.
         report, m=self.local()
         require(self.hash_contract()==report["binding"]["contract_bundle_sha256"],
@@ -281,6 +325,8 @@ class Controller:
         safe_private(self.state_root,create=True)
         locks=self.registry/"locks"
         safe_private(locks,create=True)
+        if mode == "publish":
+            self.lineage.upgrade()
         self.key=digest(m["episode_key"].encode())
         self.media_key=digest(canonical([m["target_channel_id"],m["delivery_video"]["sha256"]]))
         directory=self.state_root/self.key
@@ -319,47 +365,111 @@ class Controller:
                         self.write_partial(state,code)
                     raise
 
+    def historical_smoke(self):
+        if not self.lineage.path.exists() and not self.lineage.path.is_symlink():
+            return None
+        manifest_raw = local_bytes(self.root, MANIFEST)
+        manifest = json_data(manifest_raw)
+        key = digest(manifest["episode_key"].encode())
+        database = self.lineage.read()
+        legacy = "registry_version" not in database
+        if legacy:
+            entry = database.get(key)
+            if entry is None:
+                return None
+            candidate = entry["candidate"]
+            episode = self.lineage.episode(Path(entry["root"]), candidate)
+            row = self.lineage.row(candidate, "flat")
+        else:
+            episode = database["episodes"].get(key)
+            if episode is None:
+                return None
+            row = episode["revisions"][0]
+            candidate = row["candidate"]
+        if candidate.get("mode") != "private_smoke":
+            return None
+        if not legacy and candidate["cli_identity_sha256"] == self.hash_cli():
+            return None
+        require(episode["root"] == str(self.state_root) and manifest["channel_profile"] == "smoke-test" and
+                digest(manifest_raw) == candidate["manifest_sha256"] and
+                digest(local_bytes(self.root, PAYLOAD)) == candidate["payload_sha256"] and
+                digest(local_bytes(self.root, SEAL)) == candidate["seal_sha256"],
+                "episode_registry_binding_conflict")
+        seal = json_data(local_bytes(self.root, SEAL))
+        artifacts = close_artifacts(self.root, manifest, manifest_raw)
+        require(all(seal[name] == value for name, value in artifacts.items() if name != "contract_bundle_sha256"),
+                "candidate_artifacts_changed")
+        job = self.lineage.job_history(episode, row)
+        if not job.events("FINALIZED"):
+            if legacy:
+                raise Stop("legacy_inflight_drain_required", detail={"legacy_keys": [key], "mutations": 0})
+            raise Stop("runtime_binding_mismatch")
+        chain = self.store.chain(self.auth_id, candidate, self.clock(), historical=True)
+        recorded = [job.rows[0], *job.events("AUTH_SUCCESSOR")]
+        require([(value["authorization_id"], checksum) for value, checksum in chain] ==
+                [(event["authorization_id"], event["authorization_sha256"]) for event in recorded],
+                "authorization_genesis_conflict")
+        if legacy:
+            receipt, _, _ = self.lineage.final(job, candidate)
+        else:
+            receipt, _ = self.lineage.history(episode, row)
+        return {"status": "already_published_noop", "video_id": receipt["video_id"],
+                "mutations": 0, "evidence_as_of": "finalized"}
+
     @property
     def registry_path(self):
         return self.registry/"episodes.json"
 
-    def registered(self):
-        if self.registry_path.exists() or self.registry_path.is_symlink():
-            result=json_data(safe_read(self.registry_path))
-            require(isinstance(result,dict),"invalid_episode_registry")
-            return result
-        return {}
-
-    def open_job(self,directory):
-        entries=self.registered()
-        row=entries.get(self.key)
+    def open_job(self, directory):
+        database = self.lineage.read()
+        if database.get("registry_version") == 2:
+            episode = database["episodes"].get(self.key)
+            row = episode["revisions"][0] if episode else None
+            if row:
+                require(episode["root"] == str(self.state_root) and row["layout"] == "flat" and
+                        row["candidate"] == self.binding, "episode_registry_binding_conflict")
+                self.lineage_row = row
+                if row["phase"] == "reserved":
+                    if self.mode == "plan":
+                        return None
+                    require(self.mode == "publish" and row["genesis_auth"] == {
+                        "id": self.auth_id, "sha256": self.active_hash}, "reserved_authority_mismatch")
+                    job = self.lineage.activate(episode, row, local_bytes(self.root, PAYLOAD))
+                    self.lineage_row = {**row, "phase": "ready"}
+                    return job
+                require(row["phase"] in {"ready", "complete"}, "revision_abandoned_no_retry")
+        else:
+            record = database.get(self.key)
+            row = None
+            if record is not None:
+                require(record == {"root": str(self.state_root), "candidate": self.binding, "media_key": self.media_key},
+                        "episode_registry_binding_conflict")
+                row = record
         if row is None:
-            require(not directory.exists() and not directory.is_symlink(),"unregistered_state_exists")
+            require(not directory.exists() and not directory.is_symlink(), "unregistered_state_exists")
             return None
-        require(row=={"root":str(self.state_root),"candidate":self.binding,"media_key":self.media_key},
-                "episode_registry_binding_conflict")
-        require(directory.is_dir() and not directory.is_symlink(),"registered_state_missing")
-        job=Journal(directory)
-        require(job.rows and job.rows[0]["event"]=="GENESIS" and
-                job.rows[0]["candidate"]==self.binding,"journal_genesis_mismatch")
+        require(directory.is_dir() and not directory.is_symlink(), "registered_state_missing")
+        job = Journal(directory)
+        require(job.rows and job.rows[0]["event"] == "GENESIS" and
+                job.rows[0]["candidate"] == self.binding, "journal_genesis_mismatch")
         job.ensure_snapshot()
-        require(safe_read(job.directory/PAYLOAD)==local_bytes(self.root,PAYLOAD),"frozen_payload_mismatch")
+        require(safe_read(job.directory/PAYLOAD) == local_bytes(self.root,PAYLOAD), "frozen_payload_mismatch")
         return job
 
-    def create_job(self,directory):
-        with lock_file(self.registry/"index.lock"):
-            entries=self.registered()
-            require(self.key not in entries and
-                    self.media_key not in {r["media_key"] for r in entries.values()},
-                    "candidate_or_media_registered")
-            entries[self.key]={"root":str(self.state_root),"candidate":self.binding,"media_key":self.media_key}
-            atomic_write(self.registry_path,canonical(entries))
-        # A crash between registration and genesis fails closed wherever it is resumed.
-        job=Journal(directory,create=True)
-        atomic_write(job.directory/PAYLOAD,local_bytes(self.root,PAYLOAD),exclusive=True)
-        job.append("GENESIS",candidate=self.binding,authorization_id=self.auth_id,authorization_sha256=self.active_hash)
-        job.snapshot(self.binding,"READY")
+    def create_job(self, directory):
+        episode, row = self.lineage.reserve(self.state_root, self.binding, {
+            "id": self.auth_id, "sha256": self.active_hash,
+        })
+        require(directory == self.lineage.directory(episode, row), "unexpected_job_directory")
+        job = self.lineage.activate(episode, row, local_bytes(self.root, PAYLOAD))
+        self.lineage_row = {**row, "phase": "ready"}
         return job
+
+    def promote_literal_smoke(self, vid, receipt_hash):
+        if self.lineage_row is not None and self.lineage_row["phase"] == "ready":
+            self.lineage.change(self.lineage_row, "complete", video_id=vid, receipt_sha256=receipt_hash)
+            self.lineage_row = {**self.lineage_row, "phase": "complete", "video_id": vid,
+                                "receipt_sha256": receipt_hash}
 
     def bind_auth_chain(self,*,write):
         genesis=self.job.rows[0]
@@ -373,7 +483,7 @@ class Controller:
         require(len(links)<=len(presented)<=len(links)+1 and presented[:len(links)]==links,
                 "authorization_head_conflict")
         if len(presented)>len(links):
-            require(self.mode=="publish" and utc(self.active["expires_at"])>self.clock(),
+            require(self.mode in {"publish", "update"} and utc(self.active["expires_at"]) > self.clock(),
                     "successor_requires_current_publish")
             if write:
                 self.job.append("AUTH_SUCCESSOR",authorization_id=self.auth_id,authorization_sha256=self.active_hash,
@@ -504,12 +614,15 @@ class Controller:
                 fields={}
                 for field in ("video_id","caption_id","item_id","session_handle"):
                     if field in result:
-                        pattern=VIDEO_ID if field=="video_id" else CAPTION_ID
+                        pattern={"video_id":VIDEO_ID,"session_handle":SESSION_HANDLE}.get(field,CAPTION_ID)
                         require(isinstance(result[field],str) and pattern.fullmatch(result[field]),
                                 "invalid_ack_identity",code=11)
                         fields[field]=result[field]
                 require(required in fields,"missing_ack_identity",code=11)
                 if operation=="upload_video":
+                    observed_notify = result.get("notify_subscribers", "unknown")
+                    require(observed_notify is False or observed_notify == "unknown",
+                            "smoke_notification_evidence_conflict", code=11)
                     fields["notify_subscribers"]=False
                 return self.job.append("ACK",operation=operation,op_key=key,attempt_id=attempt,**fields)
             except Stop as exc:
@@ -520,7 +633,7 @@ class Controller:
                     self.job.append("ACK",operation=operation,op_key=key,attempt_id=attempt,
                                     **acknowledgement)
                 self.job.append("ERROR",operation=operation,op_key=key,attempt_id=attempt,
-                                error=exc.reason,effect="unknown" if exc.code in (7,10,11) else "none",
+                                error=exc.reason,effect=exc.effect or ("unknown" if exc.code in (7,10,11) else "none"),
                                 safe_ids=exc.detail)
                 raise
 
@@ -703,6 +816,7 @@ class Controller:
                 require(seq==len(self.job.rows),"receipt_recovery_journal_conflict")
                 self.job.append("FINALIZED",video_id=vid,receipt_sha256=digest(receipt_bytes))
             self.job.snapshot(self.binding,"COMPLETE",vid)
+            self.promote_literal_smoke(vid, digest(receipt_bytes))
             return {"status":"already_published_noop","video_id":vid,"mutations":0}
         raw=canonical(readback)
         atomic_write(filename,raw)
@@ -715,6 +829,7 @@ class Controller:
         atomic_write(receipt,sealed,exclusive=True)
         self.job.append("FINALIZED",video_id=vid,receipt_sha256=digest(sealed))
         self.job.snapshot(self.binding,"COMPLETE",vid)
+        self.promote_literal_smoke(vid, digest(sealed))
         return {"status":"published_private","video_id":vid,"receipt_sha256":digest(sealed)}
 
     def reconcile(self,record_id):
@@ -728,6 +843,9 @@ class Controller:
                 if intent["operation"]=="upload_video" and handle:
                     status=self.cli(["videos","upload-status",handle])
                     if status.get("state")=="complete":
+                        notification = status.get("notify_subscribers", "unknown")
+                        require(notification is False or notification == "unknown",
+                                "smoke_notification_evidence_conflict", code=4)
                         found=status.get("video_id","")
                         evidence=self.read_video(found)
                         matching_video(evidence,self.manifest,self.duration)
@@ -813,10 +931,12 @@ def settings():
 
 def arg_parser():
     parser=argparse.ArgumentParser()
-    parser.add_argument("--mode",choices=("plan","publish","reconcile"),required=True)
+    parser.add_argument("--mode",choices=("plan","publish","update","reconcile"),required=True)
     parser.add_argument("--package",type=Path,required=True)
     parser.add_argument("--preview",type=Path)
-    parser.add_argument("--profile",choices=("smoke-test",),required=True)
+    parser.add_argument("--profile",required=True)
+    parser.add_argument("--video-id", help="Assert the approved in-place update target.")
+    parser.add_argument("--inspect-effects", action="store_true", help="Record independent effect evidence.")
     parser.add_argument("--authorization",required=True,help="Registered operator authorization ID")
     parser.add_argument("--resolution",help="Registered operator resolution ID, reconcile only")
     parser.add_argument("--cache-backend",choices=("keychain","file"))
@@ -831,9 +951,18 @@ def main(argv=None):
     store,registry,state=settings()
     try:
         require(args.resolution is None or args.mode=="reconcile","resolution_requires_reconcile")
-        controller=Controller(package,preview,args.profile,Client(CLI_ROOT,args.profile,args.cache_backend),
-                              OperatorStore(store),registry,state,args.authorization)
-        result=controller.execute(args.mode,resolution=args.resolution)
+        require(KEY.fullmatch(args.profile), "invalid_profile")
+        require(not args.inspect_effects or args.mode == "reconcile" and not args.resolution,
+                "invalid_effect_inspection_mode")
+        base = (package, preview, args.profile, Client(CLI_ROOT,args.profile,args.cache_backend),
+                OperatorStore(store), registry, state, args.authorization)
+        if args.profile == "smoke-test":
+            require(args.video_id is None and not args.inspect_effects, "private_smoke_policy")
+            result = Controller(*base).execute(args.mode, resolution=args.resolution)
+        else:
+            from production import Production
+            result = Production(*base).execute(args.mode, resolution=args.resolution,
+                                               video_id=args.video_id, inspect_effects=args.inspect_effects)
         print(canonical(result).decode())
         return 0
     except Stop as exc:

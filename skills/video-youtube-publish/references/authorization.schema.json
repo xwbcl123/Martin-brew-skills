@@ -1,202 +1,1066 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:life-os:ytpub-private-authorization:2.0",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "contract_version",
-    "episode_key",
-    "channel_profile",
-    "target_channel_id",
-    "package_revision",
-    "authorization_id",
-    "actor",
-    "source_ref_kind",
-    "source_ref",
-    "original_user_quote",
-    "authorized_at",
-    "expires_at",
-    "revoked",
-    "mode",
-    "manifest_sha256",
-    "payload_sha256",
-    "video_sha256",
-    "thumbnail_sha256",
-    "captions_sha256",
-    "seal_sha256",
-    "contract_bundle_sha256",
-    "cli_identity_sha256",
-    "playlist_ids",
-    "target_privacy_status",
-    "publish_at",
-    "notify_subscribers",
-    "allowed_operations",
-    "authorization_version",
-    "supersedes",
-    "oauth_binding_sha256"
+  "$id": "urn:life-os:ytpub-authorization:union:3.0:r3",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/legacy"
+    },
+    {
+      "$ref": "#/$defs/current"
+    }
   ],
-  "properties": {
-    "contract_version": {
-      "const": "1.0"
-    },
-    "episode_key": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
-    },
-    "channel_profile": {
-      "const": "smoke-test"
-    },
-    "target_channel_id": {
-      "type": "string",
-      "pattern": "^UC[A-Za-z0-9_-]{22}(?![\\s\\S])"
-    },
-    "package_revision": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "authorization_id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
-    },
-    "actor": {
-      "const": "user"
-    },
-    "source_ref_kind": {
-      "enum": [
-        "original_user_message",
-        "operator_terminal"
-      ]
-    },
-    "source_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "original_user_quote": {
-      "type": "string",
-      "minLength": 1
-    },
-    "authorized_at": {
-      "type": "string",
-      "format": "date-time",
-      "pattern": "Z(?![\\s\\S])"
-    },
-    "expires_at": {
-      "type": "string",
-      "format": "date-time",
-      "pattern": "Z(?![\\s\\S])"
-    },
-    "revoked": {
-      "const": false
-    },
-    "mode": {
-      "const": "private_smoke"
-    },
-    "manifest_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "payload_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "video_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "thumbnail_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "captions_sha256": {
+  "$defs": {
+    "legacy": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "urn:life-os:ytpub-private-authorization:2.0",
       "type": "object",
-      "minProperties": 1,
-      "propertyNames": {
-        "type": "string",
-        "minLength": 2,
-        "maxLength": 255
-      },
-      "additionalProperties": {
-        "type": "string",
-        "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-      }
-    },
-    "seal_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "contract_bundle_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "cli_identity_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
-    },
-    "playlist_ids": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
-      },
-      "uniqueItems": true
-    },
-    "target_privacy_status": {
-      "const": "private"
-    },
-    "publish_at": {
-      "type": "null"
-    },
-    "notify_subscribers": {
-      "const": false
-    },
-    "allowed_operations": {
-      "type": "array",
-      "items": {
-        "enum": [
-          "upload_video",
-          "set_thumbnail",
-          "upload_captions",
-          "add_playlist",
-          "readback"
-        ]
-      },
-      "minItems": 1,
-      "uniqueItems": true,
-      "contains": {
-        "const": "readback"
-      }
-    },
-    "authorization_version": {
-      "const": "2.0"
-    },
-    "supersedes": {
-      "oneOf": [
-        {
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "episode_key",
+        "channel_profile",
+        "target_channel_id",
+        "package_revision",
+        "authorization_id",
+        "actor",
+        "source_ref_kind",
+        "source_ref",
+        "original_user_quote",
+        "authorized_at",
+        "expires_at",
+        "revoked",
+        "mode",
+        "manifest_sha256",
+        "payload_sha256",
+        "video_sha256",
+        "thumbnail_sha256",
+        "captions_sha256",
+        "seal_sha256",
+        "contract_bundle_sha256",
+        "cli_identity_sha256",
+        "playlist_ids",
+        "target_privacy_status",
+        "publish_at",
+        "notify_subscribers",
+        "allowed_operations",
+        "authorization_version",
+        "supersedes",
+        "oauth_binding_sha256"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "1.0"
+        },
+        "episode_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+        },
+        "channel_profile": {
+          "const": "smoke-test"
+        },
+        "target_channel_id": {
+          "type": "string",
+          "pattern": "^UC[A-Za-z0-9_-]{22}(?![\\s\\S])"
+        },
+        "package_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+        },
+        "actor": {
+          "const": "user"
+        },
+        "source_ref_kind": {
+          "enum": [
+            "original_user_message",
+            "operator_terminal"
+          ]
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "original_user_quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorized_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z(?![\\s\\S])"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z(?![\\s\\S])"
+        },
+        "revoked": {
+          "const": false
+        },
+        "mode": {
+          "const": "private_smoke"
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "video_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "thumbnail_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "captions_sha256": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+          }
+        },
+        "seal_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "contract_bundle_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "cli_identity_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "playlist_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+          },
+          "uniqueItems": true
+        },
+        "target_privacy_status": {
+          "const": "private"
+        },
+        "publish_at": {
           "type": "null"
         },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "authorization_id",
-            "authorization_sha256"
-          ],
-          "properties": {
-            "authorization_id": {
-              "type": "string",
-              "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+        "notify_subscribers": {
+          "const": false
+        },
+        "allowed_operations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "upload_video",
+              "set_thumbnail",
+              "upload_captions",
+              "add_playlist",
+              "readback"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": {
+            "const": "readback"
+          }
+        },
+        "authorization_version": {
+          "const": "2.0"
+        },
+        "supersedes": {
+          "oneOf": [
+            {
+              "type": "null"
             },
-            "authorization_sha256": {
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "authorization_id",
+                "authorization_sha256"
+              ],
+              "properties": {
+                "authorization_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+                },
+                "authorization_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+                }
+              }
+            }
+          ]
+        },
+        "oauth_binding_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        }
+      }
+    },
+    "current": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "episode_key",
+        "channel_profile",
+        "target_channel_id",
+        "package_revision",
+        "authorization_id",
+        "actor",
+        "source_ref_kind",
+        "source_ref",
+        "original_user_quote",
+        "authorized_at",
+        "expires_at",
+        "revoked",
+        "mode",
+        "manifest_sha256",
+        "payload_sha256",
+        "video_sha256",
+        "thumbnail_sha256",
+        "captions_sha256",
+        "seal_sha256",
+        "contract_bundle_sha256",
+        "cli_identity_sha256",
+        "playlist_ids",
+        "target_privacy_status",
+        "publish_at",
+        "notify_subscribers",
+        "allowed_operations",
+        "authorization_version",
+        "supersedes",
+        "oauth_binding_sha256",
+        "effective_smoke",
+        "preview_sha256",
+        "parent",
+        "target_video_id",
+        "plan_sha256",
+        "operation_plan"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "1.0"
+        },
+        "episode_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+        },
+        "channel_profile": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])",
+          "not": {
+            "const": "smoke-test"
+          }
+        },
+        "target_channel_id": {
+          "type": "string",
+          "pattern": "^UC[A-Za-z0-9_-]{22}(?![\\s\\S])"
+        },
+        "package_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+        },
+        "actor": {
+          "const": "user"
+        },
+        "source_ref_kind": {
+          "enum": [
+            "original_user_message",
+            "operator_terminal"
+          ]
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "original_user_quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorized_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z(?![\\s\\S])"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z(?![\\s\\S])"
+        },
+        "revoked": {
+          "const": false
+        },
+        "mode": {
+          "enum": [
+            "initial_publish",
+            "revision_republish",
+            "in_place_update"
+          ]
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "video_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "thumbnail_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "captions_sha256": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+          }
+        },
+        "seal_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "contract_bundle_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "cli_identity_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "playlist_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+          },
+          "uniqueItems": true
+        },
+        "target_privacy_status": {
+          "enum": [
+            "private",
+            "unlisted",
+            "public"
+          ]
+        },
+        "publish_at": {
+          "oneOf": [
+            {
               "type": "string",
-              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+              "format": "date-time",
+              "pattern": "Z(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notify_subscribers": {
+          "type": "boolean"
+        },
+        "allowed_operations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "upload_video",
+              "update_video",
+              "set_thumbnail",
+              "upload_captions",
+              "update_captions",
+              "delete_captions",
+              "add_playlist",
+              "readback"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": {
+            "const": "readback"
+          }
+        },
+        "authorization_version": {
+          "const": "3.0"
+        },
+        "supersedes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "authorization_id",
+                "authorization_sha256"
+              ],
+              "properties": {
+                "authorization_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+                },
+                "authorization_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+                }
+              }
+            }
+          ]
+        },
+        "oauth_binding_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "effective_smoke": {
+          "type": "boolean"
+        },
+        "preview_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "parent": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/parent"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_video_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plan_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "operation_plan": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effective_smoke": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "mode": {
+                "const": "initial_publish"
+              },
+              "target_privacy_status": {
+                "const": "private"
+              },
+              "publish_at": {
+                "type": "null"
+              },
+              "notify_subscribers": {
+                "const": false
+              },
+              "operation_plan": {
+                "items": {
+                  "properties": {
+                    "yes": {
+                      "const": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "initial_publish"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parent": {
+                "type": "null"
+              },
+              "target_video_id": {
+                "type": "null"
+              },
+              "operation_plan": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "operation": {
+                      "enum": [
+                        "upload_video",
+                        "set_thumbnail",
+                        "upload_captions",
+                        "add_playlist"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "operation"
+                  ],
+                  "properties": {
+                    "operation": {
+                      "const": "upload_video"
+                    }
+                  }
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "revision_republish"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parent": {
+                "$ref": "#/$defs/parent"
+              },
+              "target_video_id": {
+                "type": "null"
+              },
+              "operation_plan": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "operation": {
+                      "enum": [
+                        "upload_video",
+                        "set_thumbnail",
+                        "upload_captions",
+                        "add_playlist"
+                      ]
+                    }
+                  }
+                },
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "operation"
+                  ],
+                  "properties": {
+                    "operation": {
+                      "const": "upload_video"
+                    }
+                  }
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "in_place_update"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parent": {
+                "$ref": "#/$defs/parent"
+              },
+              "target_video_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+              },
+              "operation_plan": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "operation": {
+                      "enum": [
+                        "update_video",
+                        "set_thumbnail",
+                        "upload_captions",
+                        "update_captions",
+                        "delete_captions",
+                        "add_playlist"
+                      ]
+                    },
+                    "target": {
+                      "type": "object",
+                      "required": [
+                        "video_id"
+                      ],
+                      "properties": {
+                        "video_id": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "publish_at": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "target_privacy_status": {
+                "const": "private"
+              }
             }
           }
         }
       ]
     },
-    "oauth_binding_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    "parent": {
+      "type": "object",
+      "required": [
+        "revision",
+        "video_id",
+        "receipt_sha256",
+        "video_sha256"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "video_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+        },
+        "receipt_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "video_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": false
+    },
+    "operation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "upload_video"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "episode_key"
+              ],
+              "properties": {
+                "episode_key": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "update_video"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id"
+              ],
+              "properties": {
+                "video_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "set_thumbnail"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id"
+              ],
+              "properties": {
+                "video_id": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                    },
+                    {
+                      "const": "$uploaded"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "upload_captions"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id",
+                "language",
+                "name"
+              ],
+              "properties": {
+                "video_id": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                    },
+                    {
+                      "const": "$uploaded"
+                    }
+                  ]
+                },
+                "language": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 255
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 150
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "const": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "update_captions"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id",
+                "caption_id",
+                "language",
+                "name"
+              ],
+              "properties": {
+                "video_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                },
+                "caption_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_.:-]{1,160}(?![\\s\\S])"
+                },
+                "language": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 255
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 150
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "delete_captions"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id",
+                "caption_id",
+                "language",
+                "name"
+              ],
+              "properties": {
+                "video_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                },
+                "caption_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_.:-]{1,160}(?![\\s\\S])"
+                },
+                "language": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 255
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 150
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "operation",
+            "target",
+            "baseline_sha256",
+            "input_sha256",
+            "yes"
+          ],
+          "properties": {
+            "operation": {
+              "const": "add_playlist"
+            },
+            "target": {
+              "type": "object",
+              "required": [
+                "video_id",
+                "playlist_id"
+              ],
+              "properties": {
+                "video_id": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_-]{11}(?![\\s\\S])"
+                    },
+                    {
+                      "const": "$uploaded"
+                    }
+                  ]
+                },
+                "playlist_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+                }
+              },
+              "additionalProperties": false
+            },
+            "baseline_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "input_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "yes": {
+              "const": false
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

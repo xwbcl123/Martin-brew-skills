@@ -490,3 +490,35 @@ def test_synthetic_disclosure_conflict_prevents_receipt(env, monkeypatch, when, 
         assert writes == ["videos/upload"]
     else:
         assert writes[-1] == "playlists/items/add"
+
+
+def test_qr_evidence_reliable_on_known_legacy_opencv_edge_nonce_and_rejects_conflict(tmp_path):
+    import qrcode
+    from PIL import Image
+    from publish import qr_evidence
+
+    token = "ytpub-smoke-v2/3c94bf93dfb549ecbea5ef48c08349ee"
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H, border=4, box_size=12)
+    qr.add_data(token)
+    mark = qr.make_image(fill_color="black", back_color="white").get_image().convert("RGB")
+    canvas = Image.new("RGB", (1280, 720), "#172e45")
+    canvas.paste(mark, ((1280 - mark.width) // 2, (720 - mark.height) // 2))
+    png_path = tmp_path / "thumb.png"
+    jpg_path = tmp_path / "thumb.jpg"
+    canvas.save(png_path)
+    canvas.save(jpg_path, format="JPEG", quality=75)
+
+    expected_digest = digest(token.encode())
+    assert qr_evidence(png_path) == (expected_digest, [1280, 720])
+    assert qr_evidence(jpg_path) == (expected_digest, [1280, 720])
+
+    conflict = Image.new("RGB", (1280, 720), "#172e45")
+    for idx, suffix in enumerate(("11111111111111111111111111111111", "22222222222222222222222222222222")):
+        q = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H, border=4, box_size=8)
+        q.add_data(f"ytpub-smoke-v2/{suffix}")
+        m = q.make_image(fill_color="black", back_color="white").get_image().convert("RGB")
+        conflict.paste(m, (80 + idx * 620, 120))
+    conflict_path = tmp_path / "conflict.png"
+    conflict.save(conflict_path)
+    with pytest.raises(Stop, match="thumbnail_marker_not_proven"):
+        qr_evidence(conflict_path)

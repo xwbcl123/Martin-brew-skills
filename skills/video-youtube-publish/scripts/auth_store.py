@@ -17,17 +17,27 @@ HOUR = 3600
 KEY = re.compile(r"[a-z0-9][a-z0-9_-]{0,95}")
 SCHEMA = Path(__file__).resolve().parents[1]/"references/authorization.schema.json"
 OPS = {"upload_video","set_thumbnail","upload_captions","add_playlist","readback"}
+PRODUCTION_OPS = OPS | {"update_video", "update_captions", "delete_captions"}
 PARAMETERS = ("episode_key","channel_profile","target_channel_id","package_revision",
               "manifest_sha256","payload_sha256","video_sha256","thumbnail_sha256",
               "captions_sha256","seal_sha256","contract_bundle_sha256","cli_identity_sha256",
               "playlist_ids","oauth_binding_sha256","target_privacy_status","publish_at",
               "notify_subscribers","mode")
 
+CURRENT_PARAMETERS = PARAMETERS + ("effective_smoke", "preview_sha256", "parent", "target_video_id",
+                                   "plan_sha256", "operation_plan")
+
+
+def binding_fields(value):
+    return CURRENT_PARAMETERS if value.get("authorization_version") == "3.0" else PARAMETERS
+
 
 class Stop(Exception):
-    def __init__(self, reason, *, code=2, detail=None):
+    def __init__(self, reason, *, code=2, detail=None, effect=None, upload_init_dispatch=None):
         super().__init__(reason)
-        self.reason,self.code,self.detail=reason,code,detail or {}
+        self.reason, self.code, self.detail = reason, code, detail or {}
+        self.effect = effect
+        self.upload_init_dispatch = upload_init_dispatch
 
 
 def require(condition, reason, *, code=2):
@@ -162,17 +172,21 @@ class OperatorStore:
                 return
             atomic_write(p,canonical({"revoked_at":timestamp()}),exclusive=True)
 
-    def chain(self,key,binding,now):
+    def chain(self,key,binding,now,*,historical=False):
         chain=[]
         while key is not None:
             require(len(chain)<32 and key not in {record["authorization_id"] for record,_ in chain},
                     "invalid_authorization_chain")
             value,hashed=self.load("authorizations",key)
             validate_auth(value)
-            require(value["authorization_id"]==key and
-                    not (self.root/"revoked"/key).exists() and not (self.root/"revoked"/key).is_symlink(),
+            revoked = self.root / "revoked" / key
+            require(value["authorization_id"] == key and
+                    (historical or not revoked.exists() and not revoked.is_symlink()),
                     "authorization_revoked_or_mismatched")
-            require(all(value[k]==binding[k] for k in PARAMETERS),"authorization_binding_mismatch")
+            version = binding.get("authorization_version", "2.0")
+            require(value["authorization_version"] == version and
+                    all(value[k] == binding.get(k) for k in binding_fields(value)),
+                    "authorization_binding_mismatch")
             require(value["authorized_at"] is None or utc(value["authorized_at"])<=now,"authorization_not_yet_valid")
             if chain:
                 child,_=chain[-1]

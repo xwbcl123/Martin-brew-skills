@@ -286,5 +286,5 @@ python skills/<skill-name>/scripts/<tool>.py
 ### video-youtube-publish
 
 - keep OAuth client secrets, tokens, account registries, operator authorization ledgers, and job journals external in mode `0700`/`0600` directories outside git
-- locate the paired CLI via `YTPUB_CLI_ROOT` (defaulting to `~/Code/ytpub-cli`) rather than hardcoded user home paths
-- preserve mandatory safety invariants: explicit `private` + `notifySubscribers=false` smoke policy, hash-bound operator approvals (and monotonic successor chains via `--supersedes`), no automatic blind retries on ambiguous writes, and independent owner readback verification
+- locate the paired CLI via `YTPUB_CLI_ROOT` (defaulting to `~/Code/ytpub-cli`) and the profile map via `VIDEO_SKILLS_CONFIG` rather than hardcoded user home paths
+- preserve mandatory safety invariants: explicit `private` + `notifySubscribers=false` smoke policy (including channel aliases), risk-bound production approvals (`unlisted`/`public`/`publishAt`/`--yes`), hash-bound operator approvals (monotonic `--supersedes` chain, `--mode update` same-MP4 guard, and explicit `--supersedes-revision` for higher MP4 revisions without auto-deleting prior YouTube videos), no automatic blind retries on ambiguous writes, and independent owner readback verification
