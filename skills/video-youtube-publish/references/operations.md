@@ -21,3 +21,10 @@ Pass the same `--profile` to operator approval, plan and apply. The approval dis
 For a revision that cannot finish, inspect known effects using `publish.py --mode reconcile --inspect-effects`. This records evidence without business mutations. Have the operator explicitly attest the matching revision resolution and apply it through `--mode reconcile --resolution ID`. An abandoned revision stays in history. Previously dispatched or uncertain upload media remains reserved.
 
 An old v1 registry with open jobs stays readable by its original pinned runtime. Drain those jobs there. For an irrecoverable open job with intact original evidence, record a `legacy_revision` resolution, then run `operator.py migrate-registry --legacy-resolution ID` with exactly one resolution per such job. The import updates only the registry and preserves all old job bytes.
+
+## Operational pitfalls and multi-host notes
+
+- Profile names must match `[a-z0-9][a-z0-9_-]{0,95}` (periods such as `my.channel` are rejected; use `my-channel`).
+- Leaving `smoke-test` bound to a channel UC ID forces `effective_smoke: true` on any production alias for that channel via `is_smoke_channel()`. Remove the `smoke-test` mapping and clear old smoke bindings before upgrading a channel to production.
+- Thumbnail marker verification runs both `cv2.QRCodeDetectorAruco()` and `cv2.QRCodeDetector()` because OpenCV's legacy detector alone intermittently misses valid Version 5 QR markers (~4–10% observed failure rate), while still rejecting multi-QR conflicts.
+- `operator/`, `publish-registry/`, and `~/.local/state/ytpub/publish/` remain machine-local. Never run concurrent first uploads or updates for the same episode across multiple hosts; when handing off an already-uploaded video across hosts, run read-only `ytpub videos get VIDEO_ID --profile PROFILE` first and authorize `--mode update --video-id VIDEO_ID`.
