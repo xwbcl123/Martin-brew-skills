@@ -1,0 +1,18 @@
+[project]
+name = "video-release-contract"
+version = "1.0.0"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+    "jsonschema[format]==4.26.0",
+    "pillow>=12,<13",
+    "langcodes>=3.5,<4",
+    "regex>=2025.9.18",
+    "opencv-python-headless>=4.12,<5",
+    "qrcode>=8.2,<9",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.uv]
+package = false

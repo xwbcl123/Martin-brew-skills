@@ -1,0 +1,7 @@
+# Contract operations
+
+The input to `assemble.py --input INPUT.json` declares the fields in `video-package.schema.json`. Supply artifact paths as strings for `delivery_video`, `thumbnail`, `reading_transcript`, `enrichment_pack`, `credits` and `captions[*].file`. The assembler supplies the `youtube_payload` artifact and its hash. The assembly input stays outside the package. Include a profile map of the form `{"profiles":{"smoke-test":{"channel_id":"UC…"}}}` at the standard local config path or at the same explicit path supplied throughout the workflow.
+
+G01–G13 bind schema, exact artifact and request bytes, video and audio measurements, upload metadata, chapters, compliance disclosures, localizations, thumbnail, timed subtitles, enrichment, rights, and the account profile. The category seed list covers the regions in `policy.json`. Treat it as an offline policy snapshot. The G14 HTML report contains local relative media references and rechecks the exact preview against the seal. `contract_passed`, `human_preview_ready`, `growth_ready`, and `publish_authorized` are distinct. Short synthetic footage can pass the contract and preview without growth readiness. Release authority comes from the designated operator.
+
+Keep generated media and reports in a private working directory. The profile config and assembly input belong outside the sealed package. Create a new package revision for changed materials. Use fresh policy and tool identities when sealing a candidate after a runtime change.

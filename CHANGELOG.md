@@ -4,6 +4,13 @@ All notable changes to this repository will be documented in this file.
 
 The format is intentionally lightweight and practical for a personal-but-shareable skills repository.
 
+## 2026-11-22
+
+### Added
+
+- `video-release-contract`: portable offline video package assembler, validator, seal, and zero-network `file://` HTML preview generator with locked dependency manifest.
+- `video-youtube-publish`: operator-authorized, hash-bound private YouTube smoke publishing controller with append-only INTENT/ACK journaling, `--supersedes` chain renewal, independent owner readback (including `api_omitted_false_default` handling for omitted `containsSyntheticMedia` when sealed expectation is `false`), and `already_published_noop` idempotency.
+
 ## 2026-11-19
 
 ### Added

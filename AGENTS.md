@@ -52,6 +52,8 @@ Current in-scope skills:
 - `slide-renamer`
 - `skill-comprehension`
 - `prompt-crafter`
+- `video-release-contract`
+- `video-youtube-publish`
 - `visual-mail`
 
 Out of scope:
@@ -274,3 +276,15 @@ python skills/<skill-name>/scripts/<tool>.py
 - keep this a thin host-integrated discovery entry; continuity, delegation and Session rules remain host-owned
 - preserve Coordinator/Worker boundaries, current-task precedence, advisory-only routing and fresh identity checks
 - never export private handoffs, Memory bodies, runtime bindings, model rosters or machine paths; the public variant resolves host contracts through AGENTS
+
+### video-release-contract
+
+- keep sealed packages, media fixtures, channel-profile maps, and HTML previews outside git and outside the skill directory
+- preserve offline determinism and zero-network preview guarantees (`file://` Chrome check, no external fetches, `publish_authorized` never enabled by the contract)
+- never embed real channel IDs, API keys, credentials, or workstation-specific absolute paths in fixtures or docs
+
+### video-youtube-publish
+
+- keep OAuth client secrets, tokens, account registries, operator authorization ledgers, and job journals external in mode `0700`/`0600` directories outside git
+- locate the paired CLI via `YTPUB_CLI_ROOT` (defaulting to `~/Code/ytpub-cli`) rather than hardcoded user home paths
+- preserve mandatory safety invariants: explicit `private` + `notifySubscribers=false` smoke policy, hash-bound operator approvals (and monotonic successor chains via `--supersedes`), no automatic blind retries on ambiguous writes, and independent owner readback verification

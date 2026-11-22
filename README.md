@@ -80,6 +80,8 @@ It does not keep:
 - `skill-comprehension`
 - `prompt-crafter`
 - `llm-wiki-builder`
+- `video-release-contract` — deterministic offline video release package assembler, validator, seal, and Chrome `file://` previewer
+- `video-youtube-publish` — operator-approved, hash-bound private YouTube smoke publishing controller with journaled recovery and independent readback
 - `visual-mail`
 
 ## Repository Structure
@@ -121,6 +123,8 @@ Martin-brew-skills/
 │   ├── reflect/
 │   ├── skill-comprehension/
 │   ├── slide-renamer/
+│   ├── video-release-contract/
+│   ├── video-youtube-publish/
 │   └── visual-mail/
 ├── .env.example
 ├── .gitignore
@@ -332,7 +336,21 @@ If you reuse these skills in your own workspace, replace the templates with your
 - includes reusable script contracts for route choice, image-gen prompts, Option 5 PPTX reconstruction, render QC, Text Fidelity Gate, BG Gate, and contact sheets
 - ships with sanitized templates and references only; no private benchmark materials or generated deck outputs
 
+### `video-release-contract`
+
+- assembles, validates, seals, and renders a zero-network `file://` HTML review preview for offline video release packages (MP4, QR-fingerprinted thumbnail, SRT captions, transcript, credits, enrichment, and exact `youtube_payload.json`)
+- separates quality/policy verification from publish authority and channel credentials
+
+### `video-youtube-publish`
+
+- drives operator-approved private YouTube smoke publishing through an external `ytpub-cli` checkout (`YTPUB_CLI_ROOT` or `~/Code/ytpub-cli`)
+- enforces pre-write seal/preview/runtime binding checks, interactive OAuth channel registration, hash-bound operator authorizations (`--supersedes` for expiry renewal), append-only INTENT/ACK journaling, and independent owner readback verification
+
 ## Changelog
+
+### 2026-11-22
+
+- add `video-release-contract` and `video-youtube-publish` portable skills for deterministic offline video package sealing and hash-bound private YouTube smoke publishing with independent owner readback
 
 ### 2026-10-07
 

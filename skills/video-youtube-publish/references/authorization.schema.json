@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:life-os:ytpub-private-authorization:2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "episode_key",
+    "channel_profile",
+    "target_channel_id",
+    "package_revision",
+    "authorization_id",
+    "actor",
+    "source_ref_kind",
+    "source_ref",
+    "original_user_quote",
+    "authorized_at",
+    "expires_at",
+    "revoked",
+    "mode",
+    "manifest_sha256",
+    "payload_sha256",
+    "video_sha256",
+    "thumbnail_sha256",
+    "captions_sha256",
+    "seal_sha256",
+    "contract_bundle_sha256",
+    "cli_identity_sha256",
+    "playlist_ids",
+    "target_privacy_status",
+    "publish_at",
+    "notify_subscribers",
+    "allowed_operations",
+    "authorization_version",
+    "supersedes",
+    "oauth_binding_sha256"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "1.0"
+    },
+    "episode_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+    },
+    "channel_profile": {
+      "const": "smoke-test"
+    },
+    "target_channel_id": {
+      "type": "string",
+      "pattern": "^UC[A-Za-z0-9_-]{22}(?![\\s\\S])"
+    },
+    "package_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authorization_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+    },
+    "actor": {
+      "const": "user"
+    },
+    "source_ref_kind": {
+      "enum": [
+        "original_user_message",
+        "operator_terminal"
+      ]
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_user_quote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorized_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z(?![\\s\\S])"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z(?![\\s\\S])"
+    },
+    "revoked": {
+      "const": false
+    },
+    "mode": {
+      "const": "private_smoke"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "video_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "thumbnail_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "captions_sha256": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 255
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+      }
+    },
+    "seal_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "contract_bundle_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "cli_identity_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "playlist_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]+(?![\\s\\S])"
+      },
+      "uniqueItems": true
+    },
+    "target_privacy_status": {
+      "const": "private"
+    },
+    "publish_at": {
+      "type": "null"
+    },
+    "notify_subscribers": {
+      "const": false
+    },
+    "allowed_operations": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "upload_video",
+          "set_thumbnail",
+          "upload_captions",
+          "add_playlist",
+          "readback"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "contains": {
+        "const": "readback"
+      }
+    },
+    "authorization_version": {
+      "const": "2.0"
+    },
+    "supersedes": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authorization_id",
+            "authorization_sha256"
+          ],
+          "properties": {
+            "authorization_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,95}(?![\\s\\S])"
+            },
+            "authorization_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            }
+          }
+        }
+      ]
+    },
+    "oauth_binding_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    }
+  }
+}
