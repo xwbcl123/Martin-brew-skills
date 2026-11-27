@@ -41,6 +41,7 @@ If the user requests editable data charts, select native. A text-editable chart 
 - Check facts for self-consistency before building (numbers vs units/tiers/totals; which version of each source is authoritative). See [Deck Outline](references/deck-outline.md).
 - A first draft of 10 or more slides finished in under 10 minutes triggers stop-and-review.
 - Every slide has speaker notes and source ids. No emoji cards.
+- Planning and insight decks follow the owner's [style preferences](references/style-preferences.md): no near-black fills, gradient bars with icons, red bold lead-ins with full sentences, "启示" vs "总结" bands, model + original-figure pairs for insights, a visual cover and a Thank You take-away page.
 - Delivery needs template compliance PASS plus the [visual QC rubric](references/visual-qc-rubric.md) at 13/16 or above against a reference deck; PASS alone is not sufficient.
 - Material leaving the team passes `scripts/scan_external_traces.py` on both PPTX and PDF (notes and file properties included).
 - Intermediate versions go out for review (e.g. email); once accepted, the final is published through the host project's own closeout/publication channel instead of another email. See [gates](references/gates.md).
